@@ -1,4 +1,4 @@
-#!/usr/bin/envA python3
+#!/usr/bin/env python3
 import math
 import random
 import re
@@ -87,6 +87,10 @@ print(list(map(sum, M)))
 print({sum(row) for row in M}) # Set
 print({i: sum(M[i]) for i in range(3)})  # Dict
 
-
+D = {'a': 1, 'b': 2, 'c': 3}
+value = D.get('x', 0) # get x or 0 if not found, same as:
+print(value)
+value = D['x'] if 'x' in D else 0
+print(value)
 
 
