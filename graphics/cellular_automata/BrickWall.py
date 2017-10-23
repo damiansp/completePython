@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # TODO: add user interface
+# TODO: add other initialization methods
+# TODO: refactor
 
 import numpy as np
 from math import ceil
@@ -148,13 +150,14 @@ class Point:
         return '(%d, %d)' % (self.x, self.y)
         
 
+def random_color():
+    digits = list('0123456789abcdef')
+    return '#' + ''.join([np.random.choice(digits) for i in range(6)])
+    
+
         
     
 if __name__ == '__main__':
-    def random_color():
-        digits = list('0123456789abcdef')
-        return '#' + ''.join([np.random.choice(digits) for i in range(6)])
-    
     PALETTE = tuple([random_color() for i in range(3)])
     #keys = ((a, b) for a in PALETTE for b in PALETTE)
     #COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
