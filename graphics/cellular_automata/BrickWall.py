@@ -85,22 +85,17 @@ class RowOfBricks:
 
     def determine_color(self, row_index, brick_index):
         offset = True if row_index % 2 == 1 else False
-        if not offset:
-            parent_colors = (self.previous_row.brick_list[brick_index].color,)
+        if offset:
+            brick_index -= 1
+        parent_colors = []
+        for i in range(2):
             try:
-                parent_colors += (
-                    self.previous_row.brick_list[brick_index + 1].color,)
+                parent_colors.append(
+                    self.previous_row.brick_list[brick_index + i].color)
             except IndexError:
-                parent_colors += (self.get_new_color(self.new_color_method),)
-        else:
-            try:
-                parent_colors = (
-                    self.previous_row.brick_list[brick_index - 1].color,)
-            except IndexError:
-                parent_colors = (self.get_new_color(self.new_color_method))
-            parent_colors += (self.previous_row.brick_list[brick_index].color,)
+                parent_colors.append(self.get_new_color(self.new_color_method))
 
-        return COLOR_ASSIGNMENT_RULES[parent_colors]
+        return COLOR_ASSIGNMENT_RULES[tuple(parent_colors)]
 
     
     def draw(self):
