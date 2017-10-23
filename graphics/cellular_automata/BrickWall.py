@@ -2,20 +2,38 @@
 # TODO: add color
 # TODO: add user interface
 
+import numpy as np
 from math import ceil
 from tkinter import *
+
+def random_color():
+    digits = list('0123456789abcdef')
+    return '#' + ''.join([np.random.choice(digits) for i in range(6)])
+    
+PALETTE = tuple([random_color() for i in range(3)])
+#keys = ((a, b) for a in PALETTE for b in PALETTE)
+#COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
+COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
+                          (PALETTE[0], PALETTE[1]): PALETTE[0],
+                          (PALETTE[0], PALETTE[2]): PALETTE[1],
+                          (PALETTE[1], PALETTE[0]): PALETTE[1],
+                          (PALETTE[1], PALETTE[1]): PALETTE[2],
+                          (PALETTE[1], PALETTE[2]): PALETTE[2],
+                          (PALETTE[2], PALETTE[0]): PALETTE[2],
+                          (PALETTE[2], PALETTE[1]): PALETTE[1],
+                          (PALETTE[2], PALETTE[2]): PALETTE[0]}
+
 
 def main():
     root = Tk()
     W, H = 1400, 750
-    BRICK_HEIGHT = 10
-    PALLETTE = ['#000000', '#888888', '#FFFFFF']
+    BRICK_HEIGHT = 5
     canvas = Canvas(root, width=W, height=H)
 
     root.title('Wall')
     canvas.grid(row=0, column=1)
 
-    wall = BrickWall(canvas, BRICK_HEIGHT, initialize='random')
+    wall = BrickWall(canvas, BRICK_HEIGHT)
     wall.draw()
 
     root.mainloop()
@@ -29,8 +47,11 @@ class BrickWall:
 
         
     def build(self):
-        return [RowOfBricks(self.canvas, self.row_height, row)
-                for row in range(self.n_row)]
+        wall = [RowOfBricks(self.canvas, self.row_height, 0)]
+        for row in range(1, self.n_row):
+            wall.append(RowOfBricks(
+                self.canvas, self.row_height, row, previous_row=wall[row -1]))
+        return wall
 
     
     def draw(self):
@@ -40,24 +61,69 @@ class BrickWall:
 
     
 class RowOfBricks:
-    def __init__(self, canvas, height, index):
+    def __init__(self, canvas, height, index, previous_row=None,
+                 new_color_method='random'):
         self.canvas = canvas
         self.height = height
         self.index = index
+        self.previous_row = previous_row
+        self.previous_row = previous_row
+        self.new_color_method = new_color_method
         self.width = canvas.winfo_reqwidth()
         self.y1 = height * index
         brick_width = 2 * self.height
         self.n_bricks = int(ceil(self.width / brick_width))
+        self.brick_list = self.build()
 
         
     def build(self):
-        return [Brick(self.canvas, self.height, [self.index, brick], '#880000')
-                for brick in range(self.n_bricks)]
+        if not self.previous_row:
+            return [Brick(self.canvas,
+                          self.height,
+                          [self.index, brick],
+                          self.get_new_color(self.new_color_method))
+                    for brick in range(self.n_bricks)]
+        else:
+            return [Brick(self.canvas,
+                          self.height,
+                          [self.index, brick],
+                          self.determine_color(self.index, brick))
+                    for brick in range(self.n_bricks)]
 
 
+    def get_new_color(self, method):
+        if self.new_color_method == 'random':
+            return np.random.choice(PALETTE);
+        else:
+            print('new_color_method() not defined, using "random"')
+            get_new_color(self, 'random')
+
+
+    def determine_color(self, row_index, brick_index):
+        offset = True if row_index % 2 == 1 else False
+        if not offset:
+            parent_colors = (self.previous_row.brick_list[brick_index].color,)
+            try:
+                parent_colors += (
+                    self.previous_row.brick_list[brick_index + 1].color,)
+            except IndexError:
+                parent_colors += (self.get_new_color(self.new_color_method),)
+        else:
+            try:
+                parent_colors = (
+                    self.previous_row.brick_list[brick_index - 1].color,)
+            except IndexError:
+                parent_colors = (self.get_new_color(self.new_color_method))
+            parent_colors += (self.previous_row.brick_list[brick_index].color,)
+
+        return COLOR_ASSIGNMENT_RULES[parent_colors]
+
+    
     def draw(self):
         row = self.build()
         [brick.draw() for brick in row]
+
+
             
 
         
@@ -74,15 +140,19 @@ class Brick:
         self.x2, self.y2 = self.x1 + self.width, self.y1 + height
         self.color = color
 
-        
+
     def __str__(self):
         return ('Brick %s (%d x %d) of color %s'
                 % (str(self.index), self.width, self.height, self.color))
 
-
+    
     def draw(self):
-        self.canvas.create_rectangle(
-            self.x1, self.y1, self.x2, self.y2, fill=self.color)
+        self.canvas.create_rectangle(self.x1,
+                                     self.y1,
+                                     self.x2,
+                                     self.y2,
+                                     fill=self.color,
+                                     outline=self.color)
 
 
         
