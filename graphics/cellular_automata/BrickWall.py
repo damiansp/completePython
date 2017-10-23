@@ -86,7 +86,10 @@ class RowOfBricks:
     def determine_color(self, row_index, brick_index):
         offset = True if row_index % 2 == 1 else False
         if offset:
-            brick_index -= 1
+            # Deterministic rules...
+            brick_index -=1
+            # ...or slight randomness
+            #brick_index -= np.random.choice([-1, 0, 1], p=[0.24, 0.75, 0.01])
         parent_colors = []
         for i in range(2):
             try:
