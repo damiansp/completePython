@@ -161,6 +161,8 @@ if __name__ == '__main__':
     for key in COLOR_ASSIGNMENT_RULES:
         COLOR_ASSIGNMENT_RULES[key] = np.random.choice(PALETTE)
 
+    print(COLOR_ASSIGNMENT_RULES)
+
     # ...or hard code rules:
     '''
     COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
