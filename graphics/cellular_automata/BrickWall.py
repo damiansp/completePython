@@ -154,8 +154,15 @@ def random_color():
     
 if __name__ == '__main__':
     PALETTE = tuple([random_color() for i in range(3)])
-    #keys = ((a, b) for a in PALETTE for b in PALETTE)
-    #COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
+
+    # Random rule assigment... 
+    keys = ((a, b) for a in PALETTE for b in PALETTE)
+    COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
+    for key in COLOR_ASSIGNMENT_RULES:
+        COLOR_ASSIGNMENT_RULES[key] = np.random.choice(PALETTE)
+
+    # ...or hard code rules:
+    '''
     COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
                               (PALETTE[0], PALETTE[1]): PALETTE[0],
                               (PALETTE[0], PALETTE[2]): PALETTE[1],
@@ -165,5 +172,6 @@ if __name__ == '__main__':
                               (PALETTE[2], PALETTE[0]): PALETTE[2],
                               (PALETTE[2], PALETTE[1]): PALETTE[1],
                               (PALETTE[2], PALETTE[2]): PALETTE[0]}
+    '''
 
     main()
