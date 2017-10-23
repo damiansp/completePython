@@ -1,27 +1,9 @@
-#!/usr/bin/env/ python3
-# TODO: add color
+#!/usr/bin/env python3
 # TODO: add user interface
 
 import numpy as np
 from math import ceil
 from tkinter import *
-
-def random_color():
-    digits = list('0123456789abcdef')
-    return '#' + ''.join([np.random.choice(digits) for i in range(6)])
-    
-PALETTE = tuple([random_color() for i in range(3)])
-#keys = ((a, b) for a in PALETTE for b in PALETTE)
-#COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
-COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
-                          (PALETTE[0], PALETTE[1]): PALETTE[0],
-                          (PALETTE[0], PALETTE[2]): PALETTE[1],
-                          (PALETTE[1], PALETTE[0]): PALETTE[1],
-                          (PALETTE[1], PALETTE[1]): PALETTE[2],
-                          (PALETTE[1], PALETTE[2]): PALETTE[2],
-                          (PALETTE[2], PALETTE[0]): PALETTE[2],
-                          (PALETTE[2], PALETTE[1]): PALETTE[1],
-                          (PALETTE[2], PALETTE[2]): PALETTE[0]}
 
 
 def main():
@@ -169,4 +151,21 @@ class Point:
         
     
 if __name__ == '__main__':
+    def random_color():
+        digits = list('0123456789abcdef')
+        return '#' + ''.join([np.random.choice(digits) for i in range(6)])
+    
+    PALETTE = tuple([random_color() for i in range(3)])
+    #keys = ((a, b) for a in PALETTE for b in PALETTE)
+    #COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
+    COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
+                              (PALETTE[0], PALETTE[1]): PALETTE[0],
+                              (PALETTE[0], PALETTE[2]): PALETTE[1],
+                              (PALETTE[1], PALETTE[0]): PALETTE[1],
+                              (PALETTE[1], PALETTE[1]): PALETTE[2],
+                              (PALETTE[1], PALETTE[2]): PALETTE[2],
+                              (PALETTE[2], PALETTE[0]): PALETTE[2],
+                              (PALETTE[2], PALETTE[1]): PALETTE[1],
+                              (PALETTE[2], PALETTE[2]): PALETTE[0]}
+
     main()
