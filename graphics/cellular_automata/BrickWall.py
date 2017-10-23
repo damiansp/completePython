@@ -11,7 +11,7 @@ from tkinter import *
 def main():
     root = Tk()
     W, H = 1400, 750
-    BRICK_HEIGHT = 5
+    BRICK_HEIGHT = 2
     canvas = Canvas(root, width=W, height=H)
 
     root.title('Wall')
