@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-# TODO: add user interface
-# TODO: add other initialization methods
-# TODO: refactor
+# TODO: make options as command line tool
 
 import numpy as np
 from math import ceil
@@ -25,7 +23,9 @@ def main():
     # Initial row
     INIT = np.random.choice(NEW_COLOR_OPTIONS)
     # New off-screen bricks
-    OFF_SCREEN = np.random.choice(NEW_COLOR_OPTIONS)
+    OFF_SCREEN = np.random.choice(NEW_COLOR_OPTIONS)\
+                 if INIT == 'random' else 'random' # prevent many trivial cases
+        
     canvas = Canvas(root, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
 
     root.title('Init: %s; New: %s' % (INIT, OFF_SCREEN))
@@ -73,8 +73,8 @@ class RowOfBricks:
         self.index = index
         self.previous_row = previous_row
         self.previous_row = previous_row
-        self.init_color_generator = ColorGenerator(init_color_method)
-        self.new_color_generator = ColorGenerator(new_color_method)
+        self.init_color_iterator = ColorIterator(init_color_method)
+        self.new_color_iterator = ColorIterator(new_color_method)
         self.width = canvas.winfo_reqwidth()
         self.y1 = height * index
         brick_width = 2 * self.height
@@ -87,7 +87,7 @@ class RowOfBricks:
             return [Brick(self.canvas,
                           self.height,
                           [self.index, brick],
-                          next(self.init_color_generator))
+                          next(self.init_color_iterator))
                     for brick in range(self.n_bricks)]
         else:
             return [Brick(self.canvas,
@@ -103,6 +103,11 @@ class RowOfBricks:
 
 
     def determine_color(self, row_index, brick_index):
+        error = np.random.choice([True, False],
+                                 p=[ERROR_PROBABILITY, 1 - ERROR_PROBABILITY])
+        if error:
+            return np.random.choice(PALETTE)
+        
         offset = True if row_index % 2 == 1 else False
         if offset:
             # Deterministic rules...
@@ -115,7 +120,7 @@ class RowOfBricks:
                 parent_colors.append(
                     self.previous_row.brick_list[brick_index + i].color)
             except IndexError:
-                parent_colors.append(next(self.new_color_generator))
+                parent_colors.append(next(self.new_color_iterator))
 
         return COLOR_ASSIGNMENT_RULES[tuple(parent_colors)]
 
@@ -167,7 +172,7 @@ class Point:
         return '(%d, %d)' % (self.x, self.y)
 
 
-class ColorGenerator:
+class ColorIterator:
     def __init__(self, method='random'):
         self.method = method
         self.color1, self.color2, self.color3 = PALETTE
@@ -198,6 +203,7 @@ def random_color():
     
 if __name__ == '__main__':
     PALETTE = tuple([random_color() for i in range(3)])
+    ERROR_PROBABILITY = 0.0005
     
     # Random rule assigment...
     keys = ((a, b) for a in PALETTE for b in PALETTE)
