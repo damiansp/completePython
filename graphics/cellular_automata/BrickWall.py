@@ -10,28 +10,36 @@ from tkinter import *
 
 def main():
     root = Tk()
-    W, H = 1400, 750
+    W, H = 700, 750
     BRICK_HEIGHT = 2
+    # Choices for INIT and NEW:
+    #   random, constant, alt2, alt3, or a list indicating the sequence e.g.
+    #   [0, 1, 2, 0, 0, 1, 1, 2, 2] where 0, 1, 2 are the colors in PALETTE
+    INIT = 'alt3' 
+    NEW = 'random'
     canvas = Canvas(root, width=W, height=H)
 
-    root.title('Wall')
+    root.title('Init: %s; New: %s' % (INIT, NEW))
     canvas.grid(row=0, column=1)
 
-    wall = BrickWall(canvas, BRICK_HEIGHT)
+    wall = BrickWall(canvas, BRICK_HEIGHT, init=INIT)
     wall.draw()
 
     root.mainloop()
 
 
 class BrickWall:
-    def __init__(self, canvas, row_height):
+    def __init__(self, canvas, row_height, init):
         self.canvas = canvas
         self.row_height = row_height
+        self.init = init
         self.n_row = int(ceil(canvas.winfo_reqheight() / row_height))
 
         
     def build(self):
-        wall = [RowOfBricks(self.canvas, self.row_height, 0)]
+        wall = [
+            RowOfBricks(
+                self.canvas, self.row_height, 0, init_color_method=self.init)]
         for row in range(1, self.n_row):
             wall.append(RowOfBricks(
                 self.canvas, self.row_height, row, previous_row=wall[row -1]))
@@ -46,13 +54,14 @@ class BrickWall:
     
 class RowOfBricks:
     def __init__(self, canvas, height, index, previous_row=None,
-                 new_color_method='random'):
+                 init_color_method='random', new_color_method='random'):
         self.canvas = canvas
         self.height = height
         self.index = index
         self.previous_row = previous_row
         self.previous_row = previous_row
-        self.new_color_method = new_color_method
+        self.init_color_generator = ColorGenerator(init_color_method)
+        self.new_color_generator = ColorGenerator(new_color_method)
         self.width = canvas.winfo_reqwidth()
         self.y1 = height * index
         brick_width = 2 * self.height
@@ -65,7 +74,7 @@ class RowOfBricks:
             return [Brick(self.canvas,
                           self.height,
                           [self.index, brick],
-                          self.get_new_color(self.new_color_method))
+                          next(self.init_color_generator))
                     for brick in range(self.n_bricks)]
         else:
             return [Brick(self.canvas,
@@ -75,12 +84,9 @@ class RowOfBricks:
                     for brick in range(self.n_bricks)]
 
 
-    def get_new_color(self, method):
-        if self.new_color_method == 'random':
-            return np.random.choice(PALETTE);
-        else:
-            print('new_color_method() not defined, using "random"')
-            get_new_color(self, 'random')
+    def color_generator(self, method):
+        if method == 'alt2':
+            seq = [PALETTE[0], PALETTE[1]]
 
 
     def determine_color(self, row_index, brick_index):
@@ -96,7 +102,7 @@ class RowOfBricks:
                 parent_colors.append(
                     self.previous_row.brick_list[brick_index + i].color)
             except IndexError:
-                parent_colors.append(self.get_new_color(self.new_color_method))
+                parent_colors.append(next(self.new_color_generator))
 
         return COLOR_ASSIGNMENT_RULES[tuple(parent_colors)]
 
@@ -146,8 +152,30 @@ class Point:
         
     def __str__(self):
         return '(%d, %d)' % (self.x, self.y)
-        
 
+
+class ColorGenerator:
+    def __init__(self, method='random'):
+        self.method = method
+        self.color1, self.color2, self.color3 = PALETTE
+
+    def __next__(self):
+        if self.method == 'random':
+            return np.random.choice(PALETTE)
+        elif self.method == 'constant':
+            return self.color1
+        elif self.method == 'alt2':
+            self.color1, self.color2 = self.color2, self.color1
+            return self.color1
+        elif self.method == 'alt3':
+            self.color1, self.color2, self.color3 = (
+                self.color2, self.color3, self.color1)
+            return self.color1
+    
+    def __iter__(self):
+        return self
+
+    
 def random_color():
     digits = list('0123456789abcdef')
     return '#' + ''.join([np.random.choice(digits) for i in range(6)])
@@ -156,27 +184,4 @@ def random_color():
         
     
 if __name__ == '__main__':
-    PALETTE = tuple([random_color() for i in range(3)])
-
-    # Random rule assigment... 
-    keys = ((a, b) for a in PALETTE for b in PALETTE)
-    COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
-    for key in COLOR_ASSIGNMENT_RULES:
-        COLOR_ASSIGNMENT_RULES[key] = np.random.choice(PALETTE)
-
-    print(COLOR_ASSIGNMENT_RULES)
-
-    # ...or hard code rules:
-    '''
-    COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
-                              (PALETTE[0], PALETTE[1]): PALETTE[0],
-                              (PALETTE[0], PALETTE[2]): PALETTE[1],
-                              (PALETTE[1], PALETTE[0]): PALETTE[1],
-                              (PALETTE[1], PALETTE[1]): PALETTE[2],
-                              (PALETTE[1], PALETTE[2]): PALETTE[2],
-                              (PALETTE[2], PALETTE[0]): PALETTE[2],
-                              (PALETTE[2], PALETTE[1]): PALETTE[1],
-                              (PALETTE[2], PALETTE[2]): PALETTE[0]}
-    '''
-
     main()
