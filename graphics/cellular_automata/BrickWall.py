@@ -3,6 +3,7 @@
 
 import numpy as np
 from math import ceil
+from pprint import pprint
 from tkinter import *
 
 
@@ -211,19 +212,19 @@ if __name__ == '__main__':
     for key in COLOR_ASSIGNMENT_RULES:
         COLOR_ASSIGNMENT_RULES[key] = np.random.choice(PALETTE)
     
-        print(COLOR_ASSIGNMENT_RULES)
+    pprint(COLOR_ASSIGNMENT_RULES)
         
-        # ...or hard code rules:
-        '''
-        COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
-                                  (PALETTE[0], PALETTE[1]): PALETTE[0],
-                                  (PALETTE[0], PALETTE[2]): PALETTE[1],
-                                  (PALETTE[1], PALETTE[0]): PALETTE[1],
-                                  (PALETTE[1], PALETTE[1]): PALETTE[2],
-                                  (PALETTE[1], PALETTE[2]): PALETTE[2],
-                                  (PALETTE[2], PALETTE[0]): PALETTE[2],
-                                  (PALETTE[2], PALETTE[1]): PALETTE[1],
-                                  (PALETTE[2], PALETTE[2]): PALETTE[0]}
+    # ...or hard code rules:
+    '''
+    COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
+                              (PALETTE[0], PALETTE[1]): PALETTE[0],
+                              (PALETTE[0], PALETTE[2]): PALETTE[1],
+                              (PALETTE[1], PALETTE[0]): PALETTE[1],
+                              (PALETTE[1], PALETTE[1]): PALETTE[2],
+                              (PALETTE[1], PALETTE[2]): PALETTE[2],
+                              (PALETTE[2], PALETTE[0]): PALETTE[2],
+                              (PALETTE[2], PALETTE[1]): PALETTE[1],
+                              (PALETTE[2], PALETTE[2]): PALETTE[0]}
         '''
 
     main()
