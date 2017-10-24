@@ -10,29 +10,39 @@ from tkinter import *
 
 def main():
     root = Tk()
-    W, H = 700, 750
+    CANVAS_WIDTH, CANVAS_HEIGHT = 500, 750
     BRICK_HEIGHT = 2
-    # Choices for INIT and NEW:
-    #   random, constant, alt2, alt3, or a list indicating the sequence e.g.
-    #   [0, 1, 2, 0, 0, 1, 1, 2, 2] where 0, 1, 2 are the colors in PALETTE
-    INIT = 'alt3' 
-    NEW = 'random'
-    canvas = Canvas(root, width=W, height=H)
+    
+    # How to assign colors for initial or off-screen bricks:
+    # Choices:
+    #   random: 
+    #   constant: [0, 0, 0, 0, ...],
+    #   alt2, [0, 1, 0, 1, 0, 1, ...]
+    #   alt3, [0, 1, 2, 0, 1, 2, 0, 1, 2, ...]
+    #   or (TODO) a list indicating the sequence
+    #   e.g. [0, 1, 2, 0, 0, 1, 1, 2, 2] where 0, 1, 2 are the colors in PALETTE
+    NEW_COLOR_OPTIONS = ['random', 'constant', 'alt2', 'alt3']
+    # Initial row
+    INIT = np.random.choice(NEW_COLOR_OPTIONS)
+    # New off-screen bricks
+    OFF_SCREEN = np.random.choice(NEW_COLOR_OPTIONS)
+    canvas = Canvas(root, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
 
-    root.title('Init: %s; New: %s' % (INIT, NEW))
+    root.title('Init: %s; New: %s' % (INIT, OFF_SCREEN))
     canvas.grid(row=0, column=1)
 
-    wall = BrickWall(canvas, BRICK_HEIGHT, init=INIT)
+    wall = BrickWall(canvas, BRICK_HEIGHT, init=INIT, off_screen=OFF_SCREEN)
     wall.draw()
 
     root.mainloop()
 
 
 class BrickWall:
-    def __init__(self, canvas, row_height, init):
+    def __init__(self, canvas, row_height, init, off_screen):
         self.canvas = canvas
         self.row_height = row_height
         self.init = init
+        self.off_screen = off_screen
         self.n_row = int(ceil(canvas.winfo_reqheight() / row_height))
 
         
@@ -41,8 +51,11 @@ class BrickWall:
             RowOfBricks(
                 self.canvas, self.row_height, 0, init_color_method=self.init)]
         for row in range(1, self.n_row):
-            wall.append(RowOfBricks(
-                self.canvas, self.row_height, row, previous_row=wall[row -1]))
+            wall.append(RowOfBricks(self.canvas,
+                                    self.row_height,
+                                    row,
+                                    previous_row=wall[row -1],
+                                    new_color_method=self.off_screen))
         return wall
 
     
@@ -184,4 +197,27 @@ def random_color():
         
     
 if __name__ == '__main__':
+    PALETTE = tuple([random_color() for i in range(3)])
+    
+    # Random rule assigment...
+    keys = ((a, b) for a in PALETTE for b in PALETTE)
+    COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
+    for key in COLOR_ASSIGNMENT_RULES:
+        COLOR_ASSIGNMENT_RULES[key] = np.random.choice(PALETTE)
+    
+        print(COLOR_ASSIGNMENT_RULES)
+        
+        # ...or hard code rules:
+        '''
+        COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
+                                  (PALETTE[0], PALETTE[1]): PALETTE[0],
+                                  (PALETTE[0], PALETTE[2]): PALETTE[1],
+                                  (PALETTE[1], PALETTE[0]): PALETTE[1],
+                                  (PALETTE[1], PALETTE[1]): PALETTE[2],
+                                  (PALETTE[1], PALETTE[2]): PALETTE[2],
+                                  (PALETTE[2], PALETTE[0]): PALETTE[2],
+                                  (PALETTE[2], PALETTE[1]): PALETTE[1],
+                                  (PALETTE[2], PALETTE[2]): PALETTE[0]}
+        '''
+
     main()
