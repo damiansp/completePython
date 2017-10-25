@@ -24,15 +24,32 @@ class Point:
         return [self.x, self.y]
     
 
-def rotate(center, point, angle):
-    rad = math.radians(angle)
+def rotate_point(center, point, degrees):
+    rad = math.radians(degrees)
     a_rad = math.atan2((point.y - center.y), (point.x - center.x))
     a_len = center.distance_to(point)
     rad += a_rad
     new_x = a_len * math.cos(rad)
     new_y = a_len * math.sin(rad)
-    return Point(new_x, new_y)#, deg
+    return Point(new_x, new_y)
 
+
+def rotate_shape(shape, center, degrees):
+    '''Expects shape is a list of Points'''
+    radians = math.radians(degrees)
+    new = []
+
+    for i in range(len(shape)):
+        temp = Point(shape[i].x - center.x, shape[i].y - center.y)
+        rad = math.atan2(temp.y, temp.x)
+        mag = temp.distance_from(Point(0, 0))
+        angle = radians + rad
+        new_point = Point(mag * math.cos(angle) + center.x,
+                          mag * math.sin(angle) + center.y)
+        new.append(new_point)
+
+    return new
+    
 
 def rgb2hex(r, g, b, max_val=255):
     if max_val != 255:
