@@ -65,3 +65,15 @@ def rgb2hex(r, g, b, max_val=255):
     b = int(round(b))
 
     return '#%02x%02x%02x' %(r, g, b)
+
+
+def hex2rgb(hex_color):
+    rgb = []
+
+    for i in range(3):
+        color_channel = hex_color[2*i + 1 : 2*i + 3]
+        rgb.append(int(color_channel, 16))
+
+    return tuple(rgb)
+
+    
