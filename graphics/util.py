@@ -131,6 +131,32 @@ def random_color():
     return '#' + ''.join([np.random.choice(digits) for i in range(6)])
 
 
+def make_discrete_color_series(start_color, end_color, n_steps):
+    '''Expects start and end as hex strings'''
+    start_color, end_color = hex2rgb(start_color), hex2rgb(end_color)
+    
+    # deltas
+    dr = (end_color[0] - start_color[0]) / (n_steps - 1)
+    dg = (end_color[1] - start_color[1]) / (n_steps - 1)
+    db = (end_color[2] - start_color[2]) / (n_steps - 1)
+    
+    #color_series_int = []
+    color_series_hex = []
+    
+    for i in range(n_steps + 1):
+        r = get_color_at_step(start_color[0], dr, i)
+        g = get_color_at_step(start_color[1], dg, i)
+        b = get_color_at_step(start_color[2], db, i)
+        #color_series_int.append((r, g, b))
+        
+        if i < n_steps:
+            color_series_hex.append('#%02x%02x%02x' % (r, g, b))
+        else:
+            color_series_hex.append('#%02x%02x%02x' % end_color)
+            
+    return color_series_hex
+
+
 
 # Shapes-------------------------------------------------------------------
 def make_regular_poly(n_sides, center, radius):
