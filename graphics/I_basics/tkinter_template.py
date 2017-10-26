@@ -1,4 +1,8 @@
+import sys
 from tkinter import *
+
+sys.path.append('../../')
+from util import
 
 def main():
     root = Tk()
