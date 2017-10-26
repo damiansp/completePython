@@ -10,7 +10,7 @@ class Point:
     def __add__(self, other):
         return Point(self.x + other.x, self.y + other.y)
 
-    def __subtract__(self, other):
+    def __sub_(self, other):
         return Point(self.x - other.x, self.y - other.y)
 
     def __mul__(self, factor):
@@ -33,19 +33,15 @@ class Point:
     
 
 # Mappings-----------------------------------------------------------------
-def rotate_point(center, point, degrees):
-    rad = math.radians(degrees)
-    a_rad = math.atan2((point.y - center.y), (point.x - center.x))
-    a_len = center.distance_to(point)
-    rad += a_rad
-    new_x = a_len * math.cos(rad)
-    new_y = a_len * math.sin(rad)
-    return Point(new_x, new_y)
-
-
-def rotate_shape(shape, center, degrees):
+def rotate(shape, degrees, center=None):
     radians = math.radians(degrees)
     new = []
+
+    if type(shape) == Point:
+        shape = [shape]
+
+    if not center:
+        center = locate(shape)['center']
 
     for i in range(len(shape)):
         temp = Point(shape[i].x - center.x, shape[i].y - center.y)
@@ -55,6 +51,10 @@ def rotate_shape(shape, center, degrees):
         new_point = Point(mag * math.cos(angle) + center.x,
                           mag * math.sin(angle) + center.y)
         new.append(new_point)
+
+    if len(shape) == 1:
+        shape = shape[0]
+        
     return new
 
 
@@ -129,3 +129,18 @@ def hex2rgb(hex_color):
 def random_color():
     digits = list('0123456789abcdef')
     return '#' + ''.join([np.random.choice(digits) for i in range(6)])
+
+
+
+# Shapes-------------------------------------------------------------------
+def make_regular_poly(n_sides, center, radius):
+    vertex = center + Point(0, -radius)
+    degrees_per_vertex = 360 / n_sides
+    poly = [vertex]
+
+    for i in range(n_sides - 1):
+        vertex = rotate(vertex, degrees_per_vertex, center)
+        vertex_int = Point(int(vertex[0].x), int(vertex[0].y))
+        poly.append(vertex_int)
+
+    return poly
