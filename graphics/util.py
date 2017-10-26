@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 class Point:
     def __init__(self, x, y):
@@ -10,6 +11,12 @@ class Point:
 
     def __subtract__(self, other):
         return Point(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, factor):
+        return Point(self.x * factor, self.y * factor)
+
+    def __str__(self):
+        return '(%s, %s)' % (self.x, self.y)
 
     def set_x(self, x):
         self.x = x
@@ -35,7 +42,6 @@ def rotate_point(center, point, degrees):
 
 
 def rotate_shape(shape, center, degrees):
-    '''Expects shape is a list of Points'''
     radians = math.radians(degrees)
     new = []
 
@@ -47,9 +53,20 @@ def rotate_shape(shape, center, degrees):
         new_point = Point(mag * math.cos(angle) + center.x,
                           mag * math.sin(angle) + center.y)
         new.append(new_point)
-
     return new
-    
+
+
+def translate_shape(shape, x, y):
+    for i in range(len(shape)):
+        shape[i] += Point(x, y)
+    return shape
+
+
+def rescale(shape, factor, center=Point(0, 0)):
+    for i in range(len(shape)):
+        shape[i] *= factor
+    return shape
+
 
 def rgb2hex(r, g, b, max_val=255):
     if max_val != 255:
@@ -77,3 +94,6 @@ def hex2rgb(hex_color):
     return tuple(rgb)
 
     
+def random_color():
+    digits = list('0123456789abcdef')
+    return '#' + ''.join([np.random.choice(digits) for i in range(6)])
