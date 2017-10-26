@@ -1,6 +1,7 @@
 import math
 import numpy as np
 
+# Classes------------------------------------------------------------------
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -31,6 +32,7 @@ class Point:
         return [self.x, self.y]
     
 
+# Mappings-----------------------------------------------------------------
 def rotate_point(center, point, degrees):
     rad = math.radians(degrees)
     a_rad = math.atan2((point.y - center.y), (point.x - center.x))
@@ -62,12 +64,42 @@ def translate_shape(shape, x, y):
     return shape
 
 
-def rescale(shape, factor, center=Point(0, 0)):
+def rescale(shape, factor):
+    center = locate(shape)['center']
+    rescaled = []
+    
     for i in range(len(shape)):
-        shape[i] *= factor
-    return shape
+        x_offset = shape[i].x - center.x
+        y_offset = shape[i].y - center.y
+        new_x = center.x + factor * x_offset
+        new_y = center.y + factor * y_offset
+        rescaled.append(Point(new_x, new_y))
+
+    return rescaled
 
 
+def locate(shape):
+    '''Get shape's bounding box (bb) and center'''
+    xmin = xmax = shape[0].x
+    ymin = ymax = shape[0].y
+
+    for point in shape:
+        if point.x < xmin:
+            xmin = point.x
+        if point.x > xmax:
+            xmax = point.x
+        if point.y < ymin:
+            ymin = point.y
+        if point.y > ymax:
+            ymax = point.y
+
+    bb = [Point(xmin, ymin), Point(xmax, ymax)]
+    center = Point(int(round((xmin + xmax) / 2)), int(round((ymin + ymax) / 2)))
+    return {'bb': bb, 'center': center}
+                                                      
+    
+
+# Color stuff--------------------------------------------------------------
 def rgb2hex(r, g, b, max_val=255):
     if max_val != 255:
         def rescale(x):
