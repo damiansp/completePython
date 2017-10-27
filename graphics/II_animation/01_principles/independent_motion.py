@@ -15,7 +15,7 @@ def main():
 
     PAD = 20
     CYCLE_MS = 10
-    N_BALLS = 1000
+    N_BALLS = 100
 
     balls = [make_ball_with_trajectory(W, H) for ball in range(N_BALLS)]
 
@@ -38,8 +38,8 @@ def make_ball_with_trajectory(max_width, max_height):
     diameter = random.uniform(5, 35)
     p1 = Point(random.uniform(0, max_width), random.uniform(0, max_height))
     ball = [p1, p1 + Point(diameter, diameter)]
-    trajectory = Point(random.choice([-2, -1, 1, 2]),
-                       random.choice([-2, -1, 1, 2]))
+    trajectory = Point(random.choice([-3, -2, -1, 1, 2, 3]),
+                       random.choice([-3, -2, -1, 1, 2, 3]))
     color = random_color()
 
     return {'ball': ball, 'trajectory': trajectory, 'color': color}
