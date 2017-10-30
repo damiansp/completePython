@@ -157,6 +157,14 @@ def make_discrete_color_series(start_color, end_color, n_steps):
     return color_series_hex
 
 
+def get_color_at_step(start_color, delta, step):
+    color = start_color + step * delta
+    color = color if color > 0 else 0
+    color = color if color < 255 else 255
+    return int(color)
+                
+
+
 
 # Shapes-------------------------------------------------------------------
 def make_regular_poly(n_sides, center, radius):
