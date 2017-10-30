@@ -16,8 +16,8 @@ def main():
     GRAVITY = Point(0, 6)
     CYCLE_IN_MS = 30
     N_STEPS = 300
-    ABSORB = 0.7
-    N_BALLS = 300
+    ABSORB = 0.85
+    N_BALLS = 100
     MAX_DIAMETER = 40
     
     balls = [make_random_ball(W, H, MAX_DIAMETER) for ball in range(N_BALLS)]
