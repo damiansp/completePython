@@ -1,7 +1,5 @@
-import math
 import random
 import sys
-#import time
 from tkinter import *
 
 sys.path.append('../../')
@@ -30,11 +28,7 @@ def main():
 
     for i in range(N_STEPS):
         for j in range(len(lines)):
-            radian = math.atan((lines[j][1].y - lines[j][0].y) /
-                               (lines[j][1].x / lines[j][0].x))
-            length = lines[j][0].distance_from(lines[j][1])
-
-            lines[j] = rotate(lines[j], DEG_INCR, centers[j])
+            lines[j] = rotate(lines[j], DEG_INCR ** -1, centers[j])
             lines[j] = rotate(lines[j], (j+1) * DEG_INCR, CENTER)
             canvas.create_line(
                 lines[j][0].as_list(), lines[j][1].as_list(), fill=colors[j][i])
