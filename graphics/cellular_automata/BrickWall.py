@@ -204,7 +204,7 @@ def random_color():
     
 if __name__ == '__main__':
     PALETTE = tuple([random_color() for i in range(3)])
-    ERROR_PROBABILITY = 0.0005
+    ERROR_PROBABILITY = 0 # 0.0005
     
     # Random rule assigment...
     keys = ((a, b) for a in PALETTE for b in PALETTE)
