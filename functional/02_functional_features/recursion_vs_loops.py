@@ -16,3 +16,12 @@ def is_prime(n):
     return is_coprime(n, 3)
 
 
+# Tail-call optimization (TCO)
+def is_prime2(p):
+    if p < 2:
+        return False
+    if p == 2:
+        return True
+    if p % 2 == 0:
+        return False
+    return not any(p == 0 for p in range(3, int(math.sqrt(p)) + 1, 2))
