@@ -32,7 +32,7 @@ class PriceRule:
             stock = exchange[self.symbol]
         except KeyError:
             return False
-        return self.condtion(stock) if stock.price else False
+        return self.condition(stock) if stock.price else False
 
     def depends_on(self):
         return {self.symbol}
