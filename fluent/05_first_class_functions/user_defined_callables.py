@@ -15,5 +15,12 @@ class BingoCage:
             raise LookupError('BingoCage is empty')
 
 
+bingo = BingoCage(range(3))
+print(bingo.pick()) # or, shorthand:
+print(bingo())
+print(callable(bingo))
+print(bingo())
+#print(bingo()) # <- causes LookupError to be thrown
+
 
         
