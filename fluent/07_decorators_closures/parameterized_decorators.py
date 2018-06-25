@@ -55,5 +55,11 @@ if __name__ == '__main__':
     def snooze(seconds):
         time.sleep(seconds)
 
+    @clock('{name}: {elapsed}s')
+    def snooze2(seconds):
+        time.sleep(seconds)
+
     for i in range(3):
         snooze(0.123)
+        snooze2(0.123)
+
