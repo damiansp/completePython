@@ -1,3 +1,6 @@
+import copy
+
+
 l1 = [3, [66, 55, 44], (7, 8, 9)]
 l2 = list(l1)
 print(l2)
@@ -28,3 +31,22 @@ class Bus:
 
     def drop(self, name):
         self.passengers.remove(name)
+
+
+bus1 = Bus(['Alice', 'Bill', 'Claire', 'David'])
+bus2 = copy.copy(bus1)
+bus3 = copy.deepcopy(bus1)
+print(id(bus1), id(bus2), id(bus3))
+
+bus1.drop('Bill')
+print(bus2.passengers)
+print(id(bus1.passengers), id(bus2.passengers), id(bus3.passengers))
+print(bus3.passengers)
+
+
+a = [10, 20]
+b = [a, 30]
+a.append(b)
+print(a)
+c = copy.deepcopy(a)
+print(c)
