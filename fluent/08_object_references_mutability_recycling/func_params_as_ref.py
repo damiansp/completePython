@@ -43,3 +43,24 @@ bus3.pick_up('Dave')
 print(bus2.passengers)
 print(bus2.passengers is bus3.passengers)
 print(bus1.passengers)
+
+
+class TwilightBus:
+    def __init__(self, passengers=None):
+        # Links to same object:
+        #self.passengers = [] if passengers is None else passengers
+        # Creates a copy (better)
+        self.passengers = [] if passengers is None else list(passengers) 
+
+    def pick_up(self, name):
+        self.passengers.append(name)
+
+    def drop_off(self, name):
+        self.passengers.remove(name)
+
+
+basketball_team = ['Sue', 'Tina', 'Ursula', 'Vickie', 'Wilma']
+bus = TwilightBus(basketball_team)
+bus.drop_off('Tina')
+bus.drop_off('Vickie')
+print(basketball_team)
