@@ -63,7 +63,16 @@ class Vector2d:
         return cls(*memv)
 
 
+class ShortVector2d(Vector2d):
+    typecode = 'f'
+
+
+    
 v1 = Vector2d(3, 4)
 v2 = Vector2d(3.1, 4.2)
 print(hash(v1), hash(v2))
 print(set([v1, v2]))
+
+sv = ShortVector2d(1/11, 1/27)
+print(sv)
+print(len(bytes(sv)))
