@@ -6,6 +6,7 @@ from array import array
 
 class Vector:
     typecode = 'd'
+    shortcut_names = 'xyzt'
 
     def __init__(self, components):
         self._components = array(self.typecode, components)
@@ -46,6 +47,29 @@ class Vector:
             msg = '{cls.__name__} indices must be integers'
             raise TypeError(msg.format(cls=cls))
 
+    def __getattr__(self, name):
+        cls = type(self)
+        if len(name) == 1:
+            pos = cls.shortcut_names.find(name)
+            if 0 <= pos < len(self._components):
+                return self._components[pos]
+        msg = '{.__name__!r} object has no attribute {!r}'
+        raise AttributeError(msg.format(cls, name))
+
+    def __setattr__(self, name, value):
+        cls = type(self)
+        if len(name) == 1:
+            if name in cls.shortcut_names:
+                error = 'readonly attribute {attr_name!r}'
+            elif name.islower():
+                error = "can't set attributes 'a' to 'z' in {cl_name!r}"
+            else:
+                error = ''
+            if error:
+                msg = error.format(cls_name=cls.__name__, attr_name=name)
+                raise AttributeError(msg)
+        super().__setattr__(name, value)
+                
     @classmethod
     def frombytes(cls, octets):
         typecode = chr(octets[0])
@@ -53,30 +77,10 @@ class Vector:
         return cls(memv)
 
 
-# On slicing:
-class MySeq:
-    def __getitem__(self, index):
-        return index
-    
+v = Vector(range(5))
+print(v)   # (0.0, 1.0, 2.0, 3.0, 4.0)
+print(v.x) # 0.0
+v.x = 10
+print(v.x) # 10
+print(v)   # (0.0, 1.0, 2.0, 3.0, 4.0) !
 
-v1 = Vector([3, 4, 5])
-print(len(v1))
-print(v1[0], v1[-1])
-v7 = Vector(range(7))
-print(v7[1:4])
-print(v7[-1:])
-# print(v7[1, 2]) # throws error as expected from __getitem__
-
-s = MySeq()
-print(s[1])
-print(s[1:4])
-print(s[1:4:2])
-print(s[1:4:2, 9])
-print(s[1:4:2, 7:9])
-
-print(slice(None, 10, 2).indices(5))    # len -> start, stop, stride (0, 5, 2)
-# e.g. 'ABCDE'[:10:2] same as 'ABCDE[0:5:2] ('ABCDE' of len(5))
-print(slice(-3, None, None).indices(5)) # (2, 5, 1) 
-# e.g. 'ABCDE'[-3:] same as 'ABCDE[2:5:1]'
-
-      
