@@ -28,15 +28,10 @@ class Vector:
         return (bytes([ord(self.typecode)]) + bytes(self._components))
 
     def __eq__(self, other):
-        if len(self) != len(other):
-            return False
-        for a, b in zip(self, other):
-            if a != b:
-                return False
-        return True
+        return len(self) == len(other) and all(a == b
+                                               for a, b in zip(self, other))
 
     def __hash__(self):
-        #hashes = (hash(x) for x in self._components)
         hashes = map(hash, self._components)
         return functools.reduce(operator.xor, hashes, 0)
 
