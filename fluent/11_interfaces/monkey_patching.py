@@ -1,18 +1,5 @@
-import collection
-
-class Foo:
-    def __getitem__(self, pos):
-        return range(0, 30, 10)[pos]
-
-f = Foo()
-print(f[1])     # 10
-for i in f:
-    print(i)    # 0, 10, 20
-
-print(20 in f)  # True
-print(15 in f)  # False
-
-
+import collections
+from random import shuffle
 
 Card = collections.namedtuple('Card', ['rank', 'suit'])
 
@@ -30,3 +17,15 @@ class FrenchDeck:
     def __getitem__(self, position):
         return self._cards[position]
     
+
+deck = FrenchDeck()
+print(deck[:5])
+# shuffle(deck) # error: FrenchDeck does not support item assignment
+
+def set_card(deck, position, card):
+    deck._cards[position] = card
+
+
+FrenchDeck.__setitem__ = set_card
+shuffle(deck)
+print(deck[:5])
