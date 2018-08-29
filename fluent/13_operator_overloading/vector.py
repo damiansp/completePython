@@ -45,6 +45,14 @@ class Vector:
     def __pos__(self):
         return Vector(self)
 
+    def __add__(self, other):
+        '''
+        Vector addition: assumes that if vectors are diff lengths, the shorter
+        is 0 for all remaining dimensions
+        '''
+        pairs = itertools.zip_longets(self, other, fillvalue=0.)
+        return Vector(a + b for a, b in pairs
+
     def __bool__(self):
         return bool(abs(self))
 
