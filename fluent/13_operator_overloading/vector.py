@@ -51,8 +51,15 @@ class Vector:
         is 0 for all remaining dimensions
         '''
         pairs = itertools.zip_longets(self, other, fillvalue=0.)
-        return Vector(a + b for a, b in pairs
+        return Vector(a + b for a, b in pairs)
 
+    def __radd__(self, other):
+        '''
+        Allows Vector to be added as the second operand to compatible non-Vector
+        type
+        '''
+        return self + other
+    
     def __bool__(self):
         return bool(abs(self))
 
