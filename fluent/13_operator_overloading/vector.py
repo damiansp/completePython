@@ -50,8 +50,11 @@ class Vector:
         Vector addition: assumes that if vectors are diff lengths, the shorter
         is 0 for all remaining dimensions
         '''
-        pairs = itertools.zip_longets(self, other, fillvalue=0.)
-        return Vector(a + b for a, b in pairs)
+        try:
+            pairs = itertools.zip_longets(self, other, fillvalue=0.)
+            return Vector(a + b for a, b in pairs)
+        except TypeError:
+            return NotImplemented
 
     def __radd__(self, other):
         '''
@@ -59,6 +62,12 @@ class Vector:
         type
         '''
         return self + other
+
+    def __mul__(self, scalar):
+        return Vector(n * scalar for n in self)
+
+    def __rmul__(self, scalar):
+        return self * scalar
     
     def __bool__(self):
         return bool(abs(self))
