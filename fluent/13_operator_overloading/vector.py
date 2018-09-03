@@ -29,8 +29,11 @@ class Vector:
         return bytes([ord(self.typecode)]) + bytes(self._components)
 
     def __eq__(self, other):
-        return (len(self) == len(other)
-                and all(a == b for a, b in zip(self, other)))
+        if isinstance(other, Vector):
+            return (len(self) == len(other)
+                    and all(a == b for a, b in zip(self, other)))
+        else:
+            return NotImplemented
 
     def __hash__(self):
         hashes = (hash(x) for x in self)
@@ -71,6 +74,15 @@ class Vector:
 
     def __rmul__(self, scalar):
         return self * scalar
+
+    def __matmul__(self, other):
+        try:
+            return sum(a * b for a, b in zip(self, other))
+        except TypeError:
+            return NotImplemented
+
+    def __rmatmul__(self, other):
+        return self @ other
     
     def __bool__(self):
         return bool(abs(self))
