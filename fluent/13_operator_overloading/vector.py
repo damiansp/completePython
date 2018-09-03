@@ -64,7 +64,10 @@ class Vector:
         return self + other
 
     def __mul__(self, scalar):
-        return Vector(n * scalar for n in self)
+        if isinstance(scalar, numbers.Real):
+            return Vector(n * scalar for n in self)
+        else:
+            return NotImplemented
 
     def __rmul__(self, scalar):
         return self * scalar
