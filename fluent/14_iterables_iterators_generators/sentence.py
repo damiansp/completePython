@@ -1,5 +1,6 @@
 import re
 import reprlib
+from collections import abc
 
 
 RE_WORD = re.compile('\w+')
@@ -18,3 +19,24 @@ class Sentence:
 
     def __repr__(self):
         return 'Sentence(%s)' % reprlib.repr(self.text) # abbr if too long
+
+
+class Foo:
+    def __iter__(self):
+        pass
+
+
+
+# Test
+s = Sentence('"The time has come", the Walrus said...')
+print(s)
+
+for word in s:
+    print(word)
+
+print(list(s))
+
+
+print(issubclass(Foo, abc.Iterable)) # True
+f = Foo()
+print(isinstance(f, abc.Iterable))   # True
