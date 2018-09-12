@@ -40,3 +40,15 @@ print(list(s))
 print(issubclass(Foo, abc.Iterable)) # True
 f = Foo()
 print(isinstance(f, abc.Iterable))   # True
+
+
+s3 = Sentence('Pig and Pepper')
+it = iter(s3)
+print(it)        # <iterator object ...>
+print(next(it))  # Pig
+print(next(it))  # and
+print(next(it))  # Pepper
+#print(next(it)) # StopIteration
+
+print(list(it))       # []
+print(list(iter(s3))) # ['Pig', 'and', 'Pepper']
