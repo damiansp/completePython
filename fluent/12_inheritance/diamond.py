@@ -24,7 +24,10 @@ class D(B, C):
 
 
 d = D()
-print(d.pong())
-print(C.pong(d))
-
-
+print(d.pong())  # pong
+print()
+print(C.pong(d)) # PONG
+print()
+print(d.ping())  # ping, post-ping
+print()
+print(d.pingpong()) # ping, post-ping, ping, pong, pong, PONG
