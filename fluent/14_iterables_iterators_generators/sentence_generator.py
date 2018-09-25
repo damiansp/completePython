@@ -32,8 +32,13 @@ g = gen_123()
 for _ in range(3): # 4 throws StopIteration
     print(next(g))
 
-    
-s = 'here is my sentence'
-sent = Sentence(s)
-#print(next(sent))
 
+def gen_AB():
+    print('start')
+    yield 'A'
+    print('continue')
+    yield 'B'
+    print('end.')
+
+for c in gen_AB():
+    print('-->', c)
