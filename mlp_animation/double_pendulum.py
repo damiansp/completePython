@@ -7,9 +7,9 @@ from numpy import sin, cos
 
 G = 9.8 # earth's gravity
 L1 = 1. # length of pendulum 1
-L2 = 1. # ''     '' ''       2
+L2 = 2. # ''     '' ''       2
 M1 = 1. # mass   '' ''       1
-M2 = 2. # ''     '' ''       2
+M2 = 10. # ''     '' ''       2
 THETA1 = 120. # degrees
 W1 = 0.       # angular velocity
 THETA2 = -10.
@@ -44,7 +44,8 @@ x2 = L2*sin(y[:, 2]) + x1
 y2 = -L2*cos(y[:, 2]) + y1
 
 fig = plt.figure()
-ax = fig.add_subplot(111, autoscale_on=False, xlim=(-2, 2), ylim=(-2, 2))
+ax = fig.add_subplot(
+    111, autoscale_on=False, xlim=(-L1 - L2, L1 + L2), ylim=(-L1 - L2, L1 + L2))
 ax.set_aspect('equal')
 ax.grid()
 
