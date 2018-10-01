@@ -1,3 +1,6 @@
+import itertools
+
+
 class ArithmeticProgression:
     def __init__(self, begin, step, end=None):
         self.begin = begin
@@ -23,4 +26,24 @@ def aritprog_gen(begin, step, end=None):
         yield result
         index += 1
         result = begin + step*index
+
+
+gen = itertools.count(1, 0.5)
+print(nex(gen)) # 1
+print(nex(gen)) # 1.5
+print(nex(gen)) # 2.0
+print(nex(gen)) # 2.5
+
+# list(count()) # -> infinite: will eventually crash for want of memory
+gen = intertools.takewhile(lambda n: n < 5, itertools.count(1, 0.5))
+print(list(gen)) # [1, 1.5, 2.0, 2.5, ..., 4.0, 4.5]
+
+
+def arith_prog_gen(begin, step, end=None):
+    first = type(begin + step)(begin)
+    ap_gen = itertools.count(first, step)
+    if end is not None:
+        ap_gen = itertools.takewhile(lambda n: n < end, ap_gen)
+    return ap_gen
+
 
