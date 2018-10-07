@@ -34,3 +34,13 @@ print(list(itertools.starmap(operator.mul, enumerate('abcde', 1))))
 print(list(itertools.starmap(
     lambda a, b: b / a, enumerate(itertools.accumulate(sample), 1))))
 
+
+# merging generators
+print(list(itertools.chain('ABC', range(2)))) # [A B C 0 1]
+print(list(itertools.chain(enumerate('ABC')))) # [(0 A) (1 B) (2 C)]
+print(list(itertools.chain.from_iterable(enumerate('ABC')))) # [0 A 1 B 2 C]
+print(list(zip('ABC', range(5)))) # [(A 0) (B 1) (C 2)]
+print(list(itertools.zip_longest('ABC', range(5))))
+# [(A 0) (B 1) (C 2) (None 3) (None 4)]
+print(list(itertools.zip_longest('ABC', range(5), fillvalue='?')))
+# [(A 0) (B 1) (C 2) (? 3) (? 4)]
