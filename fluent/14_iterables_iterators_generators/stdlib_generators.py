@@ -68,3 +68,24 @@ print(next(rp), next(rp)) # (7 7)
 print(list(itertools.repeat(8, 4))) # [8 8 8 8]
 print(list(map(operator.mul, range(11), itertools.repeat(5)))) # [0 5 10 15...]
       
+
+print(list(itertools.combinations('ABC', 2))) # [(A B) (A C) (B C)]
+print(list(itertools.combinations_with_replacement('ABC', 2)))
+# [(A A) (A B) (A C) (B A)...]
+print(list(itertools.permutations('ABC', 2))) # [(A B) (A C) (B A) (B C) ...]
+print(list(itertools.product('ABC', repeat=2))) # [(A A) (A B) (A C) (B A)...]
+
+
+for char, group in itertools.groupby('LLLLAAAGG'):
+    print(char, '->', list(group))
+# L -> [L L L L]
+# A -> [A A A]
+# G -> [G G]
+
+animals = ['duck', 'eagle', 'rat', 'giraffe', 'bear', 'bat', 'dolphin', 'shark',
+           'lion']
+animals.sort(key=len)
+for length, group in itertools.groupby(animals, len):
+    print(length, '->', list(group))
+# 3 -> ['rat', 'bat']
+# 4 -> ['duck', 'bear', 'lion']...
