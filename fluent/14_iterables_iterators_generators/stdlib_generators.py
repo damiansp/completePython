@@ -89,3 +89,11 @@ for length, group in itertools.groupby(animals, len):
     print(length, '->', list(group))
 # 3 -> ['rat', 'bat']
 # 4 -> ['duck', 'bear', 'lion']...
+
+g1, g2 = itertools.tee('ABC')
+print(next(g1)) # A
+print(next(g1)) # B
+print(next(g2)) # A
+print(list(g1)) # [C]
+print(list(g2)) # [B C]
+print(list(zip(*itertools.tee('ABC')))) # [(A A) (B B) (C C)]
