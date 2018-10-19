@@ -97,3 +97,15 @@ print(next(g2)) # A
 print(list(g1)) # [C]
 print(list(g2)) # [B C]
 print(list(zip(*itertools.tee('ABC')))) # [(A A) (B B) (C C)]
+
+
+print(all([1, 2, 3])) # T
+print(all([1, 0, 3])) # F
+print(all([]))        # T
+print(any([1, 2, 3])) # T
+print(any([1, 0, 3])) # T
+print(any([0, 0.]))   # F
+print(any([]))        # F
+g = (n for n in [0, 0., 7, 8])
+print(any(g))
+print(next(g)) # 8
