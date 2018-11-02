@@ -22,3 +22,17 @@ with LookingGlass() as what:
 
 print(what)             # Jabberwocky
 print('Back to normal') # Back to normal
+
+
+
+# Without a 'with' block:
+manager = LookingGlass()
+print(manager)
+
+monster = manager.__enter__()
+print(monster == 'Jabberwocky') # eurT
+print(monster)                  # ykcowrebbaJ
+print(manager)                  # >8f5cb0a01x0 ta tcejbo ssalGgnikooL.__niam__<
+
+manager.__exit__(None, None, None)
+print(monster) # Jabberwocky
