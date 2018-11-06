@@ -2,7 +2,7 @@
   canvas:
     Rectangle:
       pos: self.x+10, self.top-80
-      size: self.width*0.15, self.heigth*0.3
+      size: self.width*0.15, self.height*0.3
     Ellipse:
       angle_start: 120
       angle_end: 420
@@ -26,3 +26,11 @@
       segments: 360
       dash_length: 10
       dash_offset: 5
+    Mesh:
+      mode: 'triangle_fan'
+      vertices: 310,30,0,0, 390,90,0,0, 390,10,0,0, 310,60,0,0
+      indices: 0, 1, 2, 3
+    Mesh:
+      mode: 'triangle_fan'
+      vertices: 430,90,0,0, 470,90,0,0, 490,70,0,0, 450,10,0,0, 410,70,0,0
+      indices: 0, 1, 2, 3, 4

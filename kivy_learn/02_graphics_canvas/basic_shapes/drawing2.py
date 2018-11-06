@@ -6,10 +6,10 @@ class DrawingSpace(RelativeLayout):
     pass
 
 
-class DrawingApp(App):
+class Drawing2App(App):
     def build(self):
         return DrawingSpace()
 
 
 if __name__ == '__main__':
-    DrawingApp().run()
+    Drawing2App().run()
