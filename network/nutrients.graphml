@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <graph edgedefault="undirected">
+    <node id="A" />
+    <node id="carrots" />
+    <node id="eggs" />
+    <node id="fatty fish" />
+    <node id="green leafy vegs" />
+    <node id="liver" />
+    <node id="milk" />
+    <node id="tomatoes" />
+    <node id="B12" />
+    <node id="B6" />
+    <node id="asparagus" />
+    <node id="beans" />
+    <node id="shellfish" />
+    <node id="Se" />
+    <node id="thiamin" />
+    <node id="whole grains" />
+    <node id="veg oils" />
+    <node id="E" />
+    <node id="yogurt" />
+    <node id="Ca" />
+    <edge source="A" target="carrots" />
+    <edge source="A" target="eggs" />
+    <edge source="A" target="fatty fish" />
+    <edge source="A" target="green leafy vegs" />
+    <edge source="A" target="liver" />
+    <edge source="A" target="milk" />
+    <edge source="A" target="tomatoes" />
+    <edge source="milk" target="B12" />
+    <edge source="tomatoes" target="tomatoes" />
+    <edge source="B6" target="asparagus" />
+    <edge source="B6" target="beans" />
+    <edge source="shellfish" target="Se" />
+    <edge source="thiamin" target="whole grains" />
+    <edge source="veg oils" target="E" />
+    <edge source="yogurt" target="Ca" />
+  </graph>
+</graphml>
