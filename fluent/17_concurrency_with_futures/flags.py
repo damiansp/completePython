@@ -21,7 +21,28 @@ def save_flag(img, filename):
 def get_flag(cc):
     url = '{}/{cc}/{cc}.gif'.format(BASE_URL, cc=cc.lower())
     resp = requests.get(url)
+    if resp.status_code != 200:
+        reps.raise_for_status()
     return resp.content
+
+
+def download_one(cc, base_url, verbose=False):
+    try:
+        image = get_flag(base_url, cc)
+    except requests.exceptions.HTTPError as e:
+        res = e.response
+        if res.status_code == 404:
+            status = HTTPStatus.not_found
+            msg = 'not found'
+        else:
+            raise
+    else:
+        save_flag(image, cc.lower() + '.gif')
+        status = HTTPStatus.ok
+        msg = 'OK'
+    if verbose:
+        print(cc, msg)
+    return Result(status, cc)
 
 
 def show(text):
