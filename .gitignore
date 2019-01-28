@@ -29,3 +29,8 @@ __pycache__
 images
 py_openGL_tut
 
+
+
+# Graph Files
+#------------------------
+*.graphml
