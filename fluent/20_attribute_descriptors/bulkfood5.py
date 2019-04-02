@@ -2,6 +2,7 @@ import model5 as model
 
 
 class LineItem:
+    description = model.NonBlank()
     weight = model.Quantity()
     price = model.Quantity()
 
