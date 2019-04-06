@@ -25,3 +25,26 @@ data = np.array([1, 2, 3], dtype=np.complex)
 print(data.real)
 print(data.imag)
 
+print(np.arange(0, 20, 2)) # = R: seq(0, 20, 2)
+print(np.linspace(0, 20, 17)) # = R: seq(0, 20, length=17)
+print(np.logspace(0, 5, 7))   # 7 numbers from 10^0 to 10^5
+
+nx, ny = (4, 3)
+x = np.linspace(0, 1, nx) # 0, .33, .67, 1
+y = np.linspace(0, 1, ny) # 0, 0.5, 1
+xv, yv = np.meshgrid(x, y)
+print(xv) #[[0, .33, .67, 1], [3x]]
+print(yv) #[[0, 0, 0, 0], [0.5, 0.5, 0.5, 0.5], [1, 1, 1, 1]]
+
+print(np.fromfunction(lambda i, j: 2*i - j, (3, 4)))
+print(np.fromfunction(lambda i, j: i == j, (3, 3)))
+print(np.random.rand(2, 3))
+
+
+data = np.array([1, 2, 3, 4])
+print(data.ndim)  # 1
+print(data.shape) # (4,)
+
+data = np.array([[1, 2], [3, 4]])
+print(data.ndim)  # 2
+print(data.shape) # (2, 2)
