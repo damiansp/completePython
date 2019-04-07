@@ -48,3 +48,14 @@ print(data.shape) # (4,)
 data = np.array([[1, 2], [3, 4]])
 print(data.ndim)  # 2
 print(data.shape) # (2, 2)
+
+
+# Arrays filled with constant values
+print(np.zeros((2, 3)))
+print(np.ones(4))
+
+data = np.ones(4, dtype=np.int64)
+x1 = np.full((2, 3), 5.4)
+print(x1)
+
+
