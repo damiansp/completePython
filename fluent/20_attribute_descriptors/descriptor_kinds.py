@@ -52,3 +52,15 @@ class Managed:
 
     def spam(self):
         print(f'-> Managed.spam({display(self)})')
+
+
+
+#  test
+obj = Managed()
+print(obj.over)
+print(Managed.over)
+obj.over = 7
+print(obj.over)
+obj.__dict__['over'] = 8
+print(vars(obj))
+print(obj.over)
