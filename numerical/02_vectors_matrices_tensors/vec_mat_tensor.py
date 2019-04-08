@@ -58,4 +58,16 @@ data = np.ones(4, dtype=np.int64)
 x1 = np.full((2, 3), 5.4)
 print(x1)
 
+data = np.empty((2, 2), dtype=np.float)
+print(data)
 
+data1 = np.ones_like(data)
+print(data)
+
+print(np.identity(4))
+print(np.eye(4))
+print(np.eye(4, k=1))
+
+
+
+# Indexing and Slicing
