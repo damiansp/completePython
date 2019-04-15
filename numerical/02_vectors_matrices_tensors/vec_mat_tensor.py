@@ -70,4 +70,24 @@ print(np.eye(4, k=1))
 
 
 
-# Indexing and Slicing
+# Reshaping and combining
+data = np.array([[1, 2],
+                 [3, 4]])
+data = data.flatten()
+print(data) # [1, 2, 3, 4]
+print(data.shape) # (4,)
+
+data = np.arange(0, 5) # [0, 1, 2, 3, 4]
+column = data[:, np.newaxis]
+print(column) # [[0], [1], [2], [3], [4]]
+row = data[np.newaxis, :]
+print(row) # [[0, 1, 2, 3, 4]]
+
+data = np.arange(5) # [0, 1, 2, 3, 4]
+print(np.vstack((data, data, data)))
+print(np.hstack((data, data, data)))
+data = data[:, np.newaxis] # now a col vector
+print(np.hstack((data, data, data)))
+
+
+# Vectorized expressions
