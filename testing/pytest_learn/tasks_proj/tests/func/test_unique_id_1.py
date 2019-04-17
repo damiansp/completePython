@@ -23,6 +23,15 @@ def test_unique_id():
     assert id1 != id2
 
 
+@pytest.mark.xfail(tasks.__version__ < '0.2.0',
+                   reason='not supported until 0.2.0')
+def test_unique_id_1():
+    '''Calling unique_id() twice should return different numbers'''
+    id1 = tasks.unique_id()
+    id2 = tasks.unique_id()
+    assert id1 != id2
+
+
 def test_unique_id2():
     '''unique_id() should return an unused id.'''
     ids = []
@@ -31,3 +40,17 @@ def test_unique_id2():
     ids.append(tasks.add(Task('three')))
     uid = tasks.unique_id()
     assert uid not in ids
+
+
+@pytest.mark.xfail()
+def test_unique_id_is_a_duck():
+    '''xfail demo'''
+    uid = tasks.unique_id()
+    assert uid == 'a duck'
+
+
+@pytest.mark.xfail()
+def test_unique_id_is_not_a_duck():
+    '''xpass demo'''
+    uid = tasks.unique_id()
+    assert uid != 'a duck'
