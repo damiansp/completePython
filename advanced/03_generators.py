@@ -1,3 +1,4 @@
+import os
 import sys
 
 # Using a list, build and return the list
@@ -41,7 +42,6 @@ print(res)
 def quarters(next_quarter=0.):
     while True:
         received = (yield next_quarter)
-
         if received is None:
             next_quarter += 0.25
         else:
@@ -60,3 +60,17 @@ while len(res) < 10:
 print(res)
 
 
+if sys.platform.startswith('win'):
+    def get_files(names):
+        for name in names:
+            if os.path.isfile(name):
+                yield name
+            else:
+                for file in glob.iglob(name):
+                    if not os.path.isfile(file):
+                        continue
+                    yield file
+else:
+    def get_files(names):
+        return (f for f in names if os.path.isfile(f))
+                        
