@@ -112,3 +112,21 @@ print(data.sum(axis=0).shape) # 3, 4
 print(data.sum(axis=(0, 2)).shape) # 3,
 print(data.sum().shape) # ()
 
+
+# Boolean Arrays and Condtiional Expressions
+a = np.array([1, 2, 3, 4])
+b = np.array([4, 3, 2, 1])
+print(a < b) # T T F F
+print(np.all(a < b)) # F
+print((a < b).all()) # F
+print((a < b).any()) # T
+
+x = np.array([-2, -1, 0, 1, 2])
+print(x > 0) # F F F T T
+print(1 * (x > 0)) # 0 0 0 1 1
+print(x * (x > 0)) # 0 0 0 1 2
+
+x = np.linspace(-4, 4, 9)
+print(x) # -4, -3, ..., 4
+print(np.where(x < 0, 2 * x, 3 * x)) # -8 -6 -4 -2 0 3 6 9 12
+
