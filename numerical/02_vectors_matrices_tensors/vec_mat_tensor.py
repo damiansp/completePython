@@ -90,4 +90,25 @@ data = data[:, np.newaxis] # now a col vector
 print(np.hstack((data, data, data)))
 
 
-# Vectorized expressions
+# Aggregate functions
+data = np.random.normal(size=(5, 5))
+print(np.mean(data))
+print(data.mean())
+print(data.std())
+print(data.var())
+print(data.sum())
+print(data.prod())
+print(data.cumsum())
+print(data.cumprod())
+print(data.min())
+print(data.max())
+print(data.argmin())
+print(data.argmax())
+print(data.any())
+print(data.all())
+
+data = np.random.normal(size=(2, 3, 4))
+print(data.sum(axis=0).shape) # 3, 4
+print(data.sum(axis=(0, 2)).shape) # 3,
+print(data.sum().shape) # ()
+
