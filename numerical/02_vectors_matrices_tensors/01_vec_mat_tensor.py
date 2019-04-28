@@ -1,3 +1,5 @@
+from functools import reduce
+
 import numpy as np
 
 # attributes common to all ndarrays:
@@ -128,5 +130,45 @@ print(x * (x > 0)) # 0 0 0 1 2
 
 x = np.linspace(-4, 4, 9)
 print(x) # -4, -3, ..., 4
+print(np.where(x < 0)) # 0 1 2 3 (note: returns indices, not values)
 print(np.where(x < 0, 2 * x, 3 * x)) # -8 -6 -4 -2 0 3 6 9 12
+
+a = [[0, 0, 1],
+     [0, 1, 1],
+     [1, 0, 0]]
+choices = ['A', 'Z']
+print(np.choose(a, choices)) # [[A A Z][A Z Z][Z A A]]
+
+conditions = [x < -1, x > 2]
+choices = [x, x ** 2]
+print(np.select(conditions, choices)) # -4 -3 -2 0 0 0 0 9 16
+
+print(np.nonzero(x)) # 0 1 2 3 5 6 7 8 (indices)
+
+a = [0, 0, 1, 1]
+b = [0, 1, 0, 1]
+print(np.logical_and(a, b)) # F F F T
+print(a and b)              # 0 1 0 1
+
+
+# Set operations
+print(np.unique(a)) # 0 1
+test = np.array([0, 1, 2, 5, 0])
+states = [0, 2]
+mask = np.in1d(test, states)
+print(mask) # T F T F T
+print(test[mask]) # 0 2 0
+print(test[np.in1d(test, states, invert=True)]) # 1 5
+
+print(np.intersect1d([1, 3, 4, 3], [3, 1, 2, 1])) # 1 3
+
+# if comparing >2 arrays
+print(reduce(np.intersect1d, ([1, 3, 4, 3], [3, 1, 2, 1], [5, 3, 4, 2]))) # 3
+
+print(np.setdiff1d([1, 3, 4, 3], [3, 1, 2, 1])) # 4 (A - B)
+print(np.union1d([1, 3, 4, 3], [3, 1, 2, 1])) # 1 2 3 4
+
+
+# Operations on arrays
+
 
