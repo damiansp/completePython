@@ -17,7 +17,7 @@ print(np.cross(a, b)) # -3 6 -3
 print(np.outer(a, b)) # [[0 0 0][3 4 5][6 8 10]]
 print(np.kron(a, b))  # kronecker prod
 
-# Express: A'  = BAB^1
+# Express: A' = BAB^1
 A = np.random.rand(3, 3)
 B = np.random.rand(3, 3)
 Ap = np.dot(B, np.dot(A, np.linalg.inv(B))) # or
