@@ -1,4 +1,7 @@
 # Code here adapted from https://realpython.com/primer-on-python-decorators/
+import functools
+import time
+
 
 def my_decorator(f):
     def wrapper():
@@ -46,7 +49,7 @@ say_yo()
 def greet(name):
     print(f'Hello {name}')
 
-# greet('Señor Montelbaum') # TypeError: wrapper() takes 0 positional arguments
+# greet('Señor Montalban') # TypeError: wrapper() takes 0 positional arguments
 
 
 def do_twice_new(f):
@@ -87,3 +90,43 @@ def return_greeting(name):
 
 hi_adam = return_greeting('Adam')
 print(hi_adam)
+
+
+def do_twice_clean(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        f(*args, **kwargs)
+        return f(*args, **kwargs)
+    return wrapper
+
+
+@do_twice_clean
+def say_clean():
+    print('So fresh and so clean!')
+
+say_clean()
+print(say_clean.__name__)
+
+
+def timer(f):
+    '''print the runtime of the decorated function f'''
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        val = f(*args, **kwargs)
+        runtime = time.perf_counter() - start
+        print(f'Finished {f.__name__!r} in {runtime:.4f}s')
+        return val
+    return wrapper
+
+
+@timer
+def waste_time(n_times):
+    for _ in range(n_times):
+        sum([i**2 for i in range(10000)])
+
+
+waste_time(1)
+waste_time(2)
+waste_time(4)
+
