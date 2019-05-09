@@ -11,7 +11,7 @@ from tasks import Task
 @pytest.fixture(scope='session')
 def tasks_db_session(tmpdir_factory):
     '''Connect to db before tests; disconnect after'''
-    tmp_dir = tmpdir_factory.mktemp('tem')
+    tmp_dir = tmpdir_factory.mktemp('temp')
     tasks.start_tasks_db(str(tmp_dir), 'tiny')
     yield
     tasks.stop_tasks_db()
