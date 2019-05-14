@@ -37,3 +37,6 @@ def shave_marks_latin(text):
             latin_base = c in string.ascii_letters
     shaved = ''.join(keepers)
     return normalize('NFC', shaved)
+
+print(shave_marks_latin(order))
+print(shave_marks_latin(Greek))
