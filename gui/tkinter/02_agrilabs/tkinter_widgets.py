@@ -15,3 +15,15 @@ my_text.insert('1.0', 'I love my text widget!')
 my_text.insert('1.2', 'REALLY ')
 my_text.get('1.0', tk.END)
 my_text.delete('end - 2 chars') # removes "!\n"
+
+# Button
+tvar = tk.StringVar()
+
+
+def swaptext():
+    if tvar.get() == 'Hi':
+        tvar.set('There')
+    else:
+        tvar.set('Hi')
+
+my_button = ttk.Button(parent, textvariable=tvar, command=swaptext)
