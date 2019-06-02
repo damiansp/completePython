@@ -54,6 +54,54 @@ class LabelInput(tk.Frame):
             self.input.insert(0, value)
         
 
+class DataRecordForm(tk.Frame):
+    '''The input form for the widgets'''
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.inputs = {}
+        record_info = tk.LabelFrame(self, text='Record Information')
+        self.inputs['Date'] = LabelInput(
+            record_info, 'Date', input_var=tk.StringVar())
+        self.inputs['Date'].grid(row=0, column=0)
+        self.inputs['Time'] = LabelInput(
+            record_info,
+            'Time',
+            input_class=ttk.Combobox,
+            input_var=tk.StringVar(),
+            input_args={'values': ['8:00', '12:00', '16:00', '20:00']})
+        self.inputs['Time'].grid(row=0, column=1)
+        self.inputs['Technician'] = LabelInput(
+            record_info, 'Technician', input_var=tk.StringVar())
+        self.inputs['Tecnician'].grid(row=0, column=2)
+        self.inputs['Lab'] = LabelInput(
+            record_info,
+            'Lab',
+            input_class=ttk.Combobox,
+            input_var=tk.StringVar(),
+            input_args={'values': ['A', 'B', 'C', 'D', 'E']})
+        self.inputs['Lab'].grid(row=1, column=0)
+        self.inputs['Plot'] = LabelInput(
+            record_info,
+            'Plot',
+            input_class=ttk.Combobox,
+            input_var=tk.IntVar(),
+            input_args={'values': list(range(1, 21))})
+        self.inputs['Plot'].grid(row=1, column=1)
+        self.inputs['Seed sample'] = LableInput(
+            record_info, 'Seed sample', input_var=tk.StringVar())
+        self.inputs['Seed sample'].grid(row=1, column=2)
+        record_info.grid(row=0, column=0, sticky=tk.W + tk.E)
+        environment_info = tk.LabelFrame(self, text='Environment Data')
+        self.inputs['Humidity'] = LabelInput(
+            environment_info,
+            'Humidity (g/m^3)',
+            input_class=tk.Spinbox,
+            input_var=tk.DoubleVar(),
+            input_args={'from_': 0.5, 'to': 52., 'increment': 0.01})
+        self.inputs['Humidity'].grid(row=0, column=0)
+        # CONTINUE HERE...
+
+    
 class Application(tk.Tk):
     '''Application root window'''
 
