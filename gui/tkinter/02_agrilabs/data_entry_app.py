@@ -99,9 +99,56 @@ class DataRecordForm(tk.Frame):
             input_var=tk.DoubleVar(),
             input_args={'from_': 0.5, 'to': 52., 'increment': 0.01})
         self.inputs['Humidity'].grid(row=0, column=0)
-        # CONTINUE HERE...
+        self.inputs['Equipment Fault'] = LabelInput(environment_info,
+                                                    'Equipment Fault',
+                                                    input_class=ttk.Checkbutton,
+                                                    input_var=tk.BooleanVar())
+        self.inputs['Equipment Fault'].grid(row=1, column=0, columnspan=3)
+        plant_info = tk.LabelFrame(self, text='Plant Data')
+        self.inputs['Plants'] = LabelInput(plant_info,
+                                           'Plants',
+                                           input_class=tk.Spinbox,
+                                           input_var=tk.IntVar(),
+                                           input_args={'from_':0, 'to': 20})
+        self.inputs['Plants'].grid(row=0, column=0)
+        self.inputs['Blossoms'] = LabelInput(plant_info,
+                                             'Blossoms',
+                                             input_class=tk.Spinbox,
+                                             input_var=tk.IntVar(),
+                                             input_args={'from_': 0,
+                                                         'to': 1000})
+        self.inputs['Blossoms'].grid(row=0, column=1)
+        self.inputs['Fruit'] = LabelInput(plant_info,
+                                          'Fruit',
+                                          input_class=tk.Spinbox,
+                                          input_var=tk.IntVar(),
+                                          input_args={'from_': 0, 'to': 1000})
+        self.inputs['Fruit'].grid(row=1, column=0)
+        self.inputs['Height'] = LabelInput(plant_info,
+                                          'Height',
+                                          input_class=tk.Spinbox,
+                                          input_var=tk.IntVar(),
+                                          input_args={'from_': 0, 'to': 1000})
+        self.inputs['Heigth'].grid(row=1, column=1)
+        self.inputs['Notes'] = LabelInput(self,
+                                          'Notes',
+                                          input_class=tk.Text,
+                                          input_args={'width': 75,
+                                                      'height': 10})
+        self.inputs['Notes'].grid(sticky='w', row=3, column=0)
+        self.reset()
 
-    
+    def get(self):
+        data = {}
+        for key, widget in self.inputs.items():
+            data[key] = widget.get()
+        return data
+
+    def reset(self):
+        for widget in self.inputs.values():
+            widget.set('')
+
+
 class Application(tk.Tk):
     '''Application root window'''
 
