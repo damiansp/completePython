@@ -1,3 +1,6 @@
+import csv
+from datetime import datetime
+import os
 import tkinter as tk
 from tkinter import ttk
 
@@ -5,7 +8,7 @@ from tkinter import ttk
 class LabelInput(tk.Frame):
     '''A widget containing a label and input together.'''
     def __init__(
-            self, parent, label='', input_class=tkk.Entry, input_var=None,
+            self, parent, label='', input_class=ttk.Entry, input_var=None,
             input_args=None, label_args=None, **kwargs):
         super().__init__(parent, **kwargs)
         input_args = input_args or {}
@@ -59,6 +62,7 @@ class DataRecordForm(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.inputs = {}
+
         record_info = tk.LabelFrame(self, text='Record Information')
         self.inputs['Date'] = LabelInput(
             record_info, 'Date', input_var=tk.StringVar())
@@ -72,7 +76,7 @@ class DataRecordForm(tk.Frame):
         self.inputs['Time'].grid(row=0, column=1)
         self.inputs['Technician'] = LabelInput(
             record_info, 'Technician', input_var=tk.StringVar())
-        self.inputs['Tecnician'].grid(row=0, column=2)
+        self.inputs['Technician'].grid(row=0, column=2)
         self.inputs['Lab'] = LabelInput(
             record_info,
             'Lab',
@@ -87,10 +91,11 @@ class DataRecordForm(tk.Frame):
             input_var=tk.IntVar(),
             input_args={'values': list(range(1, 21))})
         self.inputs['Plot'].grid(row=1, column=1)
-        self.inputs['Seed sample'] = LableInput(
+        self.inputs['Seed sample'] = LabelInput(
             record_info, 'Seed sample', input_var=tk.StringVar())
         self.inputs['Seed sample'].grid(row=1, column=2)
         record_info.grid(row=0, column=0, sticky=tk.W + tk.E)
+
         environment_info = tk.LabelFrame(self, text='Environment Data')
         self.inputs['Humidity'] = LabelInput(
             environment_info,
@@ -104,6 +109,8 @@ class DataRecordForm(tk.Frame):
                                                     input_class=ttk.Checkbutton,
                                                     input_var=tk.BooleanVar())
         self.inputs['Equipment Fault'].grid(row=1, column=0, columnspan=3)
+        environment_info.grid(row=1, column=0, sticky=tk.W + tk.E)
+
         plant_info = tk.LabelFrame(self, text='Plant Data')
         self.inputs['Plants'] = LabelInput(plant_info,
                                            'Plants',
@@ -129,13 +136,14 @@ class DataRecordForm(tk.Frame):
                                           input_class=tk.Spinbox,
                                           input_var=tk.IntVar(),
                                           input_args={'from_': 0, 'to': 1000})
-        self.inputs['Heigth'].grid(row=1, column=1)
+        self.inputs['Height'].grid(row=1, column=1)
         self.inputs['Notes'] = LabelInput(self,
                                           'Notes',
                                           input_class=tk.Text,
                                           input_args={'width': 75,
                                                       'height': 10})
         self.inputs['Notes'].grid(sticky='w', row=3, column=0)
+        plant_info.grid(row=2, column=0, sticky=tk.W + tk.E)
         self.reset()
 
     def get(self):
@@ -151,6 +159,33 @@ class DataRecordForm(tk.Frame):
 
 class Application(tk.Tk):
     '''Application root window'''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.title('Agrilabs Data Entry Application')
+        self.resizable(width=False, height=False)
+        ttk.Label(
+            self,
+            text='Agrilabs Data Entry Application',
+            font=('TkDefaultFont', 16)
+        ).grid(row=0)
+        self.recordform = DataRecordForm(self)
+        self.recordform.grid(row=1, padx=10)
+        self.savebutton = ttk.Button(self, text='Save', command=self.on_save)
+        self.savebutton.grid(sticky=tk.E, row=2, padx=10)
+        self.status = tk.StringVar()
+        self.statusbar = ttk.Label(self, textvariable=self.status)
+        self.statusbar.grid(sticky=(tk.W + tk.E), row=3, padx=10)
+        
+    def on_save(self):
+        datestring = datetime.today().strftime('%Y-%m-%d')
+        filename = f'agrilabs_data_record_{datestring}.csv'
+        newfile = not os.path.exists(filename)
+        data = self.recordform.get()
+        with open(filename, 'a') as f:
+            csvwriter = csv.DictWriter(f, fieldnames=data.keys())
+            if newfile:
+                csvwriter.writeheader()
+            csvwriter.writerow(data)
 
 
 if __name__ == '__main__':
