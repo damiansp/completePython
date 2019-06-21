@@ -1,0 +1,47 @@
+from   datetime import datetime
+import tkinter as tk
+from   tkinter import ttk
+
+# Validation Codes
+# %S: For in/del, the text being inserted/deleted (key events only)
+# %i: The index (0-based) of the text being inserted/deleted, or -1 on non-key
+#     events (passed as STRING)
+# %V: The event that triggered validation (focusin, focusout, key, forced;
+#     indicating that the text variable was changed)
+# %d: Action being attempted: 0: delete, 1: insert, -1: other (as STRING)
+class DateEntry(ttk.Entry):
+    '''An Entry for ISO-style dataes (YYYY-MM-DD)'''
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.config(
+            validate='all',
+            validatecommand=(
+                # _validate receives insertion (%S), index of insertion (%i),
+                # type of event (%V) and action performed (%d)
+                self.register(self._validate), '%S', '%i', '%V', '%d'),
+            # _on_invalid gets type of event
+            invalidcommand=(self.register(self._on_invalid), '%V'))
+        self.error = tk.StringVar()
+
+    def _toggle_error(self, error=''):
+        self.error.set(error)
+        if error:
+            self.config(foreground='red')
+        else:
+            self.config(foreground='black')
+
+    def _validate(self, char, index, event, action):
+        # reset error state
+        self._toggle_error()
+        valid = True
+        if event == 'key':
+            if action == '0': # Delete: should always validate
+                valid = True
+            elif index in '01235689':
+                valid = char.isdigit()
+            elif index in '47':
+                valid = char == '-'
+            else:
+                valid = False
+
+    
