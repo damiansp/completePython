@@ -104,6 +104,20 @@ class DataRecordForm(tk.Frame):
             input_var=tk.DoubleVar(),
             input_args={'from_': 0.5, 'to': 52., 'increment': 0.01})
         self.inputs['Humidity'].grid(row=0, column=0)
+        self.inputs['Light'] = LabelInput(
+            environment_info,
+            'Light (klx)',
+            input_class=tk.Spinbox,
+            input_var=tk.DoubleVar(),
+            input_args={'from_': 0., 'to': 1000., 'increment': 0.5})
+        self.inputs['Light'].grid(row=0, column=1)
+        self.inputs['Temperature'] = LabelInput(
+            environment_info,
+            'Temperature (C)',
+            input_class=tk.Spinbox,
+            input_var=tk.DoubleVar(),
+            input_args={'from_': -40., 'to': 100., 'increment': 0.2})
+        self.inputs['Temperature'].grid(row=0, column=2)
         self.inputs['Equipment Fault'] = LabelInput(environment_info,
                                                     'Equipment Fault',
                                                     input_class=ttk.Checkbutton,
@@ -130,13 +144,27 @@ class DataRecordForm(tk.Frame):
                                           input_class=tk.Spinbox,
                                           input_var=tk.IntVar(),
                                           input_args={'from_': 0, 'to': 1000})
-        self.inputs['Fruit'].grid(row=1, column=0)
-        self.inputs['Height'] = LabelInput(plant_info,
-                                          'Height',
+        self.inputs['Fruit'].grid(row=0, column=2)
+        self.inputs['MinHeight'] = LabelInput(plant_info,
+                                          'Min Height (cm)',
                                           input_class=tk.Spinbox,
                                           input_var=tk.IntVar(),
                                           input_args={'from_': 0, 'to': 1000})
-        self.inputs['Height'].grid(row=1, column=1)
+        self.inputs['MinHeight'].grid(row=1, column=0)
+        self.inputs['MaxHeight'] = LabelInput(
+            plant_info,
+            'Max Height (cm)',
+            input_class=tk.Spinbox,
+            input_var=tk.IntVar(),
+            input_args={'from_': 0, 'to': 1000})
+        self.inputs['MaxHeight'].grid(row=1, column=1)
+        self.inputs['MedianHeight'] = LabelInput(
+            plant_info,
+            'Median Height (cm)',
+            input_class=tk.Spinbox,
+            input_var=tk.IntVar(),
+            input_args={'from_': 0, 'to': 1000})
+        self.inputs['MedianHeight'].grid(row=1, column=2)
         self.inputs['Notes'] = LabelInput(self,
                                           'Notes',
                                           input_class=tk.Text,
@@ -175,6 +203,7 @@ class Application(tk.Tk):
         self.status = tk.StringVar()
         self.statusbar = ttk.Label(self, textvariable=self.status)
         self.statusbar.grid(sticky=(tk.W + tk.E), row=3, padx=10)
+        self.records_saved = 0
         
     def on_save(self):
         datestring = datetime.today().strftime('%Y-%m-%d')
@@ -186,6 +215,9 @@ class Application(tk.Tk):
             if newfile:
                 csvwriter.writeheader()
             csvwriter.writerow(data)
+        self.records_saved += 1
+        self.status.set(f'{self.records_saved} records saved this session')
+        self.recordform.reset()
 
 
 if __name__ == '__main__':
