@@ -26,3 +26,11 @@ show('one pixel changed', img)
 
 top_left = img[0:50, 0:50]
 show('top left', top_left)
+
+
+# Greyscale
+grey_img = cv2.imread(f'{IMG_DIR}/logo.png', cv2.IMREAD_GRAYSCALE)
+dims = grey_img.shape
+i = grey_img[6, 40]
+grey_img[6, 40] = 0
+show('grey', grey_img)
