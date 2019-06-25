@@ -1,4 +1,9 @@
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from   scipy import stats
+
+#plt.style.use('style/elegant.mplstyle') 
 
 
 def rpkm(counts, lengths):
@@ -64,3 +69,63 @@ print(x * 2) # [ 2 4 6 8]
 
 y = np.array([0, 1, 2, 1])
 print(x + y) # [1 3 5 5]
+
+
+# Broadcasting
+x = np.array([1, 2, 3, 4])
+x = np.reshape(x, (len(x), 1))
+print(x) # [[1] [2] [3] [4]]
+
+y = np.array([0, 1, 2, 1])
+y = np.reshape(y, (1, len(y)))
+print(y) # [[0 1 2 1]]
+
+print(x.shape) # (4, 1)
+print(y.shape) # (1, 4)
+
+outer = x * y
+print(outer) # [[0 1 2 1]
+             #  [0 2 4 2]
+             #  [0 3 6 3]
+             #  [0 4 8 4]]
+print(outer.shape) # (4, 4)
+
+
+# Pandas
+with open('../data/counts.txt', 'rt') as f:
+    data_table = pd.read_csv(f, index_col=0)
+
+print(data_table.head())
+
+samples = list(data_table.columns)
+
+with open('../data/genes.csv', 'rt') as f:
+    gene_info = pd.read_csv(f, index_col=0)
+print(gene_info.head())
+
+print('Genes in data_table:', data_table.shape[0])
+print('Genes in gene_info:', gene_info.shape[0])
+
+matched_index = pd.Index.intersection(data_table.index, gene_info.index)
+counts = np.asarray(data_table.loc[matched_index], dtype=int)
+gene_names = np.array(matched_index)
+print(f'{counts.shape[0]} genes measured in {counts.shape[1]} individuals')
+
+gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'], dtype=int)
+print(counts.shape)       # 20500, 375
+print(gene_lengths.shape) # 20500
+
+
+# Normalization
+total_counts = np.sum(counts, axis=0) # colsums
+density = stats.kde.gaussian_kde(total_counts)
+x = np.arange(min(total_counts), max(total_counts), 1000)
+
+fig, ax = plt.subplots()
+ax.plot(x, density(x))
+ax.set_xlabel('Total counts per individual')
+ax.set_ylabel('Density')
+plt.show()
+print(f'Count statistics:\n  min:  {np.min(total_counts):.4f}\n'
+      f'  mean: {np.mean(total_counts):.4f}\n'
+      f'  max:  {np.max(total_counts):.4f}')
