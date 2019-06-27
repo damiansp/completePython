@@ -1,3 +1,6 @@
+from   collections import defaultdict
+import itertools as it
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -129,3 +132,90 @@ plt.show()
 print(f'Count statistics:\n  min:  {np.min(total_counts):.4f}\n'
       f'  mean: {np.mean(total_counts):.4f}\n'
       f'  max:  {np.max(total_counts):.4f}')
+
+
+# Normalizing library sizes between samples
+np.random.seed(seed=14)
+samples_index = np.random.choice(range(counts.shape[1]), size=70, replace=False)
+counts_subset = counts[:, samples_index]
+
+
+def reduce_xaxis_labels(ax, factor):
+    '''Show only every ith label to prevent crowding on the x-axis; e.g., 
+      factor = 2 would plot every 2nd x-axis label, starting at the first.
+    Args:
+      ax (matplotlib plot axis): the axis to adjust
+      factor (int): factor to reduce the number of x-axis labels by
+    '''
+    plt.setp(ax.xaxis.get_ticklabels(), visible=False)
+    for label in ax.xaxis.get_ticklabels()[factor - 1::factor]:
+        label.set_visible(True)
+
+
+# Barplot of expression counts by individual
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
+#with plt.style.context('style/thinner.mplstyle'): # notebook usage
+ax.boxplot(counts_subset)
+ax.set_xlabel('Individuals')
+ax.set_ylabel('Gene expression counts')
+reduce_xaxis_labels(ax, 5)
+plt.show()
+
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
+ax.boxplot(np.log(counts_subset + 1))
+ax.set_xlabel('Individuals')
+ax.set_ylabel('log(Gene expression counts)')
+reduce_xaxis_labels(ax, 5)
+plt.show()
+
+# Normalize by lib size
+counts_lib_norm = counts / total_counts * 1000000
+counts_subset_lib_norm = counts_lib_norm[:, samples_index]
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
+ax.boxplot(np.log(counts_subset_lib_norm + 1))
+ax.set_xlabel('Individuals')
+ax.set_ylabel('log(Gene expression counts)')
+reduce_xaxis_labels(ax, 5)
+plt.show()
+
+
+def class_boxplot(data, classes, colors=None, **kwargs):
+    '''Make a boxplot with boxes colored according to the class they belong to.
+    Args:
+      data (list<arraylike<float>>): input data. One boxplot will be generated
+        for each element in <data>
+      classes (list<str> with len equal to <data>): the class each distribution
+        in <data> belongs to.
+      **kwargs: optional args to pass into <plt.boxplot>
+    '''
+    all_classes = sorted(set(classes))
+    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    class2color = dict(zip(all_classes, it.cycle(colors)))
+    # map classes to data vectors; other classes get empty list at that position
+    # to offset
+    class2data = defaultdict(list)
+    for distrib, cls in zip(data, classes):
+        for c in all_classes:
+            class2data[c].append([])
+        class2data[cls][-1] = distrib
+    # Do each boxplot with appropiate color
+    fix, ax = plt.subplots()
+    lines = []
+    for cls in all_classes:
+        # set color for all elements of boxplot
+        for key in ['boxprops', 'whiskerprops', 'flierprops']:
+            kwargs.setdefault(key, {}).update(color=class2color[cls])
+        box = ax.boxplot(class2data[cls], **kwargs)
+        lines.append(box['whiskers'][0])
+    ax.legend(lines, all_classes)
+    return ax
+
+
+log_counts_3 = list(np.log(counts.T[:3] + 1))
+log_ncounts_3 = list(np.log(counts_lib_norm.T[:3] + 1))
+ax = class_boxplot(log_counts_3 + log_ncounts_3,
+                   ['raw counts']*3 + ['normalized by lib size']*3,
+                   labels=[1, 2, 3, 1, 2, 3])
+ax.set_xlabel('sample number')
+ax.set_ylabel('log(gene expression counts)')
+plt.show()
