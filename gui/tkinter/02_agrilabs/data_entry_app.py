@@ -185,6 +185,42 @@ class DataRecordForm(tk.Frame):
             widget.set('')
 
 
+class ValidatedMixin:
+    '''Adds validation functionality to an input widget'''
+    def __init__(self, *args, error_var=None, **kwargs):
+        self.error = error_var or tk.StringVar()
+        super().__init__(*args, **kwargs)
+        vcmd = self.register(self._validate)
+        invcmd = self.register(self._invalid)
+        self.config(validate='all',
+                    validatecommand=(vcmd, '%P', '%s', '%S', '%V', '%i', '%d'),
+                    invalidcommand=(invcmd, '%P', '%s', '%S', '%V', '%i', '%d'))
+
+    def _toggle_error(self, on=False):
+        self.config(foreground('red' if on else 'black'))
+
+    def _validate(self, proposed, current, char, event, index, action):
+        self._toggle_error(False)
+        self.error.set('')
+        valid = True
+        if event == 'focusout':
+            valid = self._focusout_validate(event=event)
+        elif event == 'key':
+            valid = self._key_validate(proposed=proposed,
+                                       current=current,
+                                       char=char,
+                                       event=event,
+                                       index=index,
+                                       action=action)
+            return valid
+
+    def _focusout_validate(self, **kwargs):
+        return True
+
+    def _key_validate(self, **kwargs):
+        return True
+
+
 class Application(tk.Tk):
     '''Application root window'''
     def __init__(self, *args, **kwargs):
