@@ -219,3 +219,43 @@ ax = class_boxplot(log_counts_3 + log_ncounts_3,
 ax.set_xlabel('sample number')
 ax.set_ylabel('log(gene expression counts)')
 plt.show()
+
+
+# * forces following args to be keyword args
+def binned_boxplot(x, y, *, xlabel='log(gene len)', ylabel='mean log counts'):
+    '''Plot the distribution of <y> dependent on <x> with multiple boxplots.
+    Note: All inputs expected to be log-scaled.
+    Args:
+      x (1D array<float>): independent variable values
+      y (1D array<float>): dependent variable values
+    '''
+    x_hist, x_bins = np.histogram(x, bins='auto')
+    x_bins_idxs = np.digitize(x, x_bins[:-1])
+    binned_y = [y[x_bins_idxs == i] for i in range(x_bins_idxs.max())]
+    fig, ax = plt.subplots(figsize=(4, 8.1))
+    x_bin_centers = (x_bins[1:] + x_bins[:-1]) / 2
+    x_ticklabels = np.round(np.exp(x_bin_centers)).astype(int)
+    ax.boxplot(binned_y, labels=x_ticklabels)
+    reduce_xaxis_labels(ax, 10)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
+
+log_counts = np.log(counts_lib_norm + 1)
+mean_log_counts = np.mean(log_counts, axis=1)
+log_gene_lengths = np.log(gene_lengths)
+binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+plt.show()
+
+# longer genes have longer counts--an artifact of the lab method, not the
+# biology, hence....
+
+
+# Normalizing over Samples and Genes (RPKM: reads per kilobase transcripts per
+# million)
+C = counts
+N = counts.sum(axis=0)
+L = gene_lengths
+C_tmp = 10**9 * C
+print('C_tmp shape:', C_tmp.shape)
+print('L shape:', L.shape)
