@@ -54,6 +54,29 @@ class DateEntry(ttk.Entry):
         if event != 'key':
             self._toggle_error('Not a valid date')
 
+    def _key_validate(self, action, index, char, **kwargs):
+        valid = True
+        if action == '0':
+            valid = True
+        if index in '01235689':
+            valid = char.isdigit()
+        elif index in '47':
+            valid = char == '-'
+        else:
+            valid = False
+        return valid
+
+    def _focusout_validate(self, event):
+        valid = True
+        if not self.get():
+            self.error.set('A value is required')
+            valid = False
+        try:
+            datetime.strptime(self.get(), '%Y-%m-%d')
+        except ValueError:
+            self.error.set('Invalid date')
+            valid = False
+        return valid
 
 if __name__ == '__main__':
     root = tk.Tk()

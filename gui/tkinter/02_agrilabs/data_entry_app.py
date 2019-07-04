@@ -196,6 +196,12 @@ class ValidatedMixin:
                     validatecommand=(vcmd, '%P', '%s', '%S', '%V', '%i', '%d'),
                     invalidcommand=(invcmd, '%P', '%s', '%S', '%V', '%i', '%d'))
 
+    def trigger_focusout_validation(self):
+        valid = self._validate('', '', '', 'focusout', '', '')
+        if valid:
+            return valid
+        self._focusout_invalid(event='focusout')
+            
     def _toggle_error(self, on=False):
         self.config(foreground('red' if on else 'black'))
 
@@ -212,13 +218,39 @@ class ValidatedMixin:
                                        event=event,
                                        index=index,
                                        action=action)
-            return valid
+        return valid
 
     def _focusout_validate(self, **kwargs):
         return True
 
     def _key_validate(self, **kwargs):
         return True
+
+    def _invalid(self, proposed, current, char, event, index, action):
+        if event == 'focusout':
+            self.focusout_invalid(event=event)
+        elif event == 'key':
+            self._key_invalid(proposed=proposed,
+                              current=current,
+                              char=char,
+                              event=event,
+                              index=index,
+                              action=action)
+
+    def _focusout_invalid(self, **kwargs):
+        self._toggle_error(True)
+
+    def _key_invalid(self, **kwargs):
+        pass
+
+
+class RequiredEntry(ValidatedMixin, ttk.Entry):
+    def _focusout_validate(self, event):
+        valid = True
+        if not self.get():
+            valid = False
+            self.error.set('A value is required')
+        return valid
 
 
 class Application(tk.Tk):
