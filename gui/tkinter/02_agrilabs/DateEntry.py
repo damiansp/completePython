@@ -78,6 +78,7 @@ class DateEntry(ttk.Entry):
             valid = False
         return valid
 
+
 if __name__ == '__main__':
     root = tk.Tk()
     entry = DateEntry(root)
