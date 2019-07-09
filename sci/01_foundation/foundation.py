@@ -259,3 +259,48 @@ L = gene_lengths
 C_tmp = 10**9 * C
 print('C_tmp shape:', C_tmp.shape)
 print('L shape:', L.shape)
+
+L = L[:, np.newaxis] # append dim to L, with value 1
+print('L.shape:', L.shape)
+
+# Divide ea row by the gene len for that gene (L)
+C_tmp = C_tmp / L
+N = counts.sum(axis=0) # sum ea col = reads per sample
+print('N.shape')
+N = N[np.newaxis, :]
+print('N.shape')
+
+rpkm_counts = C_tmp / N
+
+
+# all this is wrapped in the rpkm() function above
+
+
+counts_rpkm = rpkm(counts, gene_lengths)
+log_counts = np.log(counts + 1)
+mean_log_counts = np.mean(log_counts, axis=1)
+log_gene_lengths = np.log(gene_lengths)
+binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+plt.show()
+
+log_counts = np.log(counts_rpkm + 1)
+mean_log_counts = np.mean(log_counts, axis=1)
+log_gene_lengths = np.log(gene_lengths)
+binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+plt.show()
+
+gene_idxs = np.array([80, 186])
+gene1, gene2 = gene_names[gene_idxs]
+len1, len2 = gene_lengths[gene_idxs]
+gene_labels = [f'{gene1}, {len1}bp', f'{gene2}, {len2}bp']
+log_counts = list(np.log(counts[gene_idxs] + 1))
+log_ncounts = list(np.log(counts_rpkm[gene_idxs] + 1))
+ax = class_boxplot(log_counts, ['raw counts'] * 3, labels=gene_labels)
+ax.set_xlabel('Genes')
+ax.set_ylabel('log gene expression counts over all samples')
+plt.show()
+
+ax = class_boxplot(log_ncounts, ['RPKM normalized'] * 3, labels=gene_labels)
+ax.set_xlabel('Genes')
+ax.set_ylabel('log RPKM gene expression counts over all samples')
+plt.show()
