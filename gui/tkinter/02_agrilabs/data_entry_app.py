@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 import os
 import tkinter as tk
 from tkinter import ttk
@@ -365,7 +366,42 @@ class ValidatedSpinbox(ValidatedMixin, tk.Spinbox):
         super().__init__(*args, from_=from_, to=to, **kwargs)
         self.resolution = Decimal(str(kwargs.get('increment', '1.0')))
         self.precision = self.resolution.normalize().as_tuple().exponent
+
+    def _key_validate(self, char, index, current, proposed, action, **kwargs):
+        valid = True
+        min_val = self.cget('from')
+        max_val = self.cget('to')
+        no_negative = min_val >= 0
+        no_decimal = self.precision >= 0
+        if action == '0':
+            return True
+        if any([(char not in ('-1234567890.')),
+                (char == '-' and (no_negative or index != '0')),
+                (char == '.' and (no_decimal or '.' in current))]):
+            return False
+        if proposed in '-.':
+            return True
+        proposed = Decimal(proposed)
+        proposed_precision = proposed.as_tuple().exponent
+        if any([(proposed > max_val), (proposed_precision < self.precision)]):
+            return False
+        return valid
+
+    def _focusout_validate(self, **kwargs):
+        valid = True
+        value = self.get()
+        min_val = self.cget('from')
+        try:
+            value = Decimal(value)
+        except InvalidOperation:
+            self.error.set(f'Invalid number string: {value}')
+            return False
+        if value < min_val:
+            self.error.set(f'Value is too low (min: {min_val})')
+            valid = False
+        return valid
     
+
 class Application(tk.Tk):
     '''Application root window'''
     def __init__(self, *args, **kwargs):
