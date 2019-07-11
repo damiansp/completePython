@@ -366,6 +366,46 @@ class ValidatedSpinbox(ValidatedMixin, tk.Spinbox):
         super().__init__(*args, from_=from_, to=to, **kwargs)
         self.resolution = Decimal(str(kwargs.get('increment', '1.0')))
         self.precision = self.resolution.normalize().as_tuple().exponent
+        self.variable = kwargs.get('textvariable') or tk.DoubleVar()
+        if min_var:
+            self.min_var = min_var
+            self.min_var.trace('w', self._set_minimum)
+        if max_var:
+            self.max_var = max_var
+            self.max_var.trace('w', self._set_maximum)
+        self.focus_update_var = focus_update_var
+        self.bind('<FocusOut>', self._set_focus_update_var)
+
+    def _set_focus_update_var(self, event):
+        value = self.get()
+        if self.focus_update_var and not self.error.get():
+            self.focus_update_var.set(value)
+
+    def _set_minimum(self, *args):
+        current = self.get()
+        try:
+            new_min = self.min_var.get()
+            self.config(from_=new_min)
+        except (tk.TclError, ValueError):
+            pass
+        if not current:
+            self.delete(0, tk.END)
+        else:
+            self.variable.set(current)
+        self.trigger_focusout_validation()
+
+    def _set_maximum(self, *args):
+        current = self.get()
+        try:
+            new_max = self.max_var.get()
+            self.config(to=new_max)
+        except (tk.TclError, ValueError):
+            pass
+        if not current:
+            self.delete(0, tk.END)
+        else:
+            self.variable.set(current)
+        self.trigger_focusout_validation()
 
     def _key_validate(self, char, index, current, proposed, action, **kwargs):
         valid = True
@@ -391,6 +431,7 @@ class ValidatedSpinbox(ValidatedMixin, tk.Spinbox):
         valid = True
         value = self.get()
         min_val = self.cget('from')
+        max_val = self.cget('to')
         try:
             value = Decimal(value)
         except InvalidOperation:
@@ -399,6 +440,8 @@ class ValidatedSpinbox(ValidatedMixin, tk.Spinbox):
         if value < min_val:
             self.error.set(f'Value is too low (min: {min_val})')
             valid = False
+        if value > max_val:
+            self.error.set(f'Value is too high (max: {max_val})')
         return valid
     
 
