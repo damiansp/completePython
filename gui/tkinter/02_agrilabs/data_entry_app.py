@@ -66,31 +66,34 @@ class DataRecordForm(tk.Frame):
 
         record_info = tk.LabelFrame(self, text='Record Information')
         self.inputs['Date'] = LabelInput(
-            record_info, 'Date', input_var=tk.StringVar())
+            record_info, 'Date', input_class=DateEntry, input_var=tk.StringVar()
+        )
         self.inputs['Date'].grid(row=0, column=0)
         self.inputs['Time'] = LabelInput(
             record_info,
             'Time',
-            input_class=ttk.Combobox,
+            input_class=ValidatedCombobox,
             input_var=tk.StringVar(),
             input_args={'values': ['8:00', '12:00', '16:00', '20:00']})
         self.inputs['Time'].grid(row=0, column=1)
-        self.inputs['Technician'] = LabelInput(
-            record_info, 'Technician', input_var=tk.StringVar())
+        self.inputs['Technician'] = LabelInput(record_info,
+                                               'Technician',
+                                               input_class=RequiredEntry,
+                                               input_var=tk.StringVar())
         self.inputs['Technician'].grid(row=0, column=2)
         self.inputs['Lab'] = LabelInput(
             record_info,
             'Lab',
-            input_class=ttk.Combobox,
+            input_class=ValidatedCombobox,
             input_var=tk.StringVar(),
             input_args={'values': ['A', 'B', 'C', 'D', 'E']})
         self.inputs['Lab'].grid(row=1, column=0)
         self.inputs['Plot'] = LabelInput(
             record_info,
             'Plot',
-            input_class=ttk.Combobox,
-            input_var=tk.IntVar(),
-            input_args={'values': list(range(1, 21))})
+            input_class=ValidatedCombobox,
+            input_var=tk.StringVar(),
+            input_args={'values': [str(x) for x in range(1, 21)]})
         self.inputs['Plot'].grid(row=1, column=1)
         self.inputs['Seed sample'] = LabelInput(
             record_info, 'Seed sample', input_var=tk.StringVar())
@@ -101,9 +104,9 @@ class DataRecordForm(tk.Frame):
         self.inputs['Humidity'] = LabelInput(
             environment_info,
             'Humidity (g/m^3)',
-            input_class=tk.Spinbox,
+            input_class=ValidatedSpinbox,
             input_var=tk.DoubleVar(),
-            input_args={'from_': 0.5, 'to': 52., 'increment': 0.01})
+            input_args={'from_': '0.5', 'to': '52.0', 'increment': '0.01'})
         self.inputs['Humidity'].grid(row=0, column=0)
         self.inputs['Light'] = LabelInput(
             environment_info,
@@ -146,6 +149,8 @@ class DataRecordForm(tk.Frame):
                                           input_var=tk.IntVar(),
                                           input_args={'from_': 0, 'to': 1000})
         self.inputs['Fruit'].grid(row=0, column=2)
+        min_height_var = tk.DoubleVar(value='-infinity')
+        max_height_var = tk.DoubleVar(value='infinity')
         self.inputs['MinHeight'] = LabelInput(plant_info,
                                           'Min Height (cm)',
                                           input_class=tk.Spinbox,
