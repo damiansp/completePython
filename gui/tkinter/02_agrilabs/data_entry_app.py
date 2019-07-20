@@ -25,6 +25,9 @@ class LabelInput(tk.Frame):
         self.input = input_class(self, **input_args)
         self.input.grid(row=1, column=0, sticky=(tk.W + tk.E))
         self.columnconfigure(0, weight=1)
+        self.error = getattr(self.input, 'error', tk.StringVar())
+        self.error_label = ttk.Label(self, textvariable=self.error)
+        self.error_label.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
     def grid(self, sticky=(tk.E + tk.W), **kwargs):
         super().grid(sticky=sticky, **kwargs)
@@ -146,25 +149,39 @@ class DataRecordForm(tk.Frame):
                                           input_var=tk.IntVar(),
                                           input_args={'from_': 0, 'to': 1000})
         self.inputs['Fruit'].grid(row=0, column=2)
-        self.inputs['MinHeight'] = LabelInput(plant_info,
-                                          'Min Height (cm)',
-                                          input_class=tk.Spinbox,
-                                          input_var=tk.IntVar(),
-                                          input_args={'from_': 0, 'to': 1000})
+        min_height_var = tk.DoubleVar(value='-infinity')
+        max_height_var = tk.DoubleVar(value='infinity')
+        self.inputs['MinHeight'] = LabelInput(
+            plant_info,
+            'Min Height (cm)',
+            input_class=ValidatedSpinbox,
+            input_var=tk.DoubleVar(),
+            input_args={'from_': 0, 'to': 1000,
+                        'increment': 0.01,
+                        'max_var': max_height_var,
+                        'focus_update_var': min_height_var})
         self.inputs['MinHeight'].grid(row=1, column=0)
         self.inputs['MaxHeight'] = LabelInput(
             plant_info,
             'Max Height (cm)',
-            input_class=tk.Spinbox,
-            input_var=tk.IntVar(),
-            input_args={'from_': 0, 'to': 1000})
+            input_class=ValidatedSpinbox,
+            input_var=tk.DoubleVar(),
+            input_args={'from_': 0,
+                        'to': 1000,
+                        'increment': 0.01,
+                        'min_var': min_height_var,
+                        'focus_update_var': max_height_var})
         self.inputs['MaxHeight'].grid(row=1, column=1)
         self.inputs['MedianHeight'] = LabelInput(
             plant_info,
             'Median Height (cm)',
-            input_class=tk.Spinbox,
-            input_var=tk.IntVar(),
-            input_args={'from_': 0, 'to': 1000})
+            input_class=ValidatedSpinbox,
+            input_var=tk.DoubleVar(),
+            input_args={'from_': 0,
+                        'to': 1000,
+                        'increment': 0.01,
+                        'min_var': min_height_var,
+                        'max_var': max_height_var})
         self.inputs['MedianHeight'].grid(row=1, column=2)
         self.inputs['Notes'] = LabelInput(self,
                                           'Notes',
@@ -204,7 +221,7 @@ class ValidatedMixin:
         self._focusout_invalid(event='focusout')
             
     def _toggle_error(self, on=False):
-        self.config(foreground('red' if on else 'black'))
+        self.config(foreground=('red' if on else 'black'))
 
     def _validate(self, proposed, current, char, event, index, action):
         self._toggle_error(False)
