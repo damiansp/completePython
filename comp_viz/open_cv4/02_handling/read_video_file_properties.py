@@ -27,3 +27,8 @@ print(f'CV_CAP_PROP_CONVERT_RGB: {capture.get(cv2.CAP_PROP_CONVERT_RGB)}')
 print(f'CV_CAP_PROP_RECTIFICATION: {capture.get(cv2.CAP_PROP_RECTIFICATION)}')
 print(f'CV_CAP_PROP_ISO_SPEED: {capture.get(cv2.CAP_PROP_ISO_SPEED)}')
 print(f'CV_CAP_PROP_BUFFERSIZE: {capture.get(cv2.CAP_PROP_BUFFERSIZE)}')
+
+frame_index = capture.get(cv2.CAP_PROP_FRAME_COUNT) - 1
+capture.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+ret, frame = capture.read()
+frame_index -= 1
