@@ -21,8 +21,9 @@ raw_notebooks/
 # File types
 #------------------------
 *.bin
-*.txt
 *.csv
+*.pdf
+*.txt
 
 
 # Dirs
