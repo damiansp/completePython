@@ -42,6 +42,12 @@ def main():
     cv2.line(image, (DIM // 2, 0), (DIM // 2, DIM), colors['red'], 4)
     cv2.line(image, (0, DIM // 2), (DIM, DIM // 2), colors['yellow'], 8)
     show(image, 'lines')
+
+    cv2.rectangle(image, (10,   50), ( 60, 300), colors['green'], 3) # 3=thick
+    cv2.rectangle(image, (80,   50), (130, 300), colors['blue'], -1) # fill
+    cv2.rectangle(image, (150,  50), (350, 100), colors['red'],  -1)
+    cv2.rectangle(image, (150, 150), (350, 300), colors['cyan'], 10)
+    show(image, 'rectangles')
     
     
     
