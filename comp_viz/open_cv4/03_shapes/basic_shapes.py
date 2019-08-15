@@ -48,6 +48,13 @@ def main():
     cv2.rectangle(image, (150,  50), (350, 100), colors['red'],  -1)
     cv2.rectangle(image, (150, 150), (350, 300), colors['cyan'], 10)
     show(image, 'rectangles')
+
+    cv2.circle(
+        image, center=(50, 50), radius=20, color=colors['green'], thickness=3)
+    cv2.circle(image, (100, 100), 50, colors['blue'], -1)
+    cv2.circle(image, (200, 200), 60, colors['magenta'], 10)
+    cv2.circle(image, (300, 300), 70, colors['cyan'], -1)
+    show(image, 'circles')
     
     
     
