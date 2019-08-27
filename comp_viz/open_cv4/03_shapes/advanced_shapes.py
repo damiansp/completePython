@@ -43,8 +43,40 @@ def main():
     if ret:
         cv2.line(image, p1, p2, get_random_color(), 3)
     show(image, 'clip line')
-    
-    
+
+    # arrows
+    cv2.arrowedLine(image,
+                    (50, 50),
+                    (200, 50),
+                    colors['red'],
+                    thickness=3,
+                    line_type=8, # 8, 4, none: connected CV_AA: anitaliased
+                    shift=0,
+                    tipLength=0.1)
+    cv2.arrowedLine(
+        image, (50, 120), (200, 120), colors['green'], 3, cv2.LINE_AA, 0, 0.3)
+    cv2.arrowedLine(image, (50, 200), (200, 200), colors['blue'], 4, 6, 0, 0.3)
+    show(image, 'arrows')
+
+    # ellipses
+    # img, center, axes, angle, startAngle, endAngle, color, thickness,
+    # lineType, shift
+    cv2.ellipse(image, ( 80,  80), (60, 40),  0, 0, 360, colors['red'],      -1)
+    cv2.ellipse(image, ( 80, 200), (80, 40),  0, 0, 360, colors['green'],     3)
+    cv2.ellipse(image, ( 80, 200), (10, 40),  0, 0, 360, colors['blue'],      3)
+    cv2.ellipse(image, (200, 200), (10, 40),  0, 0, 180, colors['yellow'],    3)
+    cv2.ellipse(image, (200, 100), (10, 40),  0,10, 360, colors['cyan'],      2)
+    cv2.ellipse(image, (250, 250), (30, 30),  0, 0, 360, colors['magenta'],   3)
+    cv2.ellipse(image, (250, 100), (20, 40), 45, 0, 350, colors['dark_grey'], 3)
+    show(image, 'ellipses')
+
+    # polygons
+    # img, pts, isClosed, color, thickness, lineType, shift
+    pts = np.array([[250, 5], [220, 80], [280, 80]], np.int32)
+    pts = pts.reshape((-1, 1, 2)) # n_vertex (3), 1, 2
+    print(pts.shape)
+    cv2.polylines(image, [pts], True, get_random_color(), 3)
+    show(image, 'polygon')
     
     
 
