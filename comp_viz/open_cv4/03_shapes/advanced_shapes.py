@@ -77,8 +77,58 @@ def main():
     print(pts.shape)
     cv2.polylines(image, [pts], True, get_random_color(), 3)
     show(image, 'polygon')
-    
+
+    # shift param
+    DIM = 600
+    image = np.zeros((DIM, DIM, 3), dtype='uint8')
+    image[:] = colors['light_grey']
+    shift = 2
+    factor = 2 ** shift
+    print(f'factor: {factor}')
+    # circle with r = 300
+    cv2.circle(image,
+               (int(round(299.99 * factor)), int(round(299.99 * factor))),
+               300 * factor,
+               colors['red'],
+               1,
+               shift=shift)
+    cv2.circle(image, (299, 299), 300, colors['green'], 1)
+    show(image, 'circle/shift')
+
+    DIM = 600
+    image = np.zeros((DIM, DIM, 3), dtype='uint8')
+    image[:] = colors['light_grey']
+    draw_float_circle(image,
+                      (299, 299),
+                      300,
+                      shift=0,
+                      color=colors['red'])
+    draw_float_circle(image,
+                      (299.9, 299.9),
+                      300,
+                      shift=1,
+                      color=colors['green'])
+    draw_float_circle(image,
+                      (299.99, 299.99),
+                      300,
+                      shift=2,
+                      color=colors['blue'])
+    draw_float_circle(image,
+                      (299.999, 299.999),
+                      300,
+                      shift=3,
+                      color=colors['yellow'])
+    show(image, 'Float Circles')
+                      
     
 
+def draw_float_circle(img, center, radius, color,  shift):
+    '''wrapper to draw float-coord circle'''
+    factor = 2 ** shift
+    center = (int(round(center[0] * factor)), int(round(center[1] * factor)))
+    radius = int(round(radius * factor))
+    cv2.circle(img, center, radius, color, thickness=1, lineType=8, shift=shift)
+
+    
 if __name__ == '__main__':
     main()
