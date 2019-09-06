@@ -3,6 +3,9 @@ from decimal import Decimal, InvalidOperation
 import tkinter as tk
 from tkinter import ttk
 
+from constants import FieldTypes as FT
+
+
 class ValidatedMixin:
     '''Adds validation functionality to an input widget'''
     def __init__(self, *args, error_var=None, **kwargs):
@@ -151,13 +154,13 @@ class RequiredEntry(ValidatedMixin, ttk.Entry):
 class ValidatedCombobox(ValidatedMixin, ttk.Combobox):
     def _key_validate(self, proposed, action, **kwargs):
         valid = True
-        # if user tries to delete, just clear field                              
+        # if user tries to delete, just clear field 
         if action == '0':
             self.set('')
 	          return True
-	      # get values list                                                        
+	      # get values list
         values = self.cget('values')
-	      # do case-insensitive match against entered text                         
+	      # do case-insensitive match against entered text
         matching = [val for val in values
                     if val.lower().startswith(proposed.lower)]
         if len(matching) == 0:
@@ -264,20 +267,44 @@ class ValidatedSpinbox(ValidatedMixin, tk.Spinbox):
 
 class LabelInput(tk.Frame):
     '''A widget containing a label and input together.'''
+    field_types = {FT.string: (RequiredEntry, tk.StringVar),
+                   FT.string_list: (ValidatedCombobox, tk.StringVar),
+                   FT.iso_date_string: (DateEntry, tk.StringVar),
+                   FT.long_string: (tk.Text, lambda: None),
+                   FT.decimal: (ValidatedSpinbox, tk.DoubleVar),
+                   FT.integer: (ValidatedSpinbox, tk.IntVar),
+                   FT.boolean: (ttk.Checkbutton, tk.BooleanVar)}
+    
     def __init__(
-            self, parent, label='', input_class=ttk.Entry, input_var=None,
-            input_args=None, label_args=None, **kwargs):
+            self, parent, label='', input_class=None, input_var=None,
+            input_args=None, label_args=None, field_spec=None, **kwargs):
         super().__init__(parent, **kwargs)
         input_args = input_args or {}
         label_args = label_args or {}
-        self.variable = input_var
-        if input_class in (ttk.Checkbutton, ttk.Button, ttk.Radiobutton):
+        if field_spec:
+            field_type = field_spec.get('type', FT.string)
+            input_class = input_class or self.field_types.get(field_type)[0]
+            var_type = self.field_types.get(field_type)[1]
+            self.variable = input_var if input_var else var_type()
+            # min, max, increment
+            if 'min' in field_spec and 'from_' not in input_args:
+                input_args['from_'] = field_spec.get('min')
+            if 'max' in field_spec and 'to' not in input_args:
+                input_args['to'] = field_spec.get('max')
+            if 'inc' in field_spec and 'increment' not in input_args:
+                input_args['increment'] = field_spec.get('inc')
+            # values
+            if 'values' in field_spec and 'values' not in input_args:
+                input_args['values'] = field_spec.get('inc')
+        else:
+            self.variable = input_var
+        if input_class in (ttk.Checkbutton, ttk.Button, ttk.RadioButton):
             input_args['text'] = label
-            input_args['variable'] = input_var
+            input_args['variable'] = self.variable
         else:
             self.label = ttk.Label(self, text=label, **label_args)
             self.label.grid(row=0, column=0, sticky=(tk.W + tk.E))
-            input_args['textvariable'] = input_var
+            input_args['textvariable'] = self.variable
         self.input = input_class(self, **input_args)
         self.input.grid(row=1, column=0, sticky=(tk.W + tk.E))
         self.columnconfigure(0, weight=1)
@@ -296,7 +323,7 @@ class LabelInput(tk.Frame):
 	              return self.input.get('1.0', tk.END)
             else:
 	        return self.input.get()
-        except (TypeError, tk.TclError): # if numeric fields are empty           
+        except (TypeError, tk.TclError): # if numeric fields are empty
             return ''
 
     def set(self, value, *args, **kwargs):
@@ -312,7 +339,7 @@ class LabelInput(tk.Frame):
 	      elif type(self.input) == tk.Text:
 	          self.input.delete('1.0', tk.END)
 	          self.input.insert('1.0', value)
-        else: # input mush be an Entry-type widget with no variable              
+        else: # input mush be an Entry-type widget with no variable
             self.input.delete(0, tk.END)
             self.input.insert(0, value)
 
