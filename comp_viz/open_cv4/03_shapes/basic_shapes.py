@@ -21,7 +21,15 @@ colors = {'blue':       constant.BLUE,
           'dark_grey':  constant.DARK_GREY,
           'light_grey': constant.LIGHT_GREY,
           'rand': get_random_color()}
-
+fonts = [cv2.FONT_HERSHEY_SIMPLEX, cv2.FONT_HERSHEY_PLAIN,
+         cv2.FONT_HERSHEY_DUPLEX, cv2.FONT_HERSHEY_COMPLEX,
+         cv2.FONT_HERSHEY_TRIPLEX, cv2.FONT_HERSHEY_COMPLEX_SMALL,
+         cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, cv2.FONT_HERSHEY_SCRIPT_COMPLEX]
+font_names = ['FONT_HERSHEY_SIMPLEX', 'FONT_HERSHEY_PLAIN',
+              'FONT_HERSHEY_DUPLEX', 'FONT_HERSHEY_COMPLEX',
+              'FONT_HERSHEY_TRIPLEX', 'FONT_HERSHEY_COMPLEX_SMALL',
+              'FONT_HERSHEY_SCRIPT_SIMPLEX', 'FONT_HERSHEY_SCRIPT_COMPLEX']
+         
 
 def show(img, title):
     '''Show an image using matplotlib'''
@@ -32,32 +40,86 @@ def show(img, title):
 
 
 def main():
-    DIM = 400
+    DIM = 800
     image = np.zeros((DIM, DIM, 3), dtype='uint8')
     image[:] = colors['light_grey']
     show(image, 'just grey')
 
+    # lines
     cv2.line(image, (0, 0), (DIM, DIM), colors['green'], 1) # 1=thickness
     cv2.line(image, (0, DIM), (DIM, 0), colors['blue'], 2)
     cv2.line(image, (DIM // 2, 0), (DIM // 2, DIM), colors['red'], 4)
     cv2.line(image, (0, DIM // 2), (DIM, DIM // 2), colors['yellow'], 8)
     show(image, 'lines')
 
+    # rects
     cv2.rectangle(image, (10,   50), ( 60, 300), colors['green'], 3) # 3=thick
     cv2.rectangle(image, (80,   50), (130, 300), colors['blue'], -1) # fill
     cv2.rectangle(image, (150,  50), (350, 100), colors['red'],  -1)
     cv2.rectangle(image, (150, 150), (350, 300), colors['cyan'], 10)
     show(image, 'rectangles')
 
+    # circles
+    image.fill(255) # all white
     cv2.circle(
         image, center=(50, 50), radius=20, color=colors['green'], thickness=3)
     cv2.circle(image, (100, 100), 50, colors['blue'], -1)
     cv2.circle(image, (200, 200), 60, colors['magenta'], 10)
     cv2.circle(image, (300, 300), 70, colors['cyan'], -1)
     show(image, 'circles')
-    
-    
-    
+
+    # text
+    cv2.putText(image,
+                'Mastering OpenCV4 with Python',
+                (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.9,        # fontScale
+                get_random_color(),
+                2,          # thickness
+                cv2.LINE_4) # lineType
+                            # bottomLeftOrigin=False (omitted)
+    cv2.putText(image,
+                'Mastering OpenCV4 with Python',
+                (10, 70),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.9,       # fontScale
+                get_random_color(),
+                2,
+                cv2.LINE_8)
+    cv2.putText(image,
+                'Mastering OpenCV4 with Python',
+                (10, 110),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.9,       # fontScale
+                get_random_color(),
+                2,
+                cv2.LINE_AA)
+    show(image, 'text')
+
+    # fonts
+    image.fill(255)
+    pos = [10, 30]
+    for i in range(8):
+        col = get_random_color()
+        cv2.putText(image,
+                    font_names[i],
+                    tuple(pos),
+                    fonts[i],
+                    1.1,
+                    col,
+                    2,
+                    cv2.LINE_AA)
+        pos[1] += 40
+        cv2.putText(image,
+                    font_names[i].lower(),
+                    tuple(pos),
+                    fonts[i],
+                    1.1,
+                    col,
+                    2,
+                    cv2.LINE_AA)
+        pos[1] += 40
+    show(image, 'fonts')
     
 
 if __name__ == '__main__':
