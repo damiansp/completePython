@@ -1,7 +1,7 @@
 import csv
 import os
 
-from constants import FieldTypes as FT
+from .constants import FieldTypes as FT
 
 
 class CSVModel:

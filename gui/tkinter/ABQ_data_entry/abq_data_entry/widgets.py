@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 import tkinter as tk
 from tkinter import ttk
 
-from constants import FieldTypes as FT
+from .constants import FieldTypes as FT
 
 
 class ValidatedMixin:
@@ -157,8 +157,8 @@ class ValidatedCombobox(ValidatedMixin, ttk.Combobox):
         # if user tries to delete, just clear field 
         if action == '0':
             self.set('')
-	          return True
-	      # get values list
+            return True
+        # get values list
         values = self.cget('values')
 	      # do case-insensitive match against entered text
         matching = [val for val in values
@@ -166,15 +166,15 @@ class ValidatedCombobox(ValidatedMixin, ttk.Combobox):
         if len(matching) == 0:
 	          valid = False
         elif len(matching) == 1:
-	          self.set(matching[0])
+            self.set(matching[0])
             self.icursor(tk.END)
             valid = False
-	      return valid
-
+        return valid
+    
     def _focusout_validate(self, **kwargs):
-	      valid = True
+        valid = True
         if not self.get():
-	          valid = False
+            valid = False
             self.error.set('A value is required')
         return valid
 
@@ -184,7 +184,7 @@ class ValidatedSpinbox(ValidatedMixin, tk.Spinbox):
             self, *args, min_var=None, max_var=None, focus_update_var=None,
 	          from_='-Infinity', to='Infinity', **kwargs):
         super().__init__(*args, from_=from_, to=to, **kwargs)
-	      self.resolution = Decimal(str(kwargs.get('increment', '1.0')))
+        self.resolution = Decimal(str(kwargs.get('increment', '1.0')))
         self.precision = self.resolution.normalize().as_tuple().exponent
         self.variable = kwargs.get('textvariable') or tk.DoubleVar()
         if min_var:
@@ -316,18 +316,18 @@ class LabelInput(tk.Frame):
         super().grid(sticky=sticky, **kwargs)
 
     def get(self):
-	      try:
-	          if self.variable:
+        try:
+            if self.variable:
                 return self.variable.get()
             elif type(self.input) == tk.Text:
-	              return self.input.get('1.0', tk.END)
+                return self.input.get('1.0', tk.END)
             else:
-	        return self.input.get()
+                return self.input.get()
         except (TypeError, tk.TclError): # if numeric fields are empty
             return ''
 
     def set(self, value, *args, **kwargs):
-	      if type(self.variable) == tk.BooleanVar:
+        if type(self.variable) == tk.BooleanVar:
             self.variable.set(bool(value))
         elif self.variable:
             self.variable.set(value, *args, **kwargs)
@@ -336,9 +336,9 @@ class LabelInput(tk.Frame):
                 self.input.select()
             else:
                 self.input.deselect()
-	      elif type(self.input) == tk.Text:
-	          self.input.delete('1.0', tk.END)
-	          self.input.insert('1.0', value)
+        elif type(self.input) == tk.Text:
+            self.input.delete('1.0', tk.END)
+            self.input.insert('1.0', value)
         else: # input mush be an Entry-type widget with no variable
             self.input.delete(0, tk.END)
             self.input.insert(0, value)

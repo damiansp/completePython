@@ -1,6 +1,6 @@
 from datetime import datetime
 import tkinter as tk
-from tkinter import tkk
+from tkinter import ttk
 
 from . import widgets as w
 
@@ -8,7 +8,7 @@ from . import widgets as w
 class DataRecordForm(tk.Frame):
     '''The input form for the widgets'''
     def __init__(self, parent, fields, *args, **kwargs):
-	      super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.inputs = {}
 
         record_info = tk.LabelFrame(self, text='Record Information')
@@ -27,16 +27,16 @@ class DataRecordForm(tk.Frame):
         self.inputs['Technician'].grid(row=0, column=2)
         self.inputs['Lab'] = w.LabelInput(record_info,
                                           'Lab',
-                                          field_spec=fields['Lab']
-	      self.inputs['Lab'].grid(row=1, column=0)
+                                          field_spec=fields['Lab'])
+        self.inputs['Lab'].grid(row=1, column=0)
         self.inputs['Plot'] = LabelInput(record_info,
 	                                       'Plot',
                                          field_spec=fields['Plot'])
         self.inputs['Plot'].grid(row=1, column=1)
-	      self.inputs['Seed sample'] = w.LabelInput(
+        self.inputs['Seed sample'] = w.LabelInput(
             record_info, 'Seed sample', input_var=tk.StringVar())
         self.inputs['Seed sample'].grid(row=1, column=2)
-	      record_info.grid(row=0, column=0, sticky=tk.W + tk.E)
+        record_info.grid(row=0, column=0, sticky=tk.W + tk.E)
 
         environment_info = tk.LabelFrame(self, text='Environment Data')
         self.inputs['Humidity'] = LabelInput(environment_info,
