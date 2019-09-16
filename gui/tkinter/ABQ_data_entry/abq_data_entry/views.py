@@ -29,9 +29,9 @@ class DataRecordForm(tk.Frame):
                                           'Lab',
                                           field_spec=fields['Lab'])
         self.inputs['Lab'].grid(row=1, column=0)
-        self.inputs['Plot'] = LabelInput(record_info,
-	                                       'Plot',
-                                         field_spec=fields['Plot'])
+        self.inputs['Plot'] = w.LabelInput(record_info,
+	                                   'Plot',
+                                           field_spec=fields['Plot'])
         self.inputs['Plot'].grid(row=1, column=1)
         self.inputs['Seed sample'] = w.LabelInput(
             record_info, 'Seed sample', input_var=tk.StringVar())

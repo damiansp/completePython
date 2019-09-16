@@ -298,7 +298,7 @@ class LabelInput(tk.Frame):
                 input_args['values'] = field_spec.get('inc')
         else:
             self.variable = input_var
-        if input_class in (ttk.Checkbutton, ttk.Button, ttk.RadioButton):
+        if input_class in (ttk.Checkbutton, ttk.Button, ttk.Radiobutton):
             input_args['text'] = label
             input_args['variable'] = self.variable
         else:

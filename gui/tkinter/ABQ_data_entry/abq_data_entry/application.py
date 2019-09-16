@@ -6,7 +6,7 @@ from . import models as m
 from . import views as v
 
 
-class Application:
+class Application(tk.Tk):
     '''Application root window'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
