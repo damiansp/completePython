@@ -40,7 +40,7 @@ def show(img, title):
 
 
 def main():
-    DIM = 800
+    DIM = 1200
     image = np.zeros((DIM, DIM, 3), dtype='uint8')
     image[:] = colors['light_grey']
     show(image, 'just grey')
@@ -120,6 +120,46 @@ def main():
                     cv2.LINE_AA)
         pos[1] += 40
     show(image, 'fonts')
+
+    # More text-related functions
+    image.fill(255)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 2.5
+    thickness = 5
+    text = 'abcdefghijklmnopqrstuvwxyz'
+    radius = 10
+
+    # Get size of text
+    ret, baseline = cv2.getTextSize(text, font, font_scale, thickness)
+    # Width and height
+    text_width, text_height = ret
+    # Center text in image
+    text_x = int(round((image.shape[1] - text_width) / 2)) 
+    text_y = int(round((image.shape[0] - text_height) / 2)) # y is 0?
+    # Draw center point for ref
+    cv2.circle(image, (text_x, text_y), radius, get_random_color(), -1)
+    # Bounding box for text
+    cv2.rectangle(image,
+                  (text_x, text_y + baseline),
+                  (text_x + text_width - thickness, text_y - text_height),
+                  get_random_color(),
+                  thickness)
+    # Draw baseline
+    cv2.line(
+        image,
+        (text_x, text_y + int(round(thickness / 2))),
+        (text_x + text_width - thickness, text_y + int(round(thickness / 2))),
+        get_random_color(),
+        thickness)
+    # Write the text
+    cv2.putText(image,
+                text,
+                (text_x, text_y),
+                font, font_scale,
+                get_random_color(),
+                thickness)
+    show(image, 'Text params')
+    
     
 
 if __name__ == '__main__':
