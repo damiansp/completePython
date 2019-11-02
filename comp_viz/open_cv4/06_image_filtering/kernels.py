@@ -14,3 +14,11 @@ smooth_image_gb = cv2.GaussianBlur(image, (9, 9), 0)
 
 # Median filtering
 smooth_image_mb = cv2.medianBlur(image, 9)
+
+# Bilateral filtering (noise reduction with sharp edges)
+smooth_image_bf = cv2.bilateralFilter(image, 5, 10, 10)
+
+
+# Image Sharpening
+smoothed = cv2.GaussianBlur(image, (9, 9), 10)
+unsharped = cv2.addWeighted(image, 1.5, smoothed, -0.5, 0)
