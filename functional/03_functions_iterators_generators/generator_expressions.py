@@ -1,3 +1,5 @@
+import csv
+import itertools
 import math
 
 
@@ -40,3 +42,17 @@ print(pfactorsl(1560))
 print(list(pfactorsl(1560)))
                 
                                    
+def limits(iterable):
+    max_tee, min_tee = itertools.tee(iterable, 2)
+    return max(max_tee), min(min_tee)
+
+
+# Combining generator expressions
+# g_f_x = (g(f(x)) for x in range(...))
+# g_f_x = (g(y) for y in (f(x) for x in range(...)))
+
+def row_iter(source):
+    return csv.reader(source, delimiter='\t')
+
+with open('Anscombe.txt') as source:
+    print(list(row_iter(source)))
