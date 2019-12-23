@@ -90,3 +90,19 @@ with open('Anscombe.txt') as source:
     s4 = tuple(series(3, data))
 
 print(s4)
+
+
+for subset in s1, s2, s3, s4:
+    s_mean = sum(float(pair.y) for pair in subset) / len(subset)
+    print('s mean:', s_mean)
+
+
+# Stateful Mappings
+Color = namedtuple('Color', ('red', 'green', 'blue', 'name'))
+sequence = (Color(red=239, green=222, blue=205, name='Almond'),
+            Color(red=205, green=149, blue=117, name='Antique Brass'),
+            Color(red=253, green=217, blue=181, name='Apricot'),
+            Color(red=197, green=227, blue=132, name='Yellow Green'),
+            Color(red=255, green=174, blue= 66, name='Yellow Orange'))
+name_map = {c.name: c for c in sequence}
+print(name_map)
