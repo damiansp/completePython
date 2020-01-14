@@ -33,7 +33,7 @@ def pick_lat_lon(lon, lat, alt):
     return lat, lon
 
 
-def la_lon_kml(row_iter):
+def lat_lon_kml(row_iter):
     return (pick_lat_lon(*row) for row in row_iter)
 
 
@@ -45,3 +45,20 @@ with urllib.request.urlopen('file:./Winter%202012-2013.kml') as source:
 
 
 # Pairing up items from a sequence
+def pairs(iterable):
+    def pair_from(head, iterable_tail):
+        nxt = next(iterable_tail)
+        yield head, nxt
+        yield from pair_from(nxt, iterable_tail)
+    try:
+        return pair_from(next(iterable), iterable)
+    except StopIteration:
+        return
+
+
+def legs(lat_lon_iter):
+    begin = next(lat_lon_iter)
+    for end in lat_lon_iter:
+        yield begin, end
+        begin = end
+
