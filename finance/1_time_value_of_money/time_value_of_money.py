@@ -40,6 +40,16 @@ if __name__ == '__main__':
     rate = 0.2
     print('Value 2 years ago:', get_value_at_time(value, -2, rate))
     print('Value 2 years from now:', get_value_at_time(value, 2, rate))
+    value = 500000
+    rate = 0.1
+    t = -40
+    print(
+        f'Inheritance is worth ${get_value_at_time(value, t, rate):.2f} today')
+    bond_payout = 1_000_000
+    rate = 0.04
+    t = -5
+    print(
+        f'Value of bond today: ${get_value_at_time(bond_payout, t, rate):,.2f}')
 
     # How much must you save today to be able to withdraw $100 at the end of
     # each of the next 20 years, given 5% interest?
