@@ -1,4 +1,5 @@
 from collections.abc import MutableMapping
+from typing import Dict, MutableMapping as MM
 
 
 votes = {'otter': 1281, 'polar bear': 587, 'fox': 863}
@@ -71,3 +72,14 @@ def get_winner_faster(ranks):
 #get_winner_faster(sorted_ranks) # throws error
 
 
+def populate_ranks_annotated(
+        votes: Dict[str, int], ranks: Dict[str, int]) -> None:
+    names = list(vote.keys())
+    names.sort(key=votes.get, reverse=True)
+    for i, name in enumerate(names, 1):
+        ranks[name] = i
+
+def get_winner_annotated(ranks: Dict[str, int]) -> str:
+    return next(iter(ranks))
+
+# ...
