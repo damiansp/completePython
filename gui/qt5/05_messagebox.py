@@ -17,16 +17,19 @@ class App(QWidget):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        button_reply = QMessageBox.question(self,
-                                            'Box Header',
-                                            'Do you like me?',
-                                            QMessageBox.Yes | QMessageBox.No,
-                                            QMessageBox.No)
-        if button_reply == QMessageBox.Yes:
-            print('You like me!')
-        else:
-            print('Aw, nobody likes me.')
-        
+        button_reply = QMessageBox.question(
+            self,
+            'Box Header',
+            'Do you like me?',
+            QMessageBox.Cancel | QMessageBox.No |  QMessageBox.Yes,
+            QMessageBox.Cancel)
+        print (
+            {
+                QMessageBox.Yes: 'You like me!',
+                QMessageBox.No: 'Aw, nobody likes me.',
+                QMessageBox.Cancel: "Can't decide, huh?"
+            }[button_reply])
+                
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
