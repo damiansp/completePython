@@ -3,10 +3,7 @@ import sys
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (
-    QApplication, 
-    QDialog, QGroupBox, QHBoxLayout, QPushButton, #QTabWidget,
-    QVBoxLayout#, QWidget, QMainWindow)
-)
+    QApplication, QDialog, QGroupBox, QHBoxLayout, QPushButton, QVBoxLayout)
 
 class App(QDialog):
     def __init__(self):
