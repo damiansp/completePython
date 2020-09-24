@@ -64,3 +64,32 @@ def run_mod(it):
         transmit(out)
 
 run_mod(wave_mod(12))
+
+
+def complex_wave():
+    yield from wave(7., 3)
+    yield from wave(2., 4)
+    yield from wave(10., 5)
+
+run(complex_wave())
+
+
+def complex_wave_mod():
+    yield from wave_mod(3)
+    yield from wave_mod(4)
+    yield from wave_mod(5)
+
+#run(complex_wave_mod()) # Err
+
+
+def wave_cascading(amp_it, steps):
+    step_size = 2 * math.pi / steps
+    for step in range(steps):
+        rad = step * step_size
+        frac = math.sin(rad)
+        amp = next(amp_it)
+        out = amp * frac
+        yield out
+
+
+    
