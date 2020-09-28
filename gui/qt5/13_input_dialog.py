@@ -1,12 +1,7 @@
 #! /usr/bin/env python3
 import sys
 
-#from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import (
-    QApplication, #QDialog, QGridLayout, QGroupBox,
-    QInputDialog,
-    QLineEdit, #QPushButton, QVBoxLayout
-    QWidget)
+from PyQt5.QtWidgets import QApplication, QInputDialog, QLineEdit, QWidget
 
 
 class App(QWidget):
