@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import make_response
 
 
 app = Flask(__name__)
@@ -12,3 +13,10 @@ def index():
 @app.route('/user/<name>')
 def user(name):
     return f'<h1>Hello, {name}!</h1>'
+
+
+@app.route('/set_cookie')
+def set_cookie():
+    resp = make_response('<h1>This page sets a cookie!</h1>')
+    resp.set_cookie('answer', '42')
+    return resp
