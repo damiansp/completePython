@@ -92,4 +92,18 @@ def wave_cascading(amp_it, steps):
         yield out
 
 
+def complex_wave_cascading(amp_it):
+    yield from wave_cascading(amp_it, 3)
+    yield from wave_cascading(amp_it, 4)
+    yield from wave_cascading(amp_it, 5)
+
+
+def run_cascading():
+    amps = [7, 7, 7, 2, 2, 2, 2, 10, 10, 10, 10, 10]
+    it = complex_wave_cascading(iter(amps))
+    for amp in amps:
+        output = next(it)
+        transmit(output)
+
+run_cascading()
     
