@@ -57,7 +57,7 @@ def announce(remaining):
 
     
 def run():
-    it = timer(8)
+    it = timer(5)
     while True:
         try:
             if should_reset():
@@ -68,5 +68,28 @@ def run():
             break
         else:
             announce(current)
+
+run()
+
+
+class Timer:
+    def __init__(self, period):
+        self.current = period
+        self.period = period
+
+    def reset(self):
+        self.current = self.period
+
+    def __iter__(self):
+        while self.current:
+            self.current -= 1
+            yield self.current
+
+def run():
+    timer = Timer(4)
+    for current in timer:
+        if should_reset():
+            timer.reset()
+        announce(current)
 
 run()
