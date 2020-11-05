@@ -60,3 +60,18 @@ print('Modulo:', list(mod_reduce)) # [1 3 6 10 15 1 8 16 5 15]
 # 1 2
 #   3 -> 3; + 3 = 6 -> 6; + 4 = 10 -> 10; + 5 = 15 -> 15; +6 = 21 % 20 = 1...
 
+single = itertools.product([1, 2], repeat=2)
+print('Single:', list(single)) # [(1 1) (1 2) (2 1) (2 2)]
+
+multiple = itertools.product([1, 2], ['a', 'b'])
+print('Multiple:', list(multiple)) # [(1 a) (1 b) (2 a) (2 b)]
+
+it = itertools.permutations([1, 2, 3], 2)
+print(list(it)) # [(1 2) (1 3) (2 1) (2 3) (3 1) (3 2)]
+
+it = itertools.combinations([1, 2, 3, 4], 2)
+print(list(it)) # [(1 2) (1 3) (1 4) (2 3) (2 4) (3 4)]
+
+it = itertools.combinations_with_replacement([1, 2, 3], 2)
+print(list(it)) # [(1 1) (1 2) (1 3) (2 2) (2 3) (3 3)]
+
