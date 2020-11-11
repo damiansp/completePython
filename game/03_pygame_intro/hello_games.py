@@ -8,6 +8,9 @@ from   pygame.locals import QUIT
 IMG = '../images'
 BKG = f'{IMG}/sushiplate.jpg'
 MOUSE = f'{IMG}/fugu.png'
+WINDOW_DIMS = 640, 480
+FLAGS = 0
+COLOR_BITS = 32
 
 
 def main():
@@ -17,7 +20,7 @@ def main():
 
 def init():
     pygame.init()
-    screen = pygame.display.set_mode((640, 480), 0, 32)
+    screen = pygame.display.set_mode(WINDOW_DIMS, FLAGS, COLOR_BITS)
     pygame.display.set_caption('Hello, Pygame!')
     bkg = pygame.image.load(BKG).convert()
     mouse_cursor = pygame.image.load(MOUSE).convert_alpha()
