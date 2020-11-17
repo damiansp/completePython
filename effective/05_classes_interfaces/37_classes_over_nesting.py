@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
 
 class SimpleGradebook:
@@ -91,4 +91,54 @@ book.report_grade('Al', 'PE', 85, 0.6)
 print(book.get_average_grade('Al'))
 
 
+Grade = namedtuple('Grade', ('score', 'weight'))
+
+class Subject:
+    def __init__(self):
+        self._grades = []
+
+    def report_grade(self, score, weight):
+        self._grades.append(Grade(score, weight))
+
+    def get_mean_grade(self):
+        total, total_weight = 0, 0
+        for grade in self._grades:
+            total += grade.score * grade.weight
+            total_weight += grade.weight
+        return total / total_weight
+
+
+class Student:
+    def __init__(self):
+        self._subjects = defaultdict(Subject)
+
+    def get_subject(self, name):
+        return self._subjects[name]
+
+    def get_mean_grade(self):
+        total, count = 0, 0
+        for subject in self._subjects.values():
+            total += subject.get_mean_grade()
+            count += 1
+        return total / count
+
+
+class Gradebook:
+    def __init__(self):
+        self._students = defaultdict(Student)
+
+    def get_student(self, name):
+        return self._students[name]
+
+
+book = Gradebook()
+al = book.get_student('Al')
+math = al.get_subject('Math')
+math.report_grade(75, 0.05)
+math.report_grade(65, 0.15)
+math.report_grade(70, 0.7)
+gym = al.get_subject('Gym')
+gym.report_grade(100, 0.4)
+gym.report_grade(88, 0.6)
+print(al.get_mean_grade())
 
