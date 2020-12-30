@@ -1,0 +1,36 @@
+from random import randint
+from sys import exit
+
+import pygame
+from pygame.locals import QUIT
+
+
+SCREEN = (640, 480)
+FLAGS = 0
+COLOR_BITS = 32
+
+
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode(SCREEN, FLAGS, COLOR_BITS)
+    run(screen)
+
+    
+def run(screen):
+    while True:
+        handle_events()
+        x, y  = pygame.mouse.get_pos()
+        screen.fill((255, 255, 255))
+        pygame.draw.ellipse(screen, (0, 255, 0), (0, 0, x, y))
+        pygame.display.update()
+
+
+def handle_events():
+    for e in pygame.event.get():
+        if e.type == QUIT:
+            pygame.quit()
+            exit()
+
+
+if __name__ == '__main__':
+    main()
