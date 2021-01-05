@@ -11,7 +11,6 @@ print(df)
 pd.to_pickle(df, 'dummy.pkl')
 unpickled = pd.read_pickle('dummy.pkl')
 print(unpickled)
-
 os.remove('dummy.pkl')
 
 
