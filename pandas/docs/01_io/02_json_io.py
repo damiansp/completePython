@@ -59,3 +59,12 @@ print(res)
 data = {'A': [1, 2]}
 dfd = pd.json_normalize(data, 'A', record_prefix='pref_')
 print(dfd)
+
+
+# build table schema
+df = pd.DataFrame({'A': [1, 2, 3],
+                   'B': ['a', 'b', 'c'],
+                   'C': pd.date_range('2016-01-01', freq='d', periods=3)},
+                  index=pd.Index(range(3), name='idx'))
+schema = pd.io.json.build_table_schema(df)
+print(schema)
