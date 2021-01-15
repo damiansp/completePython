@@ -18,11 +18,6 @@ __pycache__
 raw_notebooks/
 
 
-# Django
-#------------------------
-settings.py
-
-
 # File types
 #------------------------
 *.bin
