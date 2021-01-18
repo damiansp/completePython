@@ -21,9 +21,11 @@ def main():
 class Game:
     def __init__(self):
         self.screen = pygame.display.set_mode(SCREEN, FLAGS, COLOR_BITS)
+        self.clock = pygame.time.Clock()
         self.bkg = pygame.image.load(BKG).convert()
         self.sprite = pygame.image.load(SPRITE)
         self.x = 0 # x-coord of sprite
+        self.speed = 250 # px/s
                 
     def run(self):
         while True:
@@ -41,7 +43,10 @@ class Game:
         # speed of animation will depend on speed of processor
         self.screen.blit(self.bkg, (0, 0))
         self.screen.blit(self.sprite, (self.x, 100))
-        self.x += 1
+        time_passed = self.clock.tick()
+        time_passed_s = time_passed / 1000.
+        dist_moved = time_passed_s * self.speed
+        self.x += dist_moved
         if self.x > SCREEN[0]: # off screen
             self.x -= (SCREEN[0] + 100) # reset
 
