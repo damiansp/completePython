@@ -128,3 +128,36 @@ print(X.attr) # 100
 
 
 
+class Base:
+    attr = 100
+
+
+class X(Base):
+    pass
+
+
+class Y(Base):
+    pass
+
+
+print(X.attr, Y.attr) # 100, 100
+
+
+
+def attr100_decorator(cls):
+    class NewClass(cls):
+        attr = 100
+    return NewClass
+
+
+@attr100_decorator
+class W:
+    pass
+
+@attr100_decorator
+class Z:
+    pass
+
+print(W.attr, Z.attr) # 100, 100
+
+
