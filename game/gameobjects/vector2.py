@@ -6,7 +6,18 @@ class Vector2:
         self.x = x
         self.y = y
         self._magnitude = self._calculate_magnitude()
+        if hasattr(x, '__getitem__'):
+            x, y = x
+            self._v = [float(x), float(y)]
+        else:
+            self._v = [float(x), float(y)]
 
+    def __getitem__(self, index):
+        return self._v[index]
+
+    def __setitem__(self, index, val):
+        self._v[index] = 1. * val
+        
     @property
     def magnitude(self):
         return self._magnitude
