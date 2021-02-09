@@ -1,16 +1,50 @@
-import math
+from math import sqrt
+
+from .util import format_number
 
 
 class Vector2:
-    def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
-        self._magnitude = self._calculate_magnitude()
+    __slots__ = ('_v',)
+    _gameobjects_vector = 2
+    
+    def __init__(self, x=0., y=0.):
+        '''
+        Initialize a vector
+        Args:
+          - x (number): x-component
+          - y (number): y-component
+        '''
         if hasattr(x, '__getitem__'):
             x, y = x
             self._v = [float(x), float(y)]
         else:
             self._v = [float(x), float(y)]
+        #self._magnitude = self._get_length()
+
+    def _get_length(self):
+        x, y = self._v
+        return sqrt(x**2 + y**2)
+
+    def _set_length(self, length):
+        v = self._v
+        try:
+            x, y = v
+            l = length / sqrt(x**2 + y**2)
+        except ZeroDivisionError:
+            v[0] = 0.
+            v[1] = 0.
+            return self
+        v[0] *= l
+        v[1] *= l
+
+    length = property(_get_length, _set_length, None, 'Length of the vector')
+
+    @classmethod
+    def from_floats(cls, x, y):
+        vec = cls.__new__(cls, object)
+        vec._v = [x, y]
+        return vec
+    
 
     def __getitem__(self, index):
         return self._v[index]
@@ -21,9 +55,6 @@ class Vector2:
     @property
     def magnitude(self):
         return self._magnitude
-
-    def _calculate_magnitude(self):
-        return math.sqrt(self.x**2 + self.y**2)
 
     def __str__(self):
         return f'({self.x}, {self.y})'
