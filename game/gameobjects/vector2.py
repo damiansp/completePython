@@ -44,74 +44,58 @@ class Vector2:
         vec = cls.__new__(cls, object)
         vec._v = [x, y]
         return vec
-    
 
-    def __getitem__(self, index):
-        return self._v[index]
+    @classmethod
+    def from_iter(cls, iterable):
+        '''
+        Create a Vector2 object from an iterable.
+        Args:
+          iterable (iterable): iterable of length >= 2
+        '''
+        next = iter(iterable).__next__
+        vec = cls.__new__(cls, object)
+        vec._v = [float(next()), float(next())]
 
-    def __setitem__(self, index, val):
-        self._v[index] = 1. * val
-        
-    @property
-    def magnitude(self):
-        return self._magnitude
+    @classmethod
+    def from_points(cls, p1, p2):
+        '''
+        Create a Vector2 object between 2 points
+        Args:
+          p1, p2 (arraylike): points
+        '''
+        v = cls.__new__(cls, object)
+        x, y = p1
+        xx, yy = p2
+        v._v = [float(xx - x), float(yy - y)]
 
-    def __str__(self):
-        return f'({self.x}, {self.y})'
+    @classmethod
+    def _from_float_sequence(cls, seq):
+        v = cls.__new__(cls, object)
+        v._v = list(seq[:2])
+        return v
 
-    def from_points(p1, p2):
-        return Vector2(p2[0] - p1[0], p2[1] - p1[1])
+    def copy(self):
+        vec = self.__new__(self.__class__, object)
+        vec._v = self._v[:]
+        return vec
 
-    def normalize(self):
-        self.x /= self._magnitude
-        self.y /= self._magnitude
-        self._magnitude = self._calculate_magnitude()
+    def get_x(self):
+        return self._v[0]
 
-    def __add__(self, other):
-        return Vector2(self.x + other.x, self.y + other.y)
+    def set_x(self, x):
+        try:
+            self._v[0] = 1. * x
+        except:
+            raise TypeError('Must be a number')
 
-    def __sub__(self, other):
-        return Vector2(self.x - other.x, self.y - other.y)
+    def get_y(self):
+        return self._v[1]
 
-    def __neg__(self):
-        return Vector2(-self.x, -self.y)
+    def set_y(self, y):
+	      try:
+            self._v[1] = 1. * y
+	      except:
+            raise TypeError('Must be a number')
 
-    def __mul__(self, scalar):
-        return Vector2(scalar * self.x, scalar * self.y)
-
-    def __truediv__(self, scalar):
-        return Vector2(self.x / scalar, self.y / scalar)
-
-
-if __name__ == '__main__':
-    A = (10., 20.)
-    B = (30., 35.)
-    C = (15., 45.)
-
-    def test_from_points():
-        AB = Vector2.from_points(A, B)
-        print(AB)
-        print('Magnitude:', AB.magnitude)
-
-    def test_normalize():
-        AB = Vector2.from_points(A, B)
-        print(AB)
-        print('Magnitude:', AB.magnitude)
-        AB.normalize()
-        print(AB)
-        print('Magnitude:', AB.magnitude)
-
-    def test_add():
-        AB = Vector2.from_points(A, B)
-        BC = Vector2.from_points(B, C)
-        AC = Vector2.from_points(A, C)
-        print('AC:', AC)
-        AC = AB + BC
-        print('AB + BC =', AC)
-        
-    def run_tests():
-        #test_from_points()
-        #test_normalize()
-        test_add()
-
-    run_tests()
+    x = property(get_x, set_x, None, 'x component')
+    Y = property(get_Y, set_Y, None, 'y component')
