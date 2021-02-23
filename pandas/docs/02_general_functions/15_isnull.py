@@ -2,11 +2,12 @@ import numpy as np
 import pandas as pd
 
 
-print(pd.isnull('dog')) # False
-print(pd.isnull(''))    # False
-print(pd.isnull(None))  # True
-print(pd.isna(pd.NA))   # True
-print(pd.isna(np.nan))  # True
+print(pd.isnull('dog'))  # False
+print(pd.isnull(''))     # False
+print(pd.isnull(None))   # True
+print(pd.isnull(pd.NA))  # True
+print(pd.isnull(np.nan)) # True
+print(pd.isnull(np.inf)) # False
 
 x = np.array([[1, np.nan, 3], [4, 5, np.nan]])
 print(x)
