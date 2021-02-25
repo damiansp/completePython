@@ -98,4 +98,46 @@ class Vector2:
             raise TypeError('Must be a number')
 
     x = property(get_x, set_x, None, 'x component')
-    Y = property(get_Y, set_Y, None, 'y component')
+    y = property(get_y, set_y, None, 'y component')
+
+
+    def __str__(self):
+        x, y = self._v
+        return f'({x}, {y})'
+
+    def __repr__(self):
+        x, y = self._v
+        return f'Vector2({x}, {y})'
+
+    def __iter__(self):
+        return iter(self._v[:])
+
+    def __len__(self):
+        return 2
+
+    def __getitem__(self, index):
+        '''Gets component as though the vector were a list'''
+        try:
+            return self._v[index]
+        except IndexError:
+            raise IndexError('Index can only be 0 or 1 for Vector2 objects')
+
+    def __setitem__(self, index, value):
+        '''Set a component as though vector were a list'''
+        try:
+            self._v[index] = 1. * value
+        except IndexError:
+            raise IndexError('Index can only be 0 or 1 for Vector2 objects')
+        except TypeError:
+            raise TypeError('Vector2 elements must be numbers')
+
+    def __eq__(self, other):
+        x, y = self._v
+        xx, yy = other._v
+        return x == xx and y == yy
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        
