@@ -60,4 +60,65 @@ class MyStringClass:
 foo = MyStringClass(5)
 print(foo.get_val()) # '5'
 
+
 # not good for subclassing...
+class MyIntegerSubclass(MyStringClass):
+    def get_val(self):
+        return int(self._MyStringClass__val)
+
+foo = MyIntegerSubclass('5')
+print(foo.get_val()) # '5'
+
+
+class MyBaseClass:
+    def __init__(self, val):
+        self.__val = val
+
+    def get_val(self):
+        return self.__val
+
+
+class MyStringClass(MyBaseClass):
+    def get_val(self):
+        return str(super().get_val()) # updated :)
+
+    
+class MyIntSubclass(MyStringClass):
+    def get_val(self):
+        return int(self._MyStringClass__val) # not updated :(
+
+
+class APIClass:
+    def __init__(self):
+        self._val = 5 # protected
+
+    def get(self):
+        return self._val
+
+
+class Child(APIClass):
+    def __init__(self):
+        super().__init__()
+        self._val = 'hello' # conflicts!
+
+
+a = Child()
+print(f'We want {a.get()} and {a._val} to be different, but...') # both 'hello'
+
+
+class APIClass:
+    def __init__(self):
+        self.__val = 5 # private
+
+    def get(self):
+        return self.__val
+
+
+class Child(APIClass):
+    def __init__(self):
+        super().__init__()
+        self._val = 'hello' # protected (does not overwrite private)
+
+
+a = Child()
+print(f'We want {a.get()} and {a._val} to be different...') # 5, hello
