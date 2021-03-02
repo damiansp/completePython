@@ -140,4 +140,38 @@ class Vector2:
         return not self.__eq__(other)
 
     def __hash__(self):
-        
+        return hash(self._v)
+
+    def __add__(self, other):
+        x, y = self._v
+        xx, yy = other
+        return Vector2.from_floats(x + xx, y + yy)
+
+    def __iadd__(self, other):
+        '''in-place'''
+        xx, yy = other
+        v = self._v
+        v[0] += xx
+        v[1] += yy
+        return self
+
+    def __radd__(self, other):
+        return other + self
+
+    def __sub__(self, other):
+        x, y = self._v
+        xx, yy = other
+        return Vector2.from_floats(x - xx, y - yy)
+
+    def __isub__(self, other):
+        '''in-place'''
+        xx, yy = other
+        v = self._v
+        v[0] -= xx
+        v[1] -= yy
+        return self
+
+    def __rsub__(self, other):
+        return other - self
+
+    
