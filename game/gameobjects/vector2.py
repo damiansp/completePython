@@ -174,4 +174,27 @@ class Vector2:
     def __rsub__(self, other):
         return other - self
 
+    def __mul__(self, other):
+        '''Multiply with a scalar or a vector-list'''
+        x, y = self._v
+        if hasattr(other, '__getitem__'):
+            xx, yy = other
+            return Vector2.from_floats(x * xx, y * yy)
+        return Vector2.from_floats(x * other, y * other)
+
+    def __imul__(self, other):
+        '''in-place'''
+        v = self._v
+        if hasattr(other, '__getitem__'):
+            xx, yy = other
+            v[0] *= xx
+            v[1] *= yy
+        else:
+            v[0] *= other
+            v[1] *= other
+        return self
+
+    def __rmul__(self, other):
+        return other * self
+
     
