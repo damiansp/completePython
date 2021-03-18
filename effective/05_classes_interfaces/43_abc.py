@@ -1,3 +1,6 @@
+from collections.abc import Sequence
+
+
 class FreqList(list):
     def __init__(self, members):
         super().__init__(members)
@@ -73,4 +76,56 @@ print('Index 1:', tree[1])
 #print('Index -1:', tree[-1]) # not implemented
 print('11 in tree:', 11 in tree)
 print('17 in tree:', 17 in tree)
+
+# but...
+# len(tree) # TypeError, must add __len__
+
+
+class SequenceNode(IndexableNode):
+    def __len__(self):
+        for count, _ in enumerate(self._traverse(), 1):
+            pass
+        return count
+
+    
+tree = SequenceNode(
+    10,
+    left=SequenceNode(
+        5,
+        left=SequenceNode(2),
+        right=SequenceNode(
+            6,
+            right=SequenceNode(7))),
+    right=SequenceNode(
+        15,
+        left=SequenceNode(11)))
+
+print('Tree length:', len(tree))
+
+
+#class BadType(Sequence):
+#    pass
+
+#foo = BadType() # TypeError Can't instantiate abstract class BadType with
+#                # abstract methods __getitem__, __len__
+
+
+class BetterNode(SequenceNode, Sequence):
+    pass
+
+tree = BetterNode(
+    10,
+    left=BetterNode(
+        5,
+        left=BetterNode(2),
+        right=BetterNode(
+            6,
+            right=BetterNode(7))),
+    right=BetterNode(
+        15,
+        left=BetterNode(11)))
+
+print('Index of 7:', tree.index(7))
+print('Count of 10:', tree.count(10))
+
 
