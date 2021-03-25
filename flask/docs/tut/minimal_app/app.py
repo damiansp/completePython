@@ -2,7 +2,7 @@
 # > export FLASK_APP=app.py
 # > flask run 
 from flask import (
-    Flask, make_response, redirect, render_template, request, url_for)
+    Flask, jsonify, make_response, redirect, render_template, request, url_for)
 from markupsafe import escape
 from werkzeug.utils import secure_filename
 
@@ -33,7 +33,10 @@ def abort_example():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('page_not_found.html'), 404
+    #return render_template('page_not_found.html'), 404
+    resp = make_response(render_template('error.html'), 404)
+    resp.headers['X-Something'] = 'A value'
+    return resp
 
 
 @app.route('/hello/')
@@ -75,6 +78,20 @@ def show_post(post_id):
 @app.route('/path/<path:subpath>')
 def show_subpath(subpath):
     return f'Subpath {escape(subpath)}'
+
+
+# APIs with JSON
+@app.route('/me')
+def me_api():
+    user = get_current_user()
+    return {'username': user.username,
+            'theme': user.theme,
+            'image': url_for('user_image', filename=user.image)}
+
+@app.route('/users')
+def users_api():
+    users = get_all_users()
+    return jsonify([user.to_json() for user in users])
 
 
 with app.test_request_context():
