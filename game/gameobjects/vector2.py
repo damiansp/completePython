@@ -197,4 +197,34 @@ class Vector2:
     def __rmul__(self, other):
         return other * self
 
-    
+    def __div__(self, other):
+        '''Divide by scalar or pairwise'''
+        x, y = self._v
+        if hasattr(other, '__getitem__'):
+            xx, yy = other
+            return Vector2.from_floats(x / xx, y / yy)
+        return Vector2.from_floats(x / other, y / other)
+
+    def __idiv__(self, other):
+        '''in-place'''
+        v = self._v
+        if hasattr(other, '__getitem__'):
+            xx, yy = other
+            v[0] /= xx
+            v[1] /= yy
+        else:
+            v[0] /= other
+            v[1] /= other
+        return self
+
+    def __rdiv__(self, other):
+        x, y = self._v
+        if hasattr(other, '__getitem__'):
+            xx, yy = other
+        else:
+            xx = yy = other
+        return self.from_floats(xx / x, yy / y)
+
+    def __neg__(self):
+        
+            
