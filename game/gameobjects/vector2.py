@@ -226,5 +226,30 @@ class Vector2:
         return self.from_floats(xx / x, yy / y)
 
     def __neg__(self):
-        
+        x, y = self._v
+        return Vector2.from_floats(-x, -y)
+
+    def __pos__(self):
+        return self.copy()
+
+    def __bool__(self):
+        x, y = self._v
+        return bool(x or y)
+
+    def __call__(self, keys):
+        '''
+        Args
+        keys (str): string containing a list of component names
+        Ex.
+          vec = Vector(1, 2)
+          vec('yx')
+        '''
+        ord_x = ord('x')
+        v = self._v
+        return tuple(v[ord(c) - ord_x] for c in keys)
+
+    def as_tuple(self):
+        return tuple(self._v)
             
+
+    def get_length(self);
