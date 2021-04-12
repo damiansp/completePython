@@ -69,4 +69,37 @@ r3 = BoundedResistor(1e3)
 r3.ohms = 1e5 
 
 
+# r4 = BoundedResistor(-7) # ValueError
+
+
+class FixedResistor(Resistor):
+    def __init__(self, ohms):
+        super().__init__(ohms)
+
+    @property
+    def ohms(self):
+        return self._ohms
+
+    @ohms.setter
+    def ohms(self, ohms):
+        if hasattr(self, '_ohms'):
+            raise AttributeError('Ohms is immutable')
+        self._ohms = ohms
+
+
+r5 = FixedResistor(1e3)
+#r5.ohms = (2e3) # AttributeError
+
+
+# Don't do this
+class MysteriousResistor(Resistor):
+    @property
+    def ohms(self):
+        self.voltage = self._ohms * self.current # unexpected
+        return self._ohms
+
+    @ohms.setter
+    def ohms(self, ohms):
+        self._ohms = ohms
+
 
