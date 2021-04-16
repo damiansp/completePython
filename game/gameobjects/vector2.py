@@ -1,7 +1,5 @@
 from math import sqrt
 
-from .util import format_number
-
 
 class Vector2:
     __slots__ = ('_v',)
@@ -67,6 +65,7 @@ class Vector2:
         x, y = p1
         xx, yy = p2
         v._v = [float(xx - x), float(yy - y)]
+        return v
 
     @classmethod
     def _from_float_sequence(cls, seq):
@@ -92,9 +91,9 @@ class Vector2:
         return self._v[1]
 
     def set_y(self, y):
-	      try:
+        try:
             self._v[1] = 1. * y
-	      except:
+        except:
             raise TypeError('Must be a number')
 
     x = property(get_x, set_x, None, 'x component')
@@ -252,4 +251,41 @@ class Vector2:
         return tuple(self._v)
             
 
-    def get_length(self);
+    def get_length(self):
+        x, y = self._v
+        return sqrt(x*x + y*y)
+
+    get_magnitude = get_length
+
+    def normalize(self):
+        v = self._v
+        x, y = v
+        mag = sqrt(x*x, y*y)
+        try:
+            v[0] /= mag
+            v[1] /= mag
+        except ZeroDivisionError:
+            v[0] = 0.
+            v[1] = 0.
+        return self
+
+    def get_normalized(self):
+        x, y = self._v
+        mag = sqrt(x*x + y*y)
+        return Vector2.from_floats(x / mag, y / mag)
+
+    def get_distance_to(self, other):
+        x, y = self._v
+        xx, yy = other
+        dx = xx - x
+        dy = yy - y
+        return sqrt(dx*dx + dy*dy)
+
+
+if __name__ == '__main__':
+    v1 = Vector2(3, 4)
+    print(v1('yx'))
+    print(Vector2.from_points((0, 0), (3, 4)))
+    
+        
+    
