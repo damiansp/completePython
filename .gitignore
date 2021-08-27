@@ -1,0 +1,43 @@
+# OS
+#------------------------
+.DS_Store
+.*~
+*~
+
+
+# Python
+#------------------------
+__pycache__
+*.pyc
+*.pkl
+
+
+# Jupyter
+#------------------------
+.ipynb_checkpoints/
+raw_notebooks/
+
+
+# File types
+#------------------------
+*.bin
+*.csv
+*.pdf
+*.png
+*.txt
+*.sqlite3
+keys.json
+
+
+# Dirs
+#------------------------
+images
+py_openGL_tut
+data/
+bookcode/
+.pytest_cache
+
+
+# Graph Files
+#------------------------
+*.graphml
