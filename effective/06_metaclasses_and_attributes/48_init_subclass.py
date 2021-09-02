@@ -97,3 +97,47 @@ class ValidateFilled(type):
 
 class Filled(metaclass=ValidateFilled):
     color = None # must be supplied by subclass
+
+
+#class RedPentagon(Filled, Polygon):
+#    color = 'red'
+#    sides = 5
+# TypeError: metaclass conflict: the metaclass of a derived class must be a
+# (non-strict) subclass of the metaclasses of all its bases
+# fix:
+
+class ValidatePoly(type):
+    def __new__(meta, name, bases, class_dict):
+        # only validate non-root classes
+        if not class_dict.get('is_root'):
+            if class_dict['sides'] < 3:
+                raise ValueError('Polygons need 3+ sides')
+        return type.__new__(meta, name, bases, class_dict)
+
+
+class Poly(metaclass=ValidatePoly):
+    is_root = True
+    sides = None # must be specified by subclasses
+
+
+class ValidatedFilledPoly(ValidatePoly):
+    def __new__(meta, name, bases, class_dict):
+        # Only validate non-root classes
+        if not class_dict.get('is_root'):
+            if class_dict['color'] not in ('red', 'green'):
+                raise ValueError('Fill color not supported')
+        return super().__new__(meta, name, bases, class_dict)
+
+
+class FilledPoly(Polygon, metaclass=ValidatedFilledPoly):
+    is_root = True
+    color = None # must be specified by subclass
+
+
+class GreenPentagon(FilledPoly):
+    color = 'green'
+    sides = 5
+
+
+greenie = GreenPentagon()
+assert isinstance(greenie, Polygon)
