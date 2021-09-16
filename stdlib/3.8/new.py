@@ -1,4 +1,5 @@
 from datetime import date
+from importlib.metadata import version, requires, files
 from math import cos, radians
 import re
 
@@ -73,3 +74,10 @@ theta = 30
 print(f'{theta=} {cos(radians(theta))=:.3f}')
 
     
+# New importlib.metadata module (metadata about 3rd party packages)
+print('Pandas version:')
+print(version('pandas'))
+print('Requires:')
+print(list(requires('pandas')))
+print('Files:')
+print(list(files('pandas'))[:10])
