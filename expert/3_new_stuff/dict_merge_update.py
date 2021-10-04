@@ -1,3 +1,6 @@
+from collections import ChainMap
+
+
 a1 = [1, 2, 3]
 a2 = [4, 5, 6]
 a = a1 + a2
@@ -32,7 +35,32 @@ print(xor) # {2, 3, 4}
 
 
 # 3.9+
-#d1 = {'a': 1, 'b': 2}
-#d2 = {'a': 10, 'c': 30}
+d1 = {'a': 1, 'b': 2}
+d2 = {'a': 10, 'c': 30}
 #upd = d1 | d2
 #print(upd)
+
+#d1 |= d2
+#print(d1)
+
+upd = {**d1, **d2} # d2 overwrites d1
+print(upd) 
+
+
+user_acct = {'iban': 'fwif9098wf98n', 'type': 'account'}
+user_profile = {'name': 'Bob Dobolina', 'type': 'profile'}
+user = ChainMap(user_acct, user_profile)
+print(user)
+print(user['iban'])
+print(user['name'])
+print(user['type']) # account (not overwritten)
+
+user_profile['name'] = 'Abe Linky'
+print(user['name']) # updates here too
+
+user['age'] = 33
+user['type'] = 'extension'
+print(user_acct) # age appended and type = extension
+print(user_acct) # here too
+
+
