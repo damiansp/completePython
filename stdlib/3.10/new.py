@@ -91,3 +91,19 @@ match color:
         print('Red roses too')
     case Color.GREEN:
         print('And I think to myself, "what a wonderful world"')
+
+
+# Type Union
+def square(n: Union[int, float]) -> Union[int, float]:
+    return n ** 2
+
+# Same as:
+def sq(n: int | float) -> int | float:
+    return n **2
+
+print(isinstance(1, int | str))
+
+
+# Type alias
+StrCache: TypeAlias = 'Cache[str]' # type alias
+LOG_PREFIX = 'LOG[DEBUG]'
