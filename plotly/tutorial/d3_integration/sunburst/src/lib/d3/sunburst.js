@@ -122,6 +122,38 @@ export default class Sunburst3D {
       };
     }
 
-    const transtionToNode /* todo... */
+    const transitionToNode = node => {
+      // simultaneous transitions can cause infinite loops in some cases, mostly
+      // self._promise takes care of this; want to avoid clicks during
+      // transitions
+      self.transitioning = true;
+      const transition = self.svg.transition()
+        .duration(self.fig.transitionDuration)
+        .tween('scale', () = {
+            const angularDomain = d3.interpolate(self.angularScale.domain(),
+                                                 selectedX(node));
+            const radialDomain = d3.interpolate(self.radialScale.domain(),
+                                                selectedY(node));
+            const radialRange = d3.interpolate(self.radialScale.range(),
+                                               selectedRadius(node));
+            return function(t) {
+              self.angularScale.domain(angularDomain(t));
+              self.radialScale.domain(radialDomain(t)).range(radialRange(t));
+            };
+        });
+      transition.selectAll('path').attrTween('d', wrap(self.arc));
+      transition.selectAll('text')
+        .attrTween('x', wrap(xCenter))
+        .attrTween('y', wrap(yCenter))
+        .attrTween('transform', wrap(textTrans))
+        .attrTween('opacity', wrap(hideText));
+      if (self.onChange) {
+        self.fig.selectedPath = getPath(node);
+        self.onChange(self.fig);
+      }
+      return transition;
+    };
+
+    const updatePaths = (_paths, _texts, _dataChange) => { /* todo */ };
   }
 };
