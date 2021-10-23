@@ -154,6 +154,56 @@ export default class Sunburst3D {
       return transition;
     };
 
-    const updatePaths = (_paths, _texts, _dataChange) => { /* todo */ };
+    const updatePaths = (_paths, _texts, _dataChange) => {
+      if (_dataChange) {
+        const enteringPaths = _paths.enter()
+          .append('path')
+          .style({stroke: '#ffff', strokeWidth: 1})
+          .on('click', node=> {
+              if (self.transitioning) { return; }
+              self._promise = self._promise.then(() => {
+                  return new Promise(resolve => {
+                      if (self.fig.interactive) {
+                        transitionToNode(node).each('end', () => {
+                            self.transitioning = false;
+                            resolve();
+                        });
+                      } else {
+                        resolve();
+                      }
+                  });
+              });
+          });
+        enteringPaths.append('title');
+        _texts.enter().append('text').style(textStyle).text(d => d.name);
+      }
+
+      // update to attributes; need regardless of what changed
+      _paths.attr('d', self.arc)
+      // coloring this way is history-dependent. if new item is inserted in the
+      // middle it will get the next color, existing items keep their colors.
+      // But later redrawing of this component straight from data will yield
+      // different colors.
+        .style('fill', d => (
+          // first look for explicit color (or parent color)
+          d.color
+          || (!d.children && d.parent.color)
+          || self.colorScale(getPathStr(d.children ? d : d.parent))
+        ));
+
+      // title is a cheap solution for tooltip. better to call
+      // `d3.on('mouseover')` and draw tooltip. requires extra logic to work
+      // correctly across state updates
+      _paths.select('title').text(d => d.name + '\n' + numFormat(d.value));
+      _texts.attr('x', xCenter)
+        .attr('y', yCenter)
+        .attr('transform', textTrans)
+        .attr('opacity', hideText);
+
+      const dataMap = self.oldDataMap = {};
+      _paths.each(d => { dataMap[getPathStr(d)] = posOnly(d); });
+    };
+
+    const setSize = () => { /* todo */ };
   }
 };
