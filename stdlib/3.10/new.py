@@ -1,3 +1,5 @@
+from dataclasses import dataclass, KW_ONLY
+from datetime import datetime
 from enum import Enum
 
 
@@ -107,3 +109,26 @@ print(isinstance(1, int | str))
 # Type alias
 StrCache: TypeAlias = 'Cache[str]' # type alias
 LOG_PREFIX = 'LOG[DEBUG]'
+
+
+
+# Dataclasses
+@dataclasses(kw_only=True)
+class Birthday:
+    name: str
+    birthday: datetime.date
+
+
+@datclass
+class BDay:
+    name: str
+    birthday: datetime.date = field(kw_only=True)
+
+
+@dataclass
+class Point:
+    x: float
+    y: float
+    _: KW_ONLY
+    z: float = 0.
+    t: float = 0.
