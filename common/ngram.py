@@ -16,18 +16,10 @@ def ngram(text_array, ns):
     '''
     n_words = len(text_array)
     ngram_dicts = []
-    
     for n in ns:
         ngram_dict = {}
-        
         for i in range(n_words + 1 - n):
             seq = ' '.join(text_array[i:(i + n)])
-            
-            if seq in ngram_dict:
-                ngram_dict[seq] += 1
-            else:
-                ngram_dict[seq] = 1
-
+            ngram_dict[seq] = ngram_dict.get(seq, 0) + 1
         ngram_dicts.append(ngram_dict)
-        
     return ngram_dicts
