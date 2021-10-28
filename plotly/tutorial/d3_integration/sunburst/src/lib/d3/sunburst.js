@@ -120,7 +120,7 @@ export default class Sunburst3D {
           return accessor(d);
         };
       };
-    }
+    };
 
     const transitionToNode = node => {
       // simultaneous transitions can cause infinite loops in some cases, mostly
@@ -204,6 +204,52 @@ export default class Sunburst3D {
       _paths.each(d => { dataMap[getPathStr(d)] = posOnly(d); });
     };
 
-    const setSize = () => { /* todo */ };
+    const setSize = () => {
+      self.radius = (Math.min(height, width) / 2) - padding;
+      self.svg.attr({width, height});
+      const centered = 'translate(' + (width / 2) + ',' + (height / 2) + ')';
+      self.pathGroup.attr('transform', centered);
+      self.textGroup.attr('transform', centered);
+    };
+
+    /* Diffing */
+    let retVal = Promise.resolve();
+    const change = diff(oldFig, newFig);
+    if (!change) { return retVal; }
+    const sizeChnge = change.width || change.height || change.padding;
+    const dataChange = change.data;
+    const oldRootName = self.rootName;
+    const newRootName = self.rootName = data.name;
+    const oldSelectedPath = self.selectedPath;
+    const newSelectedPath = self.selectedPath = selectedPath.slice();
+
+    /* Drawing */
+    if (sizeChange) { setSize(); }
+    let paths = self.pathGroup.selectAll('path');
+    let texts = self.textGroup.selectAll('text');
+    if (dataChange) {
+      // clone data before partitioning, as this mutates the data
+      self.nodes = self.partition.nodes(
+        addIndices(JSON.parse(JSON.stringify(data))));
+      paths = paths.data(self.nodes, getPathStr);
+      texts = texts.data(self.nodes, getPathStr);
+      // exit paths at beginning of transition; enters happens at the end
+      paths.exit().remove();
+      texts.exit().remove();  
+    }
+    const selectedNode = getNode(self.nodes[0], selectedPath);
+
+    // no node: path is wrong, prob received new selectedPath before its data
+    if (!selectNode) { return retVal; }
+
+    // immediate redraw instead of transition if:
+    const shouldAnimate = (
+      self.initialized // first draw
+      && (newRootName == oldRootName) // new root node
+      && sameHead(oldSelectedPath, newSelectedPath) // not pure up/down trans
+      // the prev data didn't contain the new selected node; can happen if we
+      // transition selectedPath first, then data
+      && (!dataChange || getNode(oldFig.data, newSelectedPath)));
+    // ...
   }
 };
