@@ -36,7 +36,7 @@ class S3Connector:
           acl (str): access control list that provides special cross-account 
             access typically this would have 'bucket-owner-full-control' if the
             put_object is being called from one AWS account and putting into 
-            an S3 bucket in a different aws account (e.g., data to LX).
+            an S3 bucket in a different aws account.
         '''
         self.logger = logger
         self.args = {} if acl is None else {'ACL': acl}
