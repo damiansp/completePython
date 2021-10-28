@@ -26,12 +26,12 @@ class S3Connector:
             self, bucket_name, role=None, logger=False, acl=None):
         '''
         Args:
-          bucket_name (str): Bucket name (omit s3://)
-          role (str): AWS profile name: Needed for local testing; leave as None 
+        - bucket_name (str): Bucket name (omit s3://)
+        - role (str): AWS profile name: Needed for local testing; leave as None 
             if set globally by the calling process
-          logger (Logger): Logger instance with (minimally) a 
+        - logger (Logger): Logger instance with (minimally) a 
             <log(level, msg)> method. Prints to stdout if False.
-          acl (str): access control list that provides special cross-account 
+        - acl (str): access control list that provides special cross-account 
             access typically this would have 'bucket-owner-full-control' if the
             put_object is being called from one AWS account and putting into 
             an S3 bucket in a different aws account.
@@ -109,18 +109,18 @@ class S3Connector:
     def write(self, data, path, exit_on_fail=True, verbose=True, **kwargs):
         '''
         Args: 
-          data (python object or bytestr--see individual _write_* methods): the
+        - data (python object or bytestr--see individual _write_* methods): the
             data to be written
-          path (str): path within the bucket (omit the root)
+        - path (str): path within the bucket (omit the root)
             NOTE: to compress data, simply end the path with the compression 
                   extension (e.g., path='my/path/data.csv.bz2')
                   Currently only bz2 is supported.
-          **kwargs:
-            encoding (str): if compressing; not necessary if using default, 
+        - kwargs:
+          - encoding (str): if compressing; not necessary if using default, 
               utf-8
-            logger_args: as required by your logger if more than <msg> and 
+          - logger_args: as required by your logger if more than <msg> and 
               <level>
-            If <data> is a pd.DataFrame:
+          - If <data> is a pd.DataFrame:
               `index=False` will omit the index column (True by default)
               `index_name` (str): if writing to jsonl, keeping the index, and 
                  wanting to give it a custom name for the field (defaults to 
@@ -144,13 +144,13 @@ class S3Connector:
         '''
         Read a file from S3 into memory
         Args:
-          - path (str): path within bucket (should include filename, and all 
+         - path (str): path within bucket (should include filename, and all 
             extensions including compressions if any)
-          - extension (str): Add ONLY IF not in path
-          - exit_on_fail (bool)
-          - kwargs:
-            - optional args to pass logger 
-            - optional encoding (defaults to utf-8)
+         - extension (str): Add ONLY IF not in path
+         - exit_on_fail (bool)
+         - kwargs:
+           - optional args to pass logger 
+           - optional encoding (defaults to utf-8)
         '''
         try:
             data = self.reader.read(path, extension, **kwargs)
@@ -168,12 +168,12 @@ class S3Connector:
                 sys.exit(1)
             return None
 
-    def download_file(self, path, local_path):
+    def download_file(self, bucket_path, local_path):
         '''
         Download a file from S3
         Args:
-          path (str): full path (excluding {BUCKET}/) to file/object
-          local_path (str): path to local save location INCLUDING the file name
+        - bucket_path (str): full path (excluding {BUCKET}/) to file/object
+        - local_path (str): path to local save location INCLUDING the file name
         '''
         self._print(
             f'Attempting to download {self.bucket_name}/{path} to (local): '
@@ -186,15 +186,15 @@ class S3Connector:
             os.makedirs(dir_name)
         self.s3.download_file(self.bucket_name, path, local_path)
 
-    def upload_file(self, path, local_path):
+    def upload_file(self, local_path, bucket_path):
         '''
         Upload a file to S3
         Args:
-          path (str): full path (excluding {BUCKET}/) to file/object
-          local_path (str): path to local save location INCLUDING the file name
+        - local_path (str): path to local save location INCLUDING the file name
+        - bucket_path (str): full path (excluding {BUCKET}/) to file/object
         '''
         self._print(f'Attempting to upload local file: {local_path} to '
-              f's3://{self.bucket_name}/{path}')
+                    f's3://{self.bucket_name}/{path}')
         self.s3.upload_file(local_path, self.bucket_name, path)
 
     def list_objects(self, path, max_objects=None, exit_on_fail=True, **kwargs):
@@ -203,11 +203,11 @@ class S3Connector:
         AWS will only return up to 1000 objects per S3 API call, so we leverage 
         boto3's pagination feature to go beyond that when/if needed.
         Args:
-          - path (str): path within which to search
-          - max_objects (int): maximum number of objects to return
-          - exit_on_fail (bool)
-          - kwargs:
-            - optional args for Logger
+        - path (str): path within which to search
+        - max_objects (int): maximum number of objects to return
+        - exit_on_fail (bool)
+        - kwargs:
+          - optional args for Logger
         Returns:
         '''
         path = validate_path(path, self.bucket_name)
@@ -245,12 +245,12 @@ class Writer:
         '''
         Write data to S3
         Args:
-          data (various types): the data to be written
-          path (str): path within bucket to write to (include file name)
-          kwargs:
-            - encoding (str): if compressing; defaults to utf-8
-            - protocol (pickle.protocol): if writing pkl.  Defaults to 
-                pickle.HIGHEST_PROTOCOL but may rarely need to be changed
+        - data (various types): the data to be written
+        - path (str): path within bucket to write to (include file name)
+        - kwargs:
+          - encoding (str): if compressing; defaults to utf-8
+          - protocol (pickle.protocol): if writing pkl.  Defaults to 
+              pickle.HIGHEST_PROTOCOL but may rarely need to be changed
         '''
         self._print(f'Attempting write to {path}...')
         extension, compression = split_extensions(path)
@@ -390,11 +390,11 @@ class Reader:
         '''
         Read an object from S3 into memory
         Args:
-          - path (str): path within bucket (may include compression extension)
-          - extension (str) Add ONLY IF not in path (omit the '.')
-          - kwargs:
-            - encoding (str): defaults to utf-8
-            - args to pass to specialized Logger
+        - path (str): path within bucket (may include compression extension)
+        - extension (str) Add ONLY IF not in path (omit the '.')
+        - kwargs:
+          - encoding (str): defaults to utf-8
+          - args to pass to specialized Logger
         '''
         path = validate_path(path, self.bucket_name)
         extension, compression = split_extensions(path, extension)
@@ -501,4 +501,3 @@ def split_extensions(path, extension=None):
              f'path: {path}\nConsider using S3Connector.[up|down]load or '
              'extending the class functionality')
     return extension, compression
-
