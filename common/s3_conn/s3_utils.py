@@ -29,10 +29,10 @@ class S3Connector:
         '''
         @params:
           bucket_name (str): Bucket name (omit s3://)
-          role (str): AWS profile name: Needed for local testing; QA and Prod 
-            automatically assume the role set for the specific process.
+          role (str): AWS profile name: Needed for local testing; leave as None 
+            if set globally by the calling process
           logger (Logger): Logger instance with (minimally) a 
-            <log(msg, min_level)> method.
+            <log(level, msg)> method.
           acl (str): access control list that provides special cross-account 
             access typically this would have 'bucket-owner-full-control' if the
             put_object is being called from one AWS account and putting into 
