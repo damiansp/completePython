@@ -16,8 +16,6 @@ import pandas as pd
 # file if using!)
 
 
-VERSION = '2'
-
 # update as needed: should only require adding calls to Writer._compress and
 # Reader._decompress
 SUPPORTED_COMPRESSIONS = ['bz2', 'gz'] 
