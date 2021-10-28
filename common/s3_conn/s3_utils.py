@@ -25,7 +25,7 @@ class S3Connector:
     def __init__(
             self, bucket_name, role=None, logger=False, acl=None):
         '''
-        @params:
+        Args:
           bucket_name (str): Bucket name (omit s3://)
           role (str): AWS profile name: Needed for local testing; leave as None 
             if set globally by the calling process
