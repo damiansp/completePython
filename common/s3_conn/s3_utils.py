@@ -32,7 +32,7 @@ class S3Connector:
           role (str): AWS profile name: Needed for local testing; leave as None 
             if set globally by the calling process
           logger (Logger): Logger instance with (minimally) a 
-            <log(level, msg)> method.
+            <log(level, msg)> method. Prints to stdout if False.
           acl (str): access control list that provides special cross-account 
             access typically this would have 'bucket-owner-full-control' if the
             put_object is being called from one AWS account and putting into 
@@ -44,9 +44,7 @@ class S3Connector:
             boto3.setup_default_session(profile_name=role)
         self.session = self._get_boto3_temp_session()
         # Set the config so we can use the FIPS endpoint.
-        config = Config(
-            s3 = {'addressing_style': 'virtual'}
-        )
+        config = Config(s3={'addressing_style': 'virtual'})
         self.s3 = boto3.client(
             service_name='s3',
             endpoint_url='https://s3-fips.us-east-1.amazonaws.com', 
@@ -62,9 +60,7 @@ class S3Connector:
         # if using a logger that takes additional args, add those to the
         # _print() statements in these classes as needed
         if self.logger:
-            self.logger.log(text, level, **kwargs)
-            if not self.logging.print_too:
-                print(text)
+            self.logger.log(level, text, **kwargs)
         else:
             print(text)
 
@@ -137,7 +133,7 @@ class S3Connector:
             did_write = self.writer.write(data, path, **kwargs)
         except BaseException as e:
             self._print(
-                f'Error thrown while attempting to write to bucket:\n {str(e)}',
+                f'Error thrown while attempting to write to bucket:\n {e}',
                 'error')
             did_write = False
         if did_write:
@@ -168,7 +164,7 @@ class S3Connector:
             return None
         except BaseException as e:
             self._print(
-                f'Error thrown while attempting to read S3 object:\n {str(e)}',
+                f'Error thrown while attempting to read S3 object:\n {e}',
                 'error')
             if exit_on_fail:
                 sys.exit(1)
