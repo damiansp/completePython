@@ -281,4 +281,57 @@ export default class Sunburst3D {
 };
 
 
-function sameHead(array1, array2) {}
+function sameHead(array1, array2) {
+    const len = Math.min(array1.length, array2.length);
+    for (let i = 0; i < len; i++) {
+        if (array1[i] !== array2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+// Sw we can sort by index, not by size as partition does by default
+function addIndicies(node) {
+    if (node.children) {
+        node.children.forEach((child, i) => {
+            child.i = i;
+            addIndices(child);
+        });
+    }
+    return node;
+}
+
+
+function getPath(d) {
+    return d.parent ? getPath(d.parent).concat([d.name]) : [];
+}
+
+
+function getPathStr(d) {
+    return getPath(d).join(',') || d.name;
+}
+
+
+function getNode(node, path) {
+    if (!path.length) { return node; }
+    if (!node.children) { return false; }
+    let childi;
+    for (var i = 0; i < node.children.length; i++) {
+        childi = node.children[i];
+        if (childi.name === path[0]) {
+            return getNode(childi, path.slice(1));
+        }
+    }
+    return false;
+}
+
+
+/**
+ * Very simple diff: assumes newObj is flat and has all the possible keys from
+ * oldObj. Uses a "dataVersion" key to avoid diffing the full data object. In 
+ * fact, we can avoid copying data (i.e., treating it immutable), and just use
+ * dataVersion to track mutations.
+ */
+function diff(oldObj, newObj) {}
