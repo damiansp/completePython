@@ -334,4 +334,27 @@ function getNode(node, path) {
  * fact, we can avoid copying data (i.e., treating it immutable), and just use
  * dataVersion to track mutations.
  */
-function diff(oldObj, newObj) {}
+function diff(oldObj, newObj) {
+    const V = 'Version';
+    const out = {};
+    let hasChange = false;
+    for (const key in newObj) {
+        if (key.substr(key.length - V.length) === V) { continue; }
+        if (typeof newObj[key] === 'object') {
+            if (newObj[key + V]) {
+                if (newObj[key + V] !== oldObj[key + V]) {
+                    out[key] = 1;
+                    hasChange = true;
+                }
+            } else if (JSON.stringify(oldObj[key])
+                       !== JSON.stringify(newObj[key])) {
+                out[key] = 1;
+                hasChange = true;
+            }
+        } else if (oldObj[key] !== newObj[key]) {
+            out[key] = 1;
+            hasChange = true;
+        }
+    }
+    return hasChange && out;
+}
