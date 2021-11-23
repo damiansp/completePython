@@ -85,5 +85,64 @@ class App extends Component {
             </div>);
     }
 
-    mutateData() {}
+    mutateData() {
+        const {data, dataVersion} = this.state;
+        const newSize = Math.round(Math.random() * 200) / 10;
+        // Pick random node
+        const nodes = getPathStrs(data, '').map(getNode(data));
+        const {node, parent} = nodes[Math.floor(Math.random() * nodes.length)];
+        // Pick a random op to execute on node
+        const operations = [addChild, resizeNode, removeNode, renameNode];
+        const operation = operations[
+            Math.floor(Math.random() * operations.length)];
+        operation();
+        this.setState({dataVersion: dataVersion + 1, data: data});
+
+        function addChild() {
+            const newName = 'box ' + dataVersion;
+            const newChild = {name: newName, size: newSize};
+            if (node.children) {
+                node.children.push(newChild);
+            } else {
+                node.children = [newChild];
+                delete node.size;
+            }
+        }
+
+        function resizeNode() {
+            // valid for leaf nodes only
+            if (node.size) {
+                node.size = newSize;
+            }
+        }
+
+        function removeNode() {
+            // leaf nodes only!
+            if (!node.children) {
+                parent.children.splice(parent.children.indexOf(node), 1);
+                if (!parent.children.length) {
+                    delete parent.children;
+                    parent.size = newSize;
+                }
+            }
+        }
+
+        function renameNode() {
+            //
+            node.name = 'cheese ' + dataVersion;
+        }
+    }
 }
+
+
+function getPathStrs(data, head) {
+    let out = [head];
+    for (let i = 0; i < (data.children || []).length; i++) {
+        const childi = data.children[i];
+        out = out.concat(getPahtStrs(childi, addPath(head, childi.mame)));
+    }
+    return out;
+}
+
+
+function addPath(head, name) {}
