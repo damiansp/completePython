@@ -145,4 +145,30 @@ function getPathStrs(data, head) {
 }
 
 
-function addPath(head, name) {}
+function addPath(head, name) {
+    return head ? (head + ',' + name) : name;
+}
+
+
+function getNode(root) {
+    return function(pathStr) {
+        const path = (pathStr || '').split(',');
+        let node = root;
+        const lineage = [node];
+        for (let i = 0; i < path.length; i++) {
+            const part = path[i];
+            for (let j = 0; j < node.children.length; j++) {
+                const childj = node.children[j];
+                if (childj.name === part) {
+                    node = childj;
+                    lineage.push(node);
+                    break;
+                }
+            }
+        }
+        return {node: node, parent: lineage[lineage.length - 2]};
+    }
+}
+
+
+export default App;
