@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from functools import reduce
+from functools import partial, reduce
+from itertools import count
 import math
 
 
@@ -54,3 +55,29 @@ print(list(s_animals))
 print(reduce(lambda a, b: a + b, [2, 2]))
 print(reduce(lambda a, b: a + b, [2, 2, 4]))
 print(reduce(lambda a, b: a + b, range(100)))
+
+#for i in count(): # counts integers forever
+#    print('i:', i)
+
+seq = map(lambda x: x**2, count()) # a generator
+print(next(seq))
+print(next(seq))
+print(next(seq))
+print(next(seq))
+
+
+# Partials
+pow2 = partial(pow, 2)
+print(pow2(3))
+print(pow2(5))
+print(pow2(10))
+
+
+# Generators
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield b
+        a, b = b, a + b
+
+
