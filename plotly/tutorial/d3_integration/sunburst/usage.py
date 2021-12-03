@@ -101,7 +101,7 @@ def display_graph(data, selected_path):
               'xaxis': {'title': 'Total Nodes', 'type': 'log'},
               'yaxis': {'title': 'Total Size', 'type': 'log'},
               'hovermode': 'closest'}
-    retrun {'data': [{'x': x,
+    return {'data': [{'x': x,
                       'y': y,
                       'text': text,
                       'textposition': 'middle right',
