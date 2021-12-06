@@ -80,4 +80,11 @@ def fibonacci():
         yield b
         a, b = b, a + b
 
+fib = fibonacci()
+for i in fibonacci():
+    print(i, end=' ')
+    if i > 10:
+        break
 
+
+# Decorators
