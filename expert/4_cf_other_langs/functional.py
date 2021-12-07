@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from functools import partial, reduce
+from functools import partial, reduce, wraps
 from itertools import count
 import math
+
+from flask import g, request, redirect, url_for
 
 
 def get_circle_area(r):
@@ -88,3 +90,18 @@ for i in fibonacci():
 
 
 # Decorators
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+# Flask Ex:
+#@app.route('/secret_page')
+#@login_required
+#def secret_page():
+#    pass # ...
+
