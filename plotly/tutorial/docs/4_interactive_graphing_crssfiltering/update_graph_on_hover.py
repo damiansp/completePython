@@ -1,11 +1,12 @@
+import ssl
+
 import dash
+from   dash import dcc, html
 from   dash.dependencies import Input, Output
-import dash_core_components as dcc
-import dash_html_components as html
 import pandas as pd
-import plotyly.express as px
+import plotly.express as px
 
-
+ssl._create_default_https_context = ssl._create_unverified_context
 styles = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=styles)
 
@@ -32,10 +33,10 @@ app.layout = html.Div([
                  id='crossfilter-yaxis-column',
                  options=[{'label': i, 'value': i}
                           for i in available_indicators],
-                 value='Life exp. at birth, total (years)'),
+                 value='Life expectancy at birth, total (years)'),
               dcc.RadioItems(
                   id='crossfilter-yaxis-type',
-                  opions=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                  options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
                   value='Linear',
                   labelStyle={'display': 'inline-block', 'marginTop': '5px'})],
              style={
@@ -75,5 +76,50 @@ def update_graph(x_name, y_name, x_type, y_type, year):
                      type='linear' if x_type == 'Linear' else 'log')
     fig.update_yaxes(title=y_name,
                      type='linear' if x_type == 'Linear' else 'log')
-    
-    
+    fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
+                      hovermode='closest')
+    return fig
+
+
+def create_timeseries(df, axis_type, title):
+    fig = px.scatter(df, x='Year', y='Value')
+    fig.update_traces(mode='lines+markers')
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(type='linear' if axis_type == 'Linear' else 'log')
+    fig.add_annotation(x=0,
+                       y=0.85,
+                       xanchor='left',
+                       yanchor='bottom',
+                       xref='paper',
+                       yref='paper',
+                       showarrow=False,
+                       align='left',
+                       text=title)
+    fig.update_layout(height=225, margin={'l': 20, 'b': 30, 't': 10, 'r': 10})
+    return fig
+
+
+@app.callback(Output('x-time-series', 'figure'),
+              [Input('crossfilter-indicator-scatter', 'hoverData'),
+               Input('crossfilter-xaxis-column', 'value'),
+               Input('crossfilter-xaxis-type', 'value')])
+def update_y_timeseries(hover_data, x_name, ax_type):
+    country_name = hover_data['points'][0]['customdata']
+    dff = df[df['Country Name'] == country_name]
+    dff = dff[dff['Indicator Name'] == x_name]
+    title = f'<b>{country_name}</b><br />{x_name}'
+    return create_timeseries(dff, ax_type, title)
+
+
+@app.callback(Output('y-time-series', 'figure'),
+              [Input('crossfilter-indicator-scatter', 'hoverData'),
+               Input('crossfilter-yaxis-column', 'value'),
+               Input('crossfilter-yaxis-type', 'value')])
+def update_x_timeseries(hover_data, y_name, ax_type):
+    dff = df[df['Country Name'] == hover_data['points'][0]['customdata']]
+    dff = dff[dff['Indicator Name'] == y_name]
+    return create_timeseries(dff, ax_type, y_name)
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
