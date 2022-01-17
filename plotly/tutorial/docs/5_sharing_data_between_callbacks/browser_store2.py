@@ -12,8 +12,7 @@ app.layout = html.Div([
     dcc.Graph(id='graph'),
     html.Table(id='table'),
     dcc.Dropdown(id='dropdown'),
-    dcc.Store(id='intermediate-value') # stores intermed value
-])
+    dcc.Store(id='intermediate-value')]) # stores intermed value
 
 
 @app.callback(Output('intermediate-value', 'data'), Input('dropdown', 'value'))
@@ -29,7 +28,7 @@ def clean_data(val):
     return json_dumps(datasets)
 
 
-@app.callback(Outuput('graph1', 'figure'), Input('intermediate-value', 'data'))
+@app.callback(Output('graph1', 'figure'), Input('intermediate-value', 'data'))
 def update_graph_1(json_data):
     datasets = json.loads(json_data)
     df = pd.read_json(datasest['apples'], orient='split')
