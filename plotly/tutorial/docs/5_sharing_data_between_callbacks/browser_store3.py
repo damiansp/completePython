@@ -48,3 +48,54 @@ app.layout = html.Div([
     dcc.Store(id='signal')]) # signal val to trigger callbacks
 
 
+# Perform expensive computations in this "global store". These computations are
+# cachedin a globally available memory store which is available across processes
+# and for all time
+@cache.memoize()
+def global_store(val):
+    # simulate expensive query
+    print(f'Computing value for {val}...')
+    time.sleep(3)
+    return df[df.category == val]
+
+
+def generate_figure(val, fig):
+    fig = copy.deepcopy(fig)
+    filtered_df = global_stroe(val)
+    fig['data'][0]['x'] = filtered_df.x
+    fig['data'][0]['y'] = filtered_df.y
+    fig['layout'] = {'margin': {'l': 20, 'r': 10, 'b': 20, 't': 10}}
+    return fig
+
+
+@app.callback(Output('signal', 'data'), Input('dropdown', 'value'))
+def compute_val(val):
+    # compute and send signal when done
+    global_store(val)
+    return val
+
+
+@app.callback(Output('graph-1', 'figure'), Input('signal', 'data'))
+def update_graph_1(val):
+    # generate_fig() gets data from <global_store>. The data have already been
+    # computed by <compute_val> and result is stored in global cache
+    return generate_figure(
+        val,
+        {'data': [{
+            'type': 'scatter',
+            'mode': 'markers',
+            'marker': {
+                'opacity': 0.5,
+                'size': 14,
+                'line': {'border': 'thin darkgrey solid'}}}]})
+
+
+@app.callback(Output('graph-2', 'figure'), Input('signal', 'data'))
+def update_graph_2(val):
+    return generate_figure(
+        val,
+        {'data': [{
+            'type': 'scatter',
+            'mode': 'lines',
+            'line': {'shape': 'spline', 'width': 0.5}}]})
+
