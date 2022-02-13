@@ -80,7 +80,7 @@ class WordGame:
     def _play_turn(self, turns):
         word = input(f'\nEnter a {self.wordlen}-letter word: ')
         if not self._is_valid(word):
-            self._play_turn(turns)
+            return self._play_turn(turns)
         letters = list(word.upper())
         self._update_game_status(letters)
         self._display(letters)
@@ -88,8 +88,8 @@ class WordGame:
             n_turns = self.turns - turns + 1
             s = 's' if n_turns > 1 else ''
             print(f'You got it in {n_turns} turn{s}!')
-            self.stats[f'{self.wordlen}_letter'][n_turns] = (
-                self.stats[f'{self.wordlen}_letter'].get(n_turns, 0) + 1)
+            self.stats[f'{self.wordlen}_letter'][str(n_turns)] = (
+                self.stats[f'{self.wordlen}_letter'].get(str(n_turns), 0) + 1)
             self._end()
         turns -= 1
         return turns
@@ -147,9 +147,9 @@ class WordGame:
 
     def _show_stats(self):
         stats = self.stats[f'{self.wordlen}_letter']
-        print('Turns | Freq')
-        for turns in sorted(stats.keys()):
-            print(f'{turns:<6d}| {stats[turns]}')
+        print('Turns | Freq')        
+        for turns in sorted([int(k) for k in stats.keys()]):
+            print(f'{turns:<6d}| {stats[str(turns)]}')
         print()
 
     def _save_stats(self):
