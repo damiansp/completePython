@@ -28,7 +28,7 @@ def main():
 def choose_settings():
     turns = input('Maximum number of attempts: ')
     wordlen = 5 # maybe add more later...
-    return wodlen, turns
+    return wordlen, turns
 
 
 def display_color_coding():
