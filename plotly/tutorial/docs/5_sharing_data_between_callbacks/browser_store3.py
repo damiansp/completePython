@@ -1,12 +1,8 @@
 import copy
-import datetime
-import os
 import time
 
 import dash
-from dash import core_components as dcc
-from dash import html_components as html
-from dash.dependencies  import Input, Output
+from dash import Dash, dcc, html, Input, Output
 from flask_caching import Cache
 import numpy as np
 import pandas as pd
@@ -19,7 +15,7 @@ server = app.server
 
 CACHE_CONFIG = {'CACHE_TYPE': 'FileSystemCache'}
 cache = Cache()
-cache.init_app(app.server, confg=CACHE_CONFIG)
+cache.init_app(server, config=CACHE_CONFIG)
 
 N = 100
 df = pd.DataFrame(
@@ -61,7 +57,7 @@ def global_store(val):
 
 def generate_figure(val, fig):
     fig = copy.deepcopy(fig)
-    filtered_df = global_stroe(val)
+    filtered_df = global_store(val)
     fig['data'][0]['x'] = filtered_df.x
     fig['data'][0]['y'] = filtered_df.y
     fig['layout'] = {'margin': {'l': 20, 'r': 10, 'b': 20, 't': 10}}
@@ -99,3 +95,16 @@ def update_graph_2(val):
             'mode': 'lines',
             'line': {'shape': 'spline', 'width': 0.5}}]})
 
+
+@app.callback(Output('graph-3', 'figure'), Input('signal', 'data'))
+def update_graph_3(val):
+    return generate_figure(val, {'data': [{'type': 'histogram2d'}]})
+
+
+@app.callback(Output('graph-4', 'figure'), Input('signal', 'data'))
+def update_graph_4(val):
+    return generate_figure(val, {'data': [{'type': 'histogram2dcontour'}]})
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True, processes=4, threaded=False)
