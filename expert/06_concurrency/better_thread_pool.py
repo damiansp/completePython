@@ -23,7 +23,10 @@ def main():
     while threads:
         threads.pop().join()
     while not results_q.empty():
-        present_result(*results_q.get())
+        results = results_q.get()
+        if isinstnace(result, Exception):
+            raise result
+        present_result(*result)
 
 
 def worker(work_q, results_q):
@@ -32,8 +35,11 @@ def worker(work_q, results_q):
             item = work_q.get_nowait()
         except Empty:
             break
-        else:
-            results_q.put(fetch_rates(item))
+        try:
+            result = fetch_rates(item)
+        except Exception as e:
+            results_q.put(e)
+        finally:
             work_q.task_done()
             
 
