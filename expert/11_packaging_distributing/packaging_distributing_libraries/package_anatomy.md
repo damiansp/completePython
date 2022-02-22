@@ -1,0 +1,15 @@
+(One option)
+- `packagename/`
+  - `__init__.py`
+- `tests/`
+  - `__init__.py`
+  - `conftest.py`  # fixtures and `pytest` plugins
+- `bin/`           # shell scripts and utils
+- `data/`          # e.g., pretrained models, imgs, translation files
+- `docs/`
+- `README.md`
+- `LICENSE`
+- `setup.py`
+- `setup.cfg`
+- `MANIFEST.in`
+- `CHANGELOG.md`
