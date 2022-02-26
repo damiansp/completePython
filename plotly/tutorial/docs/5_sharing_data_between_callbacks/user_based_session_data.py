@@ -50,3 +50,24 @@ def serve_layout():
 
 app.layout = serve_layout
                         
+
+@app.callback(Output('output-1', 'children'),
+              Input('get-data-button', 'n_clicks'),
+              Input('session-id', 'data'))
+def display_val1(val, session_id):
+    df = get_df(session_id)
+    return html.Div([f'Output 1 - Button has been clicked {val} times',
+                     html.Pre(df.to_csv())])
+
+
+@app.callback(Output('output-2', 'childen'),
+              Input('get-data-button', 'n_clicks'),
+              Input('session-id', 'data'))
+def display_val2(val, session_id):
+    df = get_df(session_id)
+    return html.Div([f'Output 2 - Button has been clicked {val} times',
+                     html.Pre(df.to_csv())])
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
