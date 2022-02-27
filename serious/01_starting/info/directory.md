@@ -1,0 +1,18 @@
+`my_package/`
+- `docs/`
+  - `conf.py`
+  - `quickstart.rst`
+  - `index.rst`
+- `my_package/`
+  - `__init__.py`
+  - `cli.py`
+  - `storage.py`
+  - `tests/`
+    - `__init__.py`
+    - `test_storage.py`
+    - `test_cli.py`
+  - `data/`
+    - `img.png`
+- `setup.py`
+- `setup.cfg`
+- `README.md`
