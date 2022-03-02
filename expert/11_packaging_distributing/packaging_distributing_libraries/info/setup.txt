@@ -6,7 +6,8 @@
 
 # or
 > pip(3) install <path-to-project>  # or
-> pip(3) install <path-to-archive>
+> pip3 install <path-to-archive>
+> pip3 install -e <path>  # editable mode
 
 
 # uninstall
