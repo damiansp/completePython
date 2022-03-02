@@ -1,0 +1,20 @@
+> python3 setup.py --help-commands
+
+
+# local install
+> setup.py install
+
+# or
+> pip(3) install <path-to-project>  # or
+> pip(3) install <path-to-archive>
+
+
+# uninstall
+> pip3 uninstall <package-name>  # no setup.py equivalent!
+
+
+
+
+
+
+

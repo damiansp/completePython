@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 
 import numpy as np
@@ -9,7 +10,8 @@ RIGHT       = GREEN  = '\033[42m'
 WRONG_SPOT  = ORANGE = '\033[43m'
 NOT_IN_WORD = RED    = '\033[41m'
 RESET       = BLACK  = '\033[40m'
-DATA = './data'
+HOME = os.environ['HOME']
+DATA = f'{HOME}/Learning/completePython/game/word_games/data'
 
 
 def main():
