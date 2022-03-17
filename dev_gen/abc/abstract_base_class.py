@@ -36,3 +36,30 @@ class AnotherListLikeObjCls(object):
 
 print(issubclass(AnotherListLikeObjCls, MySequence))  # True
       
+
+class HookingClass(metaclass=abc.ABCMeta):
+    @classmethod
+    def __subclasshook__(cls, other):
+        print('subclass hook:', other)
+        hookmethod = getattr(other, 'hookmethod', None)
+        return callable(hookmethod)
+
+
+class SubClass:
+    def hookmethod(self):
+        pass
+
+
+class UncertainClass:
+    @staticmethod
+    def hookmethod():
+        pass
+
+    
+class NormalClass:
+    hookmethod = 'not a method'
+
+
+print('\nStarting hook stuff:')
+for c in [SubClass, UncertainClass, NormalClass]:
+    print(issubclass(c, HookingClass))  # True, True, False
