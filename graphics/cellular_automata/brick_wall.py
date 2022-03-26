@@ -9,7 +9,6 @@ BRICK_W = 2 * BRICK_H
 def main():
     root = Tk()
     canvas = Canvas(root, width=W, height=H, background='white')
-
     root.title('Brick Wall')
     canvas.grid(row=0, column=1)
     build_wall(canvas)

@@ -11,7 +11,6 @@ def main():
     root = Tk()
     CANVAS_WIDTH, CANVAS_HEIGHT = 700, 750
     BRICK_HEIGHT = 2
-    
     # How to assign colors for initial or off-screen bricks:
     # Choices:
     #   random: 
@@ -21,13 +20,11 @@ def main():
     #   or (TODO) a list indicating the sequence
     #   e.g. [0, 1, 2, 0, 0, 1, 1, 2, 2] where 0, 1, 2 are the colors in PALETTE
     NEW_COLOR_OPTIONS = ['random', 'constant', 'alt2', 'alt3']
-
     # Initial row
     INIT = np.random.choice(NEW_COLOR_OPTIONS)
-
     # New off-screen bricks
-    OFF_SCREEN = np.random.choice(NEW_COLOR_OPTIONS)\
-                 if INIT == 'random' else 'random' # prevent many trivial cases
+    OFF_SCREEN = (
+        np.random.choice(NEW_COLOR_OPTIONS) if INIT == 'random' else 'random') 
     canvas = Canvas(root, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
     root.title('Init: %s; New: %s' % (INIT, OFF_SCREEN))
     canvas.grid(row=0, column=1)
@@ -49,11 +46,13 @@ class BrickWall:
             RowOfBricks(
                 self.canvas, self.row_height, 0, init_color_method=self.init)]
         for row in range(1, self.n_row):
-            wall.append(RowOfBricks(self.canvas,
-                                    self.row_height,
-                                    row,
-                                    previous_row=wall[row -1],
-                                    new_color_method=self.off_screen))
+            wall.append(
+                RowOfBricks(
+                    self.canvas,
+                    self.row_height,
+                    row,
+                    previous_row=wall[row -1],
+                    new_color_method=self.off_screen))
         return wall
     
     def draw(self):
@@ -81,21 +80,25 @@ class RowOfBricks:
 
     def build(self):
         if not self.previous_row:
-            return [Brick(self.canvas,
-                          self.height,
-                          [self.index, brick],
-                          next(self.init_color_iterator))
-                    for brick in range(self.n_bricks)]
+            return [
+                Brick(
+                    self.canvas,
+                    self.height,
+                    [self.index, brick],
+                    next(self.init_color_iterator))
+                for brick in range(self.n_bricks)]
         else:
-            return [Brick(self.canvas,
-                          self.height,
-                          [self.index, brick],
-                          self.determine_color(self.index, brick))
-                    for brick in range(self.n_bricks)]
+            return [
+                Brick(
+                    self.canvas,
+                    self.height,
+                    [self.index, brick],
+                    self.determine_color(self.index, brick))
+                for brick in range(self.n_bricks)]
 
     def determine_color(self, row_index, brick_index):
-        error = np.random.choice([True, False],
-                                 p=[ERROR_PROBABILITY, 1 - ERROR_PROBABILITY])
+        error = np.random.choice(
+            [True, False], p=[ERROR_PROBABILITY, 1 - ERROR_PROBABILITY])
         if error:
             return np.random.choice(PALETTE)        
         offset = True if row_index % 2 == 1 else False
@@ -118,7 +121,6 @@ class RowOfBricks:
         [brick.draw() for brick in row]
 
 
-            
 class Brick:
     def __init__(self, canvas, height, index, color=None):
         self.index = index
@@ -137,12 +139,13 @@ class Brick:
                 % (str(self.index), self.width, self.height, self.color))
     
     def draw(self):
-        self.canvas.create_rectangle(self.x1,
-                                     self.y1,
-                                     self.x2,
-                                     self.y2,
-                                     fill=self.color,
-                                     outline=self.color)
+        self.canvas.create_rectangle(
+            self.x1,
+            self.y1,
+            self.x2,
+            self.y2,
+            fill=self.color,
+            outline=self.color)
 
         
 class Point:
@@ -179,21 +182,17 @@ class ColorIterator:
 def random_color():
     digits = list('0123456789abcdef')
     return '#' + ''.join([np.random.choice(digits) for i in range(6)])
-    
 
-        
-    
+
 if __name__ == '__main__':
     PALETTE = tuple([random_color() for i in range(3)])
-    ERROR_PROBABILITY = 0
-    
+    ERROR_PROBABILITY = 0    
     # Random rule assigment...
     keys = ((a, b) for a in PALETTE for b in PALETTE)
     COLOR_ASSIGNMENT_RULES = dict.fromkeys(keys, 0)
     for key in COLOR_ASSIGNMENT_RULES:
         COLOR_ASSIGNMENT_RULES[key] = np.random.choice(PALETTE)    
     pprint(COLOR_ASSIGNMENT_RULES)
-        
     # ...or hard code rules:
     '''
     COLOR_ASSIGNMENT_RULES = {(PALETTE[0], PALETTE[0]): PALETTE[0],
@@ -205,5 +204,5 @@ if __name__ == '__main__':
                               (PALETTE[2], PALETTE[0]): PALETTE[2],
                               (PALETTE[2], PALETTE[1]): PALETTE[1],
                               (PALETTE[2], PALETTE[2]): PALETTE[0]}
-        '''
+    '''
     main()
