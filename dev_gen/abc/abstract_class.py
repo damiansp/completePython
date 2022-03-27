@@ -42,3 +42,18 @@ class Child(Parent):
 
 print(issubclass(Child, Parent))    # True
 print(isinstance(Child(), Parent))  # True
+
+
+class Elder(ABC):
+    def tell_it(self):
+        print('Abstract Base Class')
+
+
+class Minor(Elder):
+    def tell_it(self):
+        super().tell_it()
+        print('subclass')
+
+
+pliny = Minor()
+pliny.tell_it()
