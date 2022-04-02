@@ -54,7 +54,7 @@ print(fubar.__doc__) # Hammer shit
 print(fubar.__name__) # fubar
 
 
-ppppppp@is_admin
+@is_admin
 def fubar(username='anon'):
     '''Hizammer shizit'''
     pass
@@ -103,7 +103,7 @@ def check_is_admin(f):
     return wrapper
 
 
-def Store:
+class Store:
     @check_is_admin
     def get_food(self, username, food):
         '''Get food from storage'''
@@ -135,4 +135,56 @@ class Pizza:
 
 
 print(Pizza.get_size)  # <function Pizza.get_size at 0x...>
+try:
+    print(Pizza.get_size())  # err: must belong to an instance
+except:
+    print(Pizza.get_size(Pizza(42)))  # or
+    print(Pizza(42).get_size())
+
+print(Pizza(42).get_size)
+# <bound method Pizza.get_size of <__main__.Pizza object at 0x7fd5f0378af0>>
+
+ps = Pizza(42).get_size
+print(ps())  # 42
+print(ps.__self__)  # <__main__.Pizza object at 0x7fdfa0298af0>
+
+
+# Static methods
+class Pizza:
+    @staticmethod
+    def mix(x, y):
+        return x + y
+
+    def cook(self):
+        return self.mix('cheese ', 'veggies ')
+
+print(Pizza().cook is Pizza().cook)  # False
+print(Pizza().mix is Pizza().mix)    # True
+print(Pizza().mix is Pizza.mix)      # True
+
+
+# Class methods
+class Pizza:
+    rad = 42
+
+    @classmethod
+    def get_radius(cls):
+        return cls.rad
+
+
+print(Pizza.get_radius)
+# <bound method Pizza.get_radius of <class '__main__.Pizza'>>
+print(Pizza().get_radius)  # same
+print(Pizza.get_radius is Pizza().get_radius)  # False
+
+
+'''
+class Pizza:
+    def __init__(self, ingredients):
+        self.ingredients = ingredients
+
+    @classmethod
+    def from_fridge(cls, fridge):
+        return cls(fridge.get_cheese() + fridge.get_veggies())
+'''
 
