@@ -1,3 +1,4 @@
+import abc
 import functools
 import inspect
 import uuid
@@ -187,4 +188,33 @@ class Pizza:
     def from_fridge(cls, fridge):
         return cls(fridge.get_cheese() + fridge.get_veggies())
 '''
+
+
+class BasePizza(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def get_ingredients(self):
+        '''get the list of ingredients'''
+
+
+class Calzone(BasePizza):
+    def get_ingredients(self, with_egg=False):
+        egg = Egg() if with_egg else None
+        return self.ingredients = [egg]
+
+
+class DietPizza(BasePizza):
+    @staticmethod
+    def get_ingredients():
+        return None
+
+
+class BasePizza(metaclass=abc.ABCMeta):
+    ingredients = ['cheese']
+
+    @classmethod
+    @abc.abstractmethod
+    def get_ingredients(cls):
+        '''Return the list of ingredients'''
+        return cls.ingredients
+
 
