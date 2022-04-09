@@ -218,3 +218,8 @@ class BasePizza(metaclass=abc.ABCMeta):
         return cls.ingredients
 
 
+class DietPizza(BasePizza):
+    def get_ingredients(self):
+        return [Egg()] + super().get_ingredients()
+
+
