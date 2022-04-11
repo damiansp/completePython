@@ -28,4 +28,18 @@ print(
         'def my_func():'))
 
 
+# Regex objects
+pattern = re.compile('d')
+print(pattern.search('dog'))     # <re.Match object; span=(0, 1), match='d'>
+print(pattern.search('dog', 1))  # None
+
+pattern = re.compile('o')
+print(pattern.match('dog'))     # None
+print(pattern.match('dog', 1))  # <re.Match object; span=(1, 2), match='o'>
+
+pattern = re.compile('o[gh]')
+print(pattern.fullmatch('dog'))   # None
+print(pattern.fullmatch('ogre'))  # None
+print(pattern.fullmatch('doggie', 1, 3))
+# <re.Match object; span=(1, 3), match='og'>
 
