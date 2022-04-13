@@ -46,4 +46,14 @@ inst = MyClass(None, None)
 inst.attr_c = None
 print(inst)
                          
-        
+# Don't do: overrides class __name__, __qualname__, __doc__, etc        
+def autorepr(cls):
+    attrs = cls.__annotations__.keys()
+
+    class Klass(cls):
+        def __repr__(self):
+            return repr_instance(self, attrs)
+
+    return Klass
+
+
