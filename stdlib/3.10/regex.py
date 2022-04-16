@@ -43,3 +43,53 @@ print(pattern.fullmatch('ogre'))  # None
 print(pattern.fullmatch('doggie', 1, 3))
 # <re.Match object; span=(1, 3), match='og'>
 
+
+m = re.match(r'(\w+) (\w+)', 'Isaac Newton, physicist')
+print(m.group(0))
+print(m[0])  # same as prev
+print(m.group(1))
+print(m.group(2))
+print(m.group(1, 2))
+
+m = re.match(r'(?P<first_name>\w+) (?P<last_name>\w+)', 'Malcolm Reynolds')
+print(f'{m.group("last_name").upper()}, {m.group("first_name")}')
+
+m = re.match(r'(..)+', 'a1b2c3')
+print(m.group(1))  # c3
+
+
+m = re.match(r'(\d+)\.?(\d+)', '24.1632')
+print(m.groups())
+
+m = re.match(r'(\d+)\.?(\d+)?', '24')
+print(m.groups())  # ('24', None)
+print(m.groups('0'))  # ('24', '0')
+
+
+m = re.match(r'(?P<first_name>\w+) (?P<last_name>\w+)', 'Malcolm Reynolds')
+print(m.groupdict())
+
+
+email = 'tony@tiremove_thisget.net'
+m = re.search('remove_this', email)
+print(email[:m.start()] + email[m.end():])
+
+
+# Examples
+# Check for a pair
+def display_match(match):
+    if match is None:
+        return None
+    return '<Match: %r, groups=%r>' % (match.group(), match.groups())
+
+valid = re.compile(r'^[a2-9tjqk]{5}$')      # possible poker hands
+print(display_match(valid.match('akt5q')))  # valid
+print(display_match(valid.match('akt5e')))  # invalid
+print(display_match(valid.match('akt')))    # invalid
+print(display_match(valid.match('727ak')))  # valid
+
+pair = re.compile(r'.*(.).*\1')
+print(display_match(pair.match('717ak')))  # pr of 7s
+print(display_match(pair.match('718ak')))  # no pairs
+print(display_match(pair.match('354aa'))) # pr of aces
+
