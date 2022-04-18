@@ -1,3 +1,4 @@
+import random
 import re
 
 
@@ -92,4 +93,46 @@ pair = re.compile(r'.*(.).*\1')
 print(display_match(pair.match('717ak')))  # pr of 7s
 print(display_match(pair.match('718ak')))  # no pairs
 print(display_match(pair.match('354aa'))) # pr of aces
+
+
+# search() v. match()
+print(re.match('c', 'abcdef'))  # None: match checks beginning of str only
+print(re.search('c', 'abcdef')) # Match
+
+print(re.match('X', 'A\nB\nX', re.MULTILINE))  # None; first line only
+print(re.search('^X', 'A\nB\nX', re.MULTILINE)) # match (^ required)
+
+
+# Phonebook
+text = '''Bob Dobolina: 213.456.7890 123 Some St
+
+Justin Case: 314.567.8901 44 Safety Lane
+
+
+Seymour Butts: 405.678.9012 88 Bleacher Blvd'''
+entries = re.split('\n+', text)
+print('Entries:', entries)
+
+print([re.split(':? ', entry, 3) for entry in entries])
+print([re.split(':? ', entry, 4) for entry in entries])
+
+
+def repl(m):
+    inner_word = list(m.group(2))
+    random.shuffle(inner_word)
+    return m.group(1) + ''.join(inner_word) + m.group(3)
+
+text = 'Satan oscillate my metallic sonatas'
+print(re.sub(r'(\w)(\w+)(\w)', repl, text))
+print(re.sub(r'(\w)(\w+)(\w)', repl, text))
+
+text = 'He was carefully disguised, but the police caught him quickly.'
+print('advs:', re.findall(r'\w+ly\b', text))
+
+for m in re.finditer(r'\w+ly\b', text):
+    print(f'{m.start():02d}-{m.end():02d}: {m.group(0)}')
+
+
+# Raw string notation (r-strings):
+print(r'\W(.)\1\W' == '\\W(.)\\1\\W')  # True
 
