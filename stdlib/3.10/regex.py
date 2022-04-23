@@ -1,5 +1,6 @@
 import random
 import re
+from typing import NamedTuple
 
 
 m = re.search('(?<=abc)def', 'abcdefg')
@@ -136,3 +137,52 @@ for m in re.finditer(r'\w+ly\b', text):
 # Raw string notation (r-strings):
 print(r'\W(.)\1\W' == '\\W(.)\\1\\W')  # True
 
+
+class Token(NamedTuple):
+    ttype: str
+    value: str
+    line: int
+    column: int
+
+
+def tokenize(code):
+    keywords = {'IF', 'THEN', 'ENDIF', 'FOR', 'NEXT', 'GOSUB', 'RETURN'}
+    tokens = [
+        ('NUMBER',   r'\d+(\.\d*)?'),  # Int of decimal no.
+        ('ASSIGN',   r':='),           # Assignment op
+        ('END',      r';'),            # Statement terminator
+        ('ID',       r'[A-Za-z]+'),    # Identifiers
+        ('OP',       r'[+\-*/]'),      # Arith. operators
+        ('NEWLINE',  r'\n'),           # Line endings
+        ('SKIP',     r'[ \t]+'),       # Skip over spaces and tabs
+        ('MISMATCH', r'.')]            # Any other char
+    token_regex = '|'.join(f'(?P<{name}>{re})' for (name, re) in tokens)
+    line = 1
+    line_start = 0
+    for mo in re.finditer(token_regex, code):
+        kind = mo.lastgroup
+        value = mo.group()
+        col = mo.start() - line_start
+        if kind == 'NUMBER':
+            value = float(value) if '.' in value else int(value)
+        elif kind == 'ID' and value in keywords:
+            kind = 'KEYWORD'
+        elif kind == 'NEWLINE':
+            line_start = mo.end()
+            line += 1
+            continue
+        elif kind == 'SKIP':
+            continue
+        elif kind == 'MISMATCH':
+            raise RuntimeError(f'{value!r} unexpected on line {line}')
+        yield Token(kind, value, line, col)
+
+
+statements = '''
+    IF quantity THEN
+        total := total + price*quantity;
+        tax := price * 0.05;
+    ENDIF;'''
+
+for token in tokenize(statements):
+    print(token)
