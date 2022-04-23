@@ -1,3 +1,6 @@
+import inspect
+
+
 def my_gen():
     yield 1
     yield 2
@@ -38,4 +41,32 @@ except StopIteration:
 
 print('short:', short_list)
 print('res:', res)
+
+
+gen = (x.upper() for x in ['hello', 'world'])
+print(list(gen))
+
+
+def my_gen():
+    yield 1
+
+
+print(inspect.isgeneratorfunction(my_gen))
+print(inspect.isgeneratorfunction(sum))
+
+
+gen = my_gen()
+print(gen)
+print(inspect.getgeneratorstate(gen))
+
+next(gen)
+print(inspect.getgeneratorstate(gen))
+
+try:
+    next(gen)
+except StopIteration:
+    print('Generator depleted')
+
+print(inspect.getgeneratorstate(gen))
+
 
