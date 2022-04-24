@@ -1,3 +1,9 @@
+from functools import partial
+import operator
+
+from first import first
+
+
 # map
 print(map(lambda x: x + 'bzz!', ['I think', 'I am good']))
 print(list(map(lambda x: x + 'bzz!', ['I think', 'I am good'])))
@@ -35,7 +41,7 @@ def all_(iterable):
     return True
 
 
-def any_(iteranle):
+def any_(iterable):
     for x in iterable:
         if x:
             return True
@@ -62,3 +68,37 @@ def get_first_postive_number(ns):
     for n in ns:
         if n > 0:
             return n
+
+
+def get_first(predicate, iterable):
+    for item in iterable:
+        if predicate(item):
+            return item
+
+print(get_first(lambda x: x > 0, [-1, 0, 1, 2]))
+print(list(filter(lambda x: x > 0, [-1, 0, 1, 2]))[0])  # less efficient
+print(next(filter(lambda x: x > 0, [-1, 0, 1, 2])))     # more efficient
+
+a = range(10)
+print(next(x for x in a if x > 3))
+print(next((x for x in a if x > 10), None))
+
+
+#  first()
+print(first([0, False, None, [], (), {}, 42]))
+print(first([-1, 0, 1, 2]))
+print(first([-1, 0, 1, 2], key=lambda x: x > 0))
+
+
+def gt_zero(n):
+    return  n > 0
+
+print(first([-1, 0, 1, 2], key=gt_zero))
+
+
+def gt(n, mn=0):
+    return n > mn
+
+print(first([-1, 0, 1, 2], key=partial(gt, mn=42)))
+# first val that 0 is less than (?)
+print(first([-1, 0, 1, 2], key=partial(operator.lt, 0)))  
