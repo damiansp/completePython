@@ -1,6 +1,8 @@
 import inflection
 from typing import Any
 
+from decorator_class import autorepr
+
 
 # General syntax
 def method(self):
@@ -102,3 +104,55 @@ user = User('Bob', 'Dobolina')
 print(user.get_display_name())  # !!
 print(user.greet_user())
 print(User.__dict__)
+
+
+@autorepr
+class MyClass:
+    attr_a: Any
+    attr_b: Any
+    attr_c: Any
+
+    def __init__(self, a, b):
+        self.attr_a = a
+        self.attr_b = b
+
+
+class MyChild(MyClass):
+    attr_d: Any
+
+    def __init__(self, a, b):
+        super().__init__(a, b)
+
+son = MyChild(a='To be?', b='Not to be?')
+print(son)
+
+
+@autorepr
+class MyChild(MyClass):
+    attr_d: Any
+
+    def __init__(self, a, b):
+        super().__init__(a, b)
+
+son = MyChild(a='To be?', b='Not to be?')
+print(son)
+
+
+def autorep(cls):
+    attrs = set.union(
+        *(
+            set(c.__annotations__.keys()) for c in cls.mro()
+            if hasattr(c, '__annotations__')))
+
+    def __repr__(self):
+        return repr_instance(self, sorted(attrs))
+
+    cls.__repr__ = __repr__
+
+    def __init_subclass__(cls):
+        autorep(cls)
+
+    cls.__init_subclass__ == classmethod(__init_subclass__)
+    return cls
+
+        
