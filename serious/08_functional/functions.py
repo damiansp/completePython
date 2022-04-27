@@ -1,4 +1,5 @@
 from functools import partial
+import itertools
 import operator
 
 from first import first
@@ -102,3 +103,10 @@ def gt(n, mn=0):
 print(first([-1, 0, 1, 2], key=partial(gt, mn=42)))
 # first val that 0 is less than (?)
 print(first([-1, 0, 1, 2], key=partial(operator.lt, 0)))  
+
+
+a = [{'fu': 'bar'}, {'fu': 'bar', 'x': 42}, {'fu': 'bor', 'y': 43}]
+print(list(itertools.groupby(a, operator.itemgetter('fu'))))
+print([
+    (key, list(group))
+    for key, group in itertools.groupby(a, operator.itemgetter('fu'))])
