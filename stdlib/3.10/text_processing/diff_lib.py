@@ -27,6 +27,30 @@ matcher = difflib.SequenceMatcher(None, s1, s2)
 print(matcher.find_longest_match(0, len(s1), 0, len(s2)))
 
 # first arg to SeqMatcher is 'isjunk' (e.g., ignore spaces in this ex:)
-matcher = diflib.SequenceMatcher(lambda x: x == ' ', s1, s2)
+matcher = difflib.SequenceMatcher(lambda x: x == ' ', s1, s2)
 print(matcher.find_longest_match(0, len(s1), 0, len(s2)))
 
+
+s = difflib.SequenceMatcher(None, 'abxcd', 'abcd')
+print(s.get_matching_blocks())
+
+a = 'qabxcd'
+b = 'abycdf'
+s = difflib.SequenceMatcher(None, a, b)
+for tag, i1, i2, j1, j2 in s.get_opcodes():
+    print(
+        f'{tag:7} a[{i1}:{i2}] --> b[{j1}:{j2}] {a[i1:i2]!r:>8} --> '
+        f'{b[j1:j2]!r}')
+
+print(difflib.SequenceMatcher(None, 'tide', 'diet').ratio())
+print(difflib.SequenceMatcher(None, 'diet', 'tide').ratio())
+
+s = difflib.SequenceMatcher(
+    lambda x: x == ' ',
+    'private Thread currentThread;',
+    'private volatile Thread currentThread;')
+print(round(s.ratio(), 3))
+for block in s.get_matching_blocks():
+    print('a[%d] and b[%d] match for %d elements' % block)
+for opcode in s.get_opcodes():
+    print('%6s a[%d:%d] b[%d:%d]' % opcode)
