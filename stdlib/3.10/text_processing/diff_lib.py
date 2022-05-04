@@ -1,5 +1,6 @@
 import difflib
 import keyword
+from pprint import pprint
 
 
 print(
@@ -54,3 +55,19 @@ for block in s.get_matching_blocks():
     print('a[%d] and b[%d] match for %d elements' % block)
 for opcode in s.get_opcodes():
     print('%6s a[%d:%d] b[%d:%d]' % opcode)
+
+
+text1 = '''
+  1. Beautiful is better than ugly.
+  2. Explicit is better than implicit.
+  3. Simple is better than complex.
+  4. Complex is better than complicated.'''.splitlines(keepends=True)
+text2 = '''
+  1. Beautiful is better than ugly.
+  2. Explicit is better than implicit.
+  3. Simple is better than complex.
+  4. Flat is better than nested.'''.splitlines(keepends=True)
+
+d = difflib.Differ()
+res = list(d.compare(text1, text2))
+pprint(res)
