@@ -1,0 +1,9 @@
+from setuptools import Extension, setup
+
+
+module1 = Extension('demo', sources=['demo.c'])
+setup(
+    name='PackageName',
+    version='1.0',
+    description='This is a demo package',
+    ext_modules=[module1])
