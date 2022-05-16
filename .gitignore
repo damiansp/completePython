@@ -42,3 +42,9 @@ bookcode/
 # Graph Files
 #------------------------
 *.graphml
+
+
+# Packaging
+#------------------------
+*.egg-info
+*.so

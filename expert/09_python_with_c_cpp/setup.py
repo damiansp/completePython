@@ -1,9 +1,8 @@
 from setuptools import Extension, setup
 
 
-module1 = Extension('demo', sources=['demo.c'])
 setup(
-    name='PackageName',
+    name='fibonacci',
     version='1.0',
-    description='This is a demo package',
-    ext_modules=[module1])
+    description='Computes the nth Fibonacci number',
+    ext_modules=[Extension('fibonacci', ['fibonacci.c'])])
