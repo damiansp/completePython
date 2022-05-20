@@ -23,6 +23,7 @@ raw_notebooks/
 *.bin
 *.csv
 *.exe
+*.h5
 *.pdf
 *.png
 *.txt
