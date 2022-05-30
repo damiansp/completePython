@@ -13,9 +13,17 @@ long long fibonacci(unsigned int n) {
 static PyObject* fibonacci_py(PyObject* self, PyObject* args) {
   PyObject* result = NULL;
   long n;
+  long long fib;
 
   if (PyArg_ParseTuple(args, "l", &n)) {
-    result = Py_BuildValue("L", fibonacci((unsigned int) n));
+    if (n < 0) {
+      PyErr_SetString(PyExc_ValueError, "n cannot be < 0");
+    } else {
+      Py_BEGIN_ALLOW_THREADS;
+      fib = fibonacci(n);
+      Py_END_ALLOW_THREADS;
+      result = Py_BuildValue("L", fib);
+    }
   }
   return result;
 }
