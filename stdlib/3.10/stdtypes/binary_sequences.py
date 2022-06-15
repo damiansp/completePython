@@ -22,3 +22,10 @@ a = b'abc'
 b = a.replace(b'a', b'z')
 print(b)
 
+b = b'my itty bitty byte string'
+print(b.count(b'b'))
+# 3.9+
+#print(b.removeprefix(b'my '))
+print(b.find(b'tt'))
+print(b' '.join([b'one', b'two', b'three']))
+print(b.replace(b't', b'g'))
