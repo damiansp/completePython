@@ -45,3 +45,11 @@ if VERSION >= '3.9':
 else:
     print('str.removeprefix() unavailable')
 
+text = (
+    'ab c\n'
+    '\n'
+    'de fg\r'
+    'kl\r'
+    '\n')
+print(text.splitlines())
+print(text.splitlines(keepends=True))
