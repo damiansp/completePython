@@ -1,14 +1,19 @@
 from itertools import chain
 
+import pytest
+
 from batch import batches
 
 
-def test_batch_on_lists():
+@pytest.mark.parametrize(
+    'batch_size, expected',
+    [[1, [[1], [2], [3], [4], [5], [6]]],
+     [2, [[1, 2], [3, 4], [5, 6]]],
+     [3, [[1, 2, 3], [4, 5, 6]]],
+     [4, [[1, 2, 3, 4], [5, 6]]]])
+def test_batch_with_loop(batch_size, expected):
     a = [1, 2, 3, 4, 5, 6]
-    assert list(batches(a, 1)) == [[1], [2], [3], [4], [5], [6]]
-    assert list(batches(a, 2)) == [[1, 2], [3, 4], [5, 6]]
-    assert list(batches(a, 3)) == [[1, 2, 3], [4, 5, 6]]
-    assert list(batches(a, 4)) == [[1, 2, 3, 4], [5, 6]]
+    assert list(batches(a, batch_size)) == expected
 
 
 def test_batch_order():
