@@ -7,9 +7,15 @@
 
 # Python
 #------------------------
+build/
 __pycache__
 *.pyc
 *.pkl
+
+
+# Cython/C
+#------------------------
+*.so
 
 
 # Jupyter
