@@ -1,3 +1,7 @@
+cimport cython
+from cython cimport operator
+
+
 cdef int i
 cdef int j, h
 cdef float k = 0., m = 2.2
@@ -27,3 +31,46 @@ def integrate2(a, b, f):
         s == f(a + i*dx)
     return s * dx
 
+
+# supports all c types
+cdef int *p
+cdef void **buf
+cdef int arr[10]
+cdef double points[3][5]
+cdef size_t len
+cdef tm time_struct
+cdef int_short_union_t hi_lo_bytes
+cdef void (*f)(int, double)
+
+cdef int (*signal(int (*f)(int))(int))
+
+
+@cython.infer_types(True)
+def more_inference():
+    i = 1
+    d = 2.
+    im = 3+4j
+    r = i*d + c
+    return r
+
+
+# C pointers
+cdef int *p_int
+cdef float** pp_float = NULL
+cdef int *a, *b
+
+# dereferencing
+cdef double golden_ratio
+cdef double *p_double = &golden_ratio
+p_double[0] = 1.618  # NOT *p_double =
+print(p_double[0])   # NOT print(*p_double)
+# or
+print(operator.dereference(p_double))
+
+# pointers to structs
+'''C:
+st_t *p_st = make_struct();
+int a_doubled = 2 * p_st->a;
+'''
+cdef st_t *p_st = make_struct()
+cdef int a_doubled = 2 * p_st.a  # . instead of ->
