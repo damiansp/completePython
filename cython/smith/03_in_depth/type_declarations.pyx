@@ -74,3 +74,17 @@ int a_doubled = 2 * p_st->a;
 '''
 cdef st_t *p_st = make_struct()
 cdef int a_doubled = 2 * p_st.a  # . instead of ->
+
+
+cdef int a, b, c
+tuple_of_ints = (a, b, c)
+
+cdef list particles, modified_particles
+cdef dict names_from_particles
+cdef str pname
+cdef set unique_particles
+
+particles = list(names_from_particles.keys())
+other_particles = particles
+del other_particles[0]  # changes particles, too
+
