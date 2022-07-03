@@ -88,3 +88,25 @@ particles = list(names_from_particles.keys())
 other_particles = particles
 del other_particles[0]  # changes particles, too
 
+
+@cython.cdivision(True)
+def divides(int a, int b):
+    return a / b
+
+
+def remainder(int a, int b):
+    with cython.cdivision(True):
+        return a % b
+
+
+b1 = b'All men are mortal. '
+b2 = b'Socrates is a man. '
+cdef char *buf = b1 + b2
+
+tmp = s1 + s2
+cdef char *buf = tmp
+
+cdef bytes tmp = s1 + s2
+cdef char *buf = tmp
+
+
