@@ -18,3 +18,11 @@ cpdef long cp_fact(long n):
     if n <= 1:
         return 1
     return n * cp_fact(n - 1)
+
+
+# Replaces func calls with function body to reduce call overhead
+cdef inline long c_fact(long n):
+    '''Compute n!'''
+    if n <= 1:
+        return 1
+    return n * c_fact(n - 1)
