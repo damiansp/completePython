@@ -8,19 +8,22 @@ POPULATION = 100
 TIME_STEPS = 30
 RETURN_DISTRIB = {'name': 't', 'params': {'df': 3}}
 WEALTH_DISTRIB = {'name': 'chisq', 'params': {'df': 0.02}}
+AMT_INVESTED_DISTRIB = {'name': 'uniform', 'params': {}}
 MIN_RETURN = 0.6
 MAX_RETURN = 1.8
 #{'name': 'exp', 'params': {'scale': 30.}}
 
 
 def main():
-    wealth = Returns(**WEALTH_DISTRIB).get_returns(TIME_STEPS)
+    wealth = Returns(**WEALTH_DISTRIB).get_returns(POPULATION, normalize=True)
+    amounts_invested = Returns(**AMT_INVESTED_DISTRIB).get_returns(POPULATION)
     # returns represented as a fraction: e.g., 1.2 = 20% gain, 0.8 = 20% loss
     returns = (
         Returns(**RETURN_DISTRIB)
         .get_returns(
             TIME_STEPS, adj_params={'min': MIN_RETURN, 'max': MAX_RETURN}))
-    plot_distributions(wealth, returns)
+    plot_distributions(wealth, amounts_invested, returns)
+    
     # TODO:
     # create citizen class
     # create population with different investing params
@@ -35,20 +38,20 @@ class Returns:
         self.distrib = {
             'chisq': np.random.chisquare,
             'exp': np.random.exponential,
-            't': np.random.standard_t
+            't': np.random.standard_t,
+            'uniform': np.random.uniform
         }[self.name]
 
-    def get_returns(self, size, adj_params=None):
+    def get_returns(self, size, adj_params=None, normalize=False):
         raw_distrib = self.distrib(size=size, **self.params)
-        if adj_params is None:
-            return raw_distrib
-        return self._adjust(raw_distrib, adj_params)
-
+        if adj_params is not None:
+            raw_distrib = self._adjust(raw_distrib, adj_params)
+        if normalize:
+            return raw_distrib / raw_distrib.sum()
+        return raw_distrib
 
     def _adjust(self, x, params):
         x = self._rescale(x, params)
-        #mean_diff = params['mean'] - t.mean()
-        #t += mean_diff
         return x
     
     @staticmethod
@@ -58,9 +61,7 @@ class Returns:
         x /= x.max()
         x *= rng
         x += params['min']
-        return x
-    
-        
+        return x        
 
 
 class Citizen:
@@ -74,14 +75,21 @@ class Citizen:
     def get_wealth_as_fraction_of_population(self, total_wealth):
         return self.wealth / total_wealth
 
+
+class Population:
+    def __init__(self):
+        population = [Citizen()]
     
         
 
-def plot_distributions(wealth, returns):
-    plt.subplot(211)
+def plot_distributions(wealth, amounts_invested, returns):
+    plt.subplot(311)
     plt.hist(wealth)
     plt.xlabel('Wealth')
-    plt.subplot(212)
+    plt.subplot(312)
+    plt.hist(amounts_invested)
+    plt.xlabel('Fractions invested')
+    plt.subplot(313)
     plt.hist(returns)
     plt.xlabel('Returns')
     plt.show()
