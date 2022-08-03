@@ -44,6 +44,41 @@ def advance(dt, n, bodies, pairs):
             r[2] += dt * vz
 
 
+# cython version
+def advance(double dt, int n, bodies):
+    cdef:
+        int i, ii, jj
+        double dx, dy, dz, mag, b1m, b2m
+        body_t *body1
+        body_t *body2
+        body_t cbodies[N_BODIES]
+    make_cbodies(bodies, cbodies, N_BODIES)
+    for i in range(n):
+        for ii in range(N_BODIES - 1):
+            body1 = &cbodies[ii]
+            for jj in range(ii + 1, N_BODIES):
+                body2 = &cbodies[jj]
+                dx = body1.x[0] - body2.x[0]
+                dy = body1.x[1] - body2.x[1]
+                dz = body1.x[2] - body2.x[2]
+                mag = dt * ((dx*dx + dy*dy + dz*dz)**(-1.5))
+                b1m = body1.m * mag
+                b2m = body2.m * mag
+                body1.v[0] -= dx * b2m
+                body1.v[1] -= dy * b2m
+                body1.v[2] -= dz * b2m
+                body2.v[0] -= dx * b1m
+                body2.v[1] -= dy * b1m
+                body2.v[2] -= dz * b1m
+        for ii in range(N_BODIES):
+            body2 = &cbodies[ii]
+            body2.x[0] += dt * body2.v[0]
+            body2.x[1] += dt * body2.v[1]
+            body2.x[2] += dt * body2.v[2]
+    return make_pybodies(cbodies, N_BODIES)
+
+
+
 cdef struct body_t:
     double x[3]
     double v[3]
