@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import logging
 
 
@@ -8,3 +9,15 @@ logger.log(logging.CRITICAL, 'a critical message')
 logger.error('an error msg')
 logger.warning('and a warning')
 logger.info('basic info')
+
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+formatter = logging.Formatter(
+    fmt=(
+        '%(asctime)s | %(levelname)s | %(name)s | %(filename)s:%(lineno)d | '
+        '% (message)s'))
+handler = logging.handlers.TimedRotatingHandler(
+    filename='app.log', when='D', backupCount=28)
+handler.setFormatter(formatter)
+root_logger.addHandler(handler)
