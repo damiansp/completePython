@@ -21,3 +21,9 @@ handler = logging.handlers.TimedRotatingHandler(
     filename='app.log', when='D', backupCount=28)
 handler.setFormatter(formatter)
 root_logger.addHandler(handler)
+
+
+acme_logger = logging.getLogger('acme.utils')
+acme_logger.disabled = True
+acme_logger.handlers.clear()
+acme_logger.setLevel(logging.CRITICAL)
