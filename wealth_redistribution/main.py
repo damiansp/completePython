@@ -78,7 +78,7 @@ class Citizen:
 
 class Population:
     def __init__(self):
-        population = [Citizen()]
+        population = [Citizen()] for _ in POPULATION]
     
         
 
