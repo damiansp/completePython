@@ -14,6 +14,7 @@ def main(n, bodies=BODIES, ref='sun'):
     offset_momentum(bodies[ref], system)
     report_energy(system)
     system = advance(0.01, n, system)
+    report_energy(sytem)
 
 
 def offset_momentum(ref, bodies):
@@ -75,9 +76,22 @@ def advance(double dt, int n, bodies):
     return make_pybodies(cbodies, N_BODIES)
 
 
-def make c_bodies():
-    pass
+cdef void make c_bodies(list bodies, body_t *cbodies, int n_cbodies):
+    cdef body_t *cbody
+    for i, body in enumerate(bodies):
+        if i >= n_cbodies:
+            break
+        x, v, m = body
+        cbody = &cbodies[i]
+        cbody.x[0], cbody.x[1], cbody.x[2] = x
+        cbody.v[0], cbody.v[1], cbody.v[2] = v
+        cbodies[i].m = m    
 
 
-def make_pybodies():
-    pass
+cdef list make_pybodies(body_t *cbodies, int n_cbodies):
+    pybodies = []
+    for i in range(n_cbodies):
+        x = [cbodies[i].x[0], cbodies[i].x[1], cbodies[i].x[2]]
+        v = [cbodies[i].v[0], cbodies[i].v[1], cbodies[i].v[2]]
+        pybodies.append((x, v, cbodies[i].m))
+    return pybodies
