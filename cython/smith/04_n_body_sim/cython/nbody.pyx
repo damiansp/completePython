@@ -9,12 +9,18 @@ from static import BODIES
 DEF N_BODIES = 5
 
 
+cdef struct body_t:
+    double x[3]
+    double v[3]
+    double m
+
+
 def main(n, bodies=BODIES, ref='sun'):
     system = list(bodies.values())
     offset_momentum(bodies[ref], system)
     report_energy(system)
     system = advance(0.01, n, system)
-    report_energy(sytem)
+    report_energy(system)
 
 
 def offset_momentum(ref, bodies):
@@ -76,7 +82,7 @@ def advance(double dt, int n, bodies):
     return make_pybodies(cbodies, N_BODIES)
 
 
-cdef void make c_bodies(list bodies, body_t *cbodies, int n_cbodies):
+cdef void make_cbodies(list bodies, body_t *cbodies, int n_cbodies):
     cdef body_t *cbody
     for i, body in enumerate(bodies):
         if i >= n_cbodies:
