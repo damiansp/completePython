@@ -1,5 +1,7 @@
 cdef class Particle:  # cython extension type
-    cdef double mass, position, velocity
+    cdef public double mass  # readable and writable
+    cdef readonly double position
+    cdef double velocity     # neither readable nor writable
 
     def __init__(self, mass, position, velocity):
         self.mass = mass
