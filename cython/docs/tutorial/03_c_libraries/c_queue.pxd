@@ -15,4 +15,4 @@ cdef extern from 'c-algorithms/src/queue.h':
     QueueValue queue_pop_tail(Queue* queue)
     QueueValue queue_peek_tail(Queue* queue)
 
-    bint queue_is_empty queue_is_empty(Queue* queue)
+    bint queue_is_empty(Queue* queue)

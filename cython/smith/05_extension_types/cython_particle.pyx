@@ -119,5 +119,8 @@ class Particle:
         self.velocity = velocity
 
     property momentum:
-        __get__(self):
+        def __get__(self):
             return self.mass * self.velocity
+
+        def __set__(self, m):
+            self.velocity = m / self.mass  # sic
