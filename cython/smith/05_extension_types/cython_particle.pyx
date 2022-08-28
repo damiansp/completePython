@@ -64,3 +64,60 @@ class PyParticle(Particle):
 cdef Particle static_p = p
 print(static_p.get_momentum())
 print(static_p.velocity())
+print((<Particle>p).get_momentum())  # cast
+print((<Particle>p).velocity)
+# Safer check that cast is possible:
+print((<Particle?>p).velocity)  # TypeError if not castable
+
+
+def dispatch(Particle p):
+    print(p.get_momentum())
+    print(p.velocity)
+
+dispatch(Particle(1, 2, 3))    # OK
+dispatch(CParticle(1, 2, 3))   # OK
+dispatch(PyParticle(1, 2, 3))  # OK
+dispatch(object())             # TypeError
+dispatch(None)                 # Segmentation fault
+
+
+def dispatch(Particle p):
+    if p is None:
+        raise TypeError('NoneType cannot be dispatched')
+    print(p.get_momentum())
+    print(p.velocity)
+
+
+# Simpler Cython syntax
+def dispatch(Particle p not None):
+    print(p.get_momentum())
+    print(p.velocity)
+
+
+# Class properties
+class Particle:
+    cdef double mass, position, velocity
+    
+    def __init__(self, mass, position, velocity):
+        self.mass = mass
+        self.position = position
+        self.velocity = velocity
+
+    def _get_momentum(self):
+        return self.mass * self.velocity
+
+    momentum = property(_get_momentum)
+
+
+# Alt syntax
+class Particle:
+    cdef double mass, position, velocity
+
+    def __init__(self, mass, position, velocity):
+        self.mass = mass
+        self.position = position
+        self.velocity = velocity
+
+    property momentum:
+        __get__(self):
+            return self.mass * self.velocity
