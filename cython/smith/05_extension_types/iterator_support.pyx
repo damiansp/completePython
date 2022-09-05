@@ -4,7 +4,7 @@ cdef class I:
         int i
 
     def __init__(self):
-        self.data = range(100)
+        self.data = list(range(100))
         self.i = 0
 
     def __iter__(self):
