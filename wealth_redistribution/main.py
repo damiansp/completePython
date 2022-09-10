@@ -15,20 +15,22 @@ MAX_RETURN = 1.8
 
 
 def main():
-    wealth = Returns(**WEALTH_DISTRIB).get_returns(POPULATION, normalize=True)
-    amounts_invested = Returns(**AMT_INVESTED_DISTRIB).get_returns(POPULATION)
+    wealth_distribution = (
+        Returns(**WEALTH_DISTRIB).get_returns(POPULATION, normalize=True))
+    invested_distribution = Returns(
+        **AMT_INVESTED_DISTRIB).get_returns(POPULATION)
     # returns represented as a fraction: e.g., 1.2 = 20% gain, 0.8 = 20% loss
     returns = (
         Returns(**RETURN_DISTRIB)
         .get_returns(
             TIME_STEPS, adj_params={'min': MIN_RETURN, 'max': MAX_RETURN}))
     plot_distributions(wealth, amounts_invested, returns)
-    
-    # TODO:
-    # create citizen class
-    # create population with different investing params
-    # distribute initial wealth
-    # Run sim
+    population = Population(wealth_distribution, invested_distribution)
+    # track wealth per citizen, and
+    # for return in returns:
+    #     population.updated_wealth()
+    #     track
+    # show distribution over time
 
 
 class Returns:
@@ -69,17 +71,23 @@ class Citizen:
         self.wealth = wealth
         self.fraction_invested = fraction_invested
 
-    def update_wealth(self, returns):
-        self.wealth *= returns
+   # def update_wealth(self, returns):
+   #     self.wealth *= returns
 
     def get_wealth_as_fraction_of_population(self, total_wealth):
         return self.wealth / total_wealth
 
 
 class Population:
-    def __init__(self):
-        population = [Citizen()] for _ in POPULATION]
-    
+    def __init__(self, wealth_distribution, invested_distribution):
+        wealth_per_citizen = TOTAL_WEALTH * wealth
+        population = [
+            Citizen(amt, fraction_invested)
+            for amt, fraction_invested in zip(
+                    wealth_per_citizen, invested_distribution)]
+
+    def update_wealth(self, returns):
+        pass
         
 
 def plot_distributions(wealth, amounts_invested, returns):
