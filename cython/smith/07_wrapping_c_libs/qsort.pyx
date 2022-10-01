@@ -43,3 +43,13 @@ cdef int int_compare(const void *a, const void *b):
 
 cdef int reverse_int_compare(const void *a, const void *b):
     return -int_compare(a, b)
+
+
+cdef object py_cmp = None
+
+
+cdef int py_cmp_wrapper(const void *a, const void *b):
+    cdef int ia, ib
+    ia = (<int*>a)[0]
+    ib = (<int*>b)[0]
+    return ia - ib
