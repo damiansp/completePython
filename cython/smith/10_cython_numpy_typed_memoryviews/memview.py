@@ -18,3 +18,13 @@ print(mutable2[0])
 print(ba[:10])
 
 np_mv = memoryview(np.ones((10, 20, 30)))
+print(np_mv.ndim)
+print(np_mv.shape)
+print(np_mv.strides)
+print(np_mv.format)
+
+dt = np.dtype([('a', np.int8), ('b', np.complex128)])
+print(dt)
+
+structured_mv = memoryview(np.empty((10,), dtype=dt))
+print(structured_mv.format)
