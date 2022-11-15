@@ -44,3 +44,39 @@ d.clear()
 d.extendleft('abc')
 print(d)
       
+
+def tail(filename, n=10):
+    '''Return the last n lines of a file'''
+    with open(filename, 'r') as f:
+        return deque(f, n)
+
+
+def moving_avg(iterable, window=3):
+    it = iter(iterable)
+    d = deque(itertools.islice(it, window - 1))
+    d.appendleft(0)
+    s = sum(d)
+    for elem in it:
+        s += elem - d.popleft()
+        d.append(elem)
+        yield s / n
+
+
+def round_robing(*iterables):
+    '''round_robing('ABC', 'D', 'EF') -> A D E B F C'''
+    iterators = deque(map(iter, iterables))
+    while iterators:
+        try:
+            while True:
+                yield next(iterators[0])
+                iterators.rotate(-1)
+        except StopIteration:
+            iterators.popleft()
+
+
+def delete_nth(d, n):
+    d.rotate(-n)
+    d.popleft()
+    d.rotate(n)
+
+
