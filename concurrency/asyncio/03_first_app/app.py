@@ -11,20 +11,26 @@ connections = []
 
 try:
     while True:
-        connection, client_address = server_socket.accept()
-        connection.setblocking(False)
-        print(f'Connection made with {client_address}')
-        connections.append(connection)
+        try:
+            connection, client_address = server_socket.accept()
+            connection.setblocking(False)
+            print(f'Connection made with {client_address}')
+            connections.append(connection)
+        except BlockingIOError:
+            pass
         for connection in connections:
-            buff = b''
-            while buff[-2:] != '\r\n':
-                data = connection.recv(2)
-                if data:
-                    print(f'Got data: {data}!')
-                    buff += data
-                else:
-                    break
-            print(f'Complete data:\n{buff}')
-            connection.sendall(buff)
+            try:
+                buff = b''
+                while buff[-2:] != '\r\n':
+                    data = connection.recv(2)
+                    if data:
+                        print(f'Got data: {data}!')
+                        buff += data
+                    else:
+                        break
+                print(f'Complete data:\n{buff}')
+                connection.sendall(buff)
+            except BlockingIOError:
+                pass
 finally:
     server_socket.close()
