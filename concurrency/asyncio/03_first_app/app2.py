@@ -1,11 +1,22 @@
 import asyncio
 from asyncio import AbstractEventLoop
+import logging
 import socket
 
 
+tasks = []
+
+
 async def echo(conn: socket, loop: AbstractEventLoop) -> None:
-    while data := await loop.sock_recv(conn, 1024):
-        await loop.sock_sendall(conn, data)
+    try:
+        while data := await loop.sock_recv(conn, 1024):
+            if data == b'boom\r\n':
+                raise Exception('Unexpected network error')
+            await loop.sock_sendall(conn, data)
+    except Exception as e:
+        logging.exception(e)
+    finally:
+        connection.close()
 
 
 async def listen_for_conn(server_socket: socket, loop: AbstractEventLoop):
@@ -13,7 +24,7 @@ async def listen_for_conn(server_socket: socket, loop: AbstractEventLoop):
         conn, address = await loop.sock_accept(server_socket)
         conn.setblocking(False)
         print(f'Got connection from {address}')
-        asyncio.create_task(echo(conn, loop))
+        tasks.append(asyncio.create_task(echo(conn, loop)))
 
 
 async def main():
