@@ -16,6 +16,9 @@ tasks = []
 async def main():
     loop: AbstractEventLoop = asyncio.get_running_loop()
     loop.add_signal_handler(signal.SIGINT, cancel_tasks)
+    #loop.add_signal_handler(
+    #    signal.SIGINT, lambda asyncio.create_task(await_all_tasks()))
+    loop.add_signal(singal.SIGINT, shutdown)
     await delay(10)
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -32,6 +35,11 @@ def cancel_tasks():
     print(f'Cancelling {len(tasks)} task(s)')
     [task.cancel() for task in tasks]
 
+
+async def await_all_tasks():
+    tasks = asyncio.all_tasks()
+    [await task for task in tasks]
+    
     
 async def echo(conn: socket, loop: AbstractEventLoop) -> None:
     try:
@@ -51,6 +59,16 @@ async def listen_for_conn(server_socket: socket, loop: AbstractEventLoop):
         conn.setblocking(False)
         print(f'Got connection from {address}')
         tasks.append(asyncio.create_task(echo(conn, loop)))
+
+
+class GracefulExit(SystemExit):
+    pass
+
+
+def shutdoiwn():
+    raise GracefulExit()
+
+
 
 
 if __name__ == '__main__':
