@@ -46,7 +46,7 @@ def capwords(s, sep=None):
     return (sep or ' ').join(map(str.capitalize, s.split(sep)))
 
 
-##################################################################
+#--------------------------------------------------------------------------
 import re as _re
 from collections import ChainMap as _ChainMap
 
@@ -142,3 +142,50 @@ class Template:
                 'Unrecognized named group in pattern', self.pattern)
 
         return self.pattern.sub(convert, self.template)
+
+
+    def is_valid(self):
+        for mo in self.pattern.finditer(self.template):
+            if mo.group('invalid') is not None:
+                return False
+            if (mo.group('named') is None
+                and mo.group('braced') is None
+                and mo.group('escaped') is None):
+                # there must be a group we're not expecting
+                raise ValueError(
+                    'Unrecognized name group in pattern', self.pattern)
+        return True
+
+    def get_identifiers(self):
+        ids = []
+        for mo in self.pattern.finditer(self.template):
+            named = mo.group('named') or mo.group('braced')
+            if named is not None and named not in ids:
+                # add a named group the first time it appears
+                ids.append(named)
+            elif (named is None
+                  and mo.group('invalid') is None
+                  and mo.group('escaped') is None):
+                # there must be a group we're not expecting
+                raise ValueError(
+                    'Unrecognized name group in pattern', self.pattern)
+        return ids
+
+
+# Init Template.pattern.  __init_subclass__() is automatically called only for
+# subclasses, not for the Template class itself.
+Template.__init_subclass__()
+
+
+#--------------------------------------------------------------------------
+# The Formatter class
+# See PEP 3101 for details and the purpose of this class
+#
+# The hard parts are reused from the C implementation.  They're exposed as '_'
+# prefixed methods of str.
+# The overall parser is implemented in _string.formatter_parser.
+# The field name parser is implemented in _string.formatter_field_name_split
+class Formatter:
+    def format(self, format_string, /, *arg, **kwargs):
+        return self.vformat(format_string, args, kwargs)
+
