@@ -3,6 +3,9 @@ import functools
 import time
 from typing import Any, Callable
 
+import aiohttp
+from aiohttp import ClientSession
+
 
 async def delay(s: int) -> int:
     print(f'Sleeping for {s}s...')
@@ -27,3 +30,13 @@ def async_timed():
 
     return wrapper
 
+
+#async def fetch_status(session: ClientSession, url: str) -> int:
+#    ten_ms = aiohttp.ClientTimeout(total=0.01)
+#    async with session.get(url, timeout=ten_ms) as res:
+#        return res.status
+
+
+async def fetch_status(session: ClientSession, url: str) -> int:
+    async with session.get(url) as res:
+        return res.status
