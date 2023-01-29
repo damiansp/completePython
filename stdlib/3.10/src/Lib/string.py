@@ -189,3 +189,59 @@ class Formatter:
     def format(self, format_string, /, *arg, **kwargs):
         return self.vformat(format_string, args, kwargs)
 
+    def vformat(self, format_string, args, kwargs):
+        used_args = set()
+        result, _ = self._vformat(format_string, args, kwargs, used_args, 2)
+        self.check_unused_args(used_args, args, kwargs)
+        return result
+
+    def _vformat(
+            self, format_string, args, kwargs, used_args, recursion_depth,
+            auto_arg_index=0):
+        if recursion_depth < 0:
+            raise ValueError('Max string recursion exceeded')
+        result = []
+        for literal_text, field_name, format_spec, conversion in self.parse(
+                format_string):
+            # output the literal text
+            if literal_text:
+                result.append(literal_text)
+            # if there's a field, output it
+            if field_name is not None:
+                # this is some markup; find the object and do the formatting
+                # handle arg index when empty field names given
+                field_spec_err = (
+                    'cannot swittch from manual field specification to '
+                    'automatic field numbering.')
+                if field_name == '':
+                    if auto_arg_index is False:
+                        raise ValueError(field_spec_err)
+                    field_name = str(auto_arg_index)
+                    auto_arg_index += 1
+                elif field_name.isdigit():
+                    if auto_arg_index:
+                        raise ValueError(field_spec_err)
+                    # disable auto arg incrementing. if it gets used later on,
+                    # exception will be raised
+                    auto_arg_index = False
+                # given the field name, find the obj it references and the arg
+                # it came from
+                obj, arg_used = self.get_field(field_nme, args, kwargs)
+                used_args.add(arg_used)
+                # do any conversion on the resulting obj
+                obj = self.convert_field(obj, conversion)
+                # expand the format spec if needed
+                format_spec, auto_arg_index = slef._vformat(
+                    format_spec,
+                    args,
+                    kwargs,
+                    used_args,
+                    recursion_depth - 1,
+                    auto_arg_index=aut_arg_index)
+                # format the obj and append to res
+                result.append(self.format_field(obj, format_spec))
+        return ''.join(result), auto_arg_index
+
+    def get_value():
+                            
+                
