@@ -69,4 +69,73 @@ class ExtendedRef(weakref.ref):
             self.__counter += 1
             ob = (ob, self.__counter)
         return ob
-        
+
+
+_id2obj_dict = weakref.WeakValueDictionary()
+
+
+def remember(obj):
+    oid = id(obj)
+    _id2obj_dict[oid] = obj
+    return oid
+
+
+def id2obj(oid):
+    return _id2obj_dict[oid]
+
+
+kenny = Object()
+weakref.finalize(kenny, print, 'You killed Kenny!')
+del kenny
+
+
+def callback(x, y, z):
+    print('CALLBACK')
+    return x + y + z
+
+
+obj = Object()
+f = weakref.finalize(obj, callback, 1, 2, z=3)
+assert f.alive
+assert f() == 6  # finalized; callback called
+assert not f.alive
+f()      # nothing; finalizer dead
+del obj  # nothing; finalizer dead
+
+obj = Object()
+f = weakref.finalizer(obj, callback, 1, 2, z=3)
+f.detach()
+new_obj, func, args, kwargs = _
+assert not f.alive
+assert new_obj is obj
+assert func(*args, **kwargs) == 6  # CALLBACK
+
+
+class TempDir:
+    def __init__(self):
+        self.name = tempfile.mkdtemp()
+
+    def remove(self):
+        if self.name is not None:
+            shutil.rmtree(self.name)
+            self.name = None
+
+    @property
+    def removed(self):
+        return self.name is None
+
+    def __del__(self):
+        self.remove()
+
+
+class BetterTempDir:
+    def __init__(self):
+        self.name = tempfile.mkdtemp()
+        self._finalizer = weakref.finalize(self, shutil.rmtree, self.name)
+
+    def remove(self):
+        self._finalizer()
+
+    @property
+    def removed(self):
+        return not self._finalizer.alive
