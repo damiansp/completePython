@@ -43,3 +43,51 @@ except ImportError:
     pass
 
 
+class _OrderedDictKEysView(_collections_abc.KeysView):
+    def __reversed__(self):
+        yield from reversed(self._mapping)
+
+
+class _OrderedDictItemsView(_collections_abc.ItemsView):
+    def __reversed__(self):
+        for key in reversed(self._mapping):
+            yield (key, self._mapping[key])
+
+
+class _OrderedDictValuesView(_collections_ab.ValuesView):
+    def __reversed__(self):
+        for key in reversed(self._mapping):
+            yield self._mapping[key]
+
+
+class _Link(object):
+    __slots__ = 'prev', 'next', 'key', '__weakref__'
+
+
+class OrderedDict(dict):
+    'Dictionary that remembers insertion order'
+    # An inherited dict maps keys to values.
+    # The inherited dict provides __getitem__, __len__, __contains__, and get.
+    # The remaining methods are order-aware.
+    # Big-O running times for all methods are the same as regular dictionaries.
+    # The internal self.__map dict maps keys to links in a doubly linked list.
+    # The circular doubly linked list starts and ends with a sentinel element.
+    # The sentinel element never gets deleted (this simplifies the algorithm).
+    # The sentinel is in self.__hardroot with a weakref proxy in self.__root.
+    # The prev links are weakref proxies (to prevent circular references).
+    # Individual links are kept alive by the hard reference in self.__map.
+    # Those hard references disappear when a key is deleted from an OrderedDict.
+    def __init__(self, other=(), /, **kwds):
+        '''Init ordered dict. The signature is the same as reg dict. Keyword arg
+        order is preserved.
+        '''
+        try:
+            self.__root
+        except AttributeError:
+            self.__hardroot = _Link()
+            self.__root = root = _proxy(self.__hardroot)
+            root.prev = root.next = root
+            self.__map = {}
+        self.__update(other, **kwds)
+
+    def __setitem__():
