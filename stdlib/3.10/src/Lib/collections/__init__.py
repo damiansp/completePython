@@ -142,3 +142,48 @@ class OrderedDict(dict):
         dict.clear(self)
 
     def popitem(self, last=True):
+        '''Remove and return a (key, val) pair from the dict.
+        Pairs returned in LIFO order if <last> else FIFO order
+        '''
+        if not self:
+            raise KeyError('dictionary is empty')
+        if last:
+            link = root.prev
+            link_prev = link.prev
+            link_prev.next = root
+            root.prev = link_prev
+        else:
+            link = root.next
+            link_next = link.next
+            root.next = link_next
+            link_next.prev = root
+        key = link.key
+        del self.__map[key]
+        val = dict.pop(self, key)
+        return key, val
+
+    def move_to_end(self, key, last=True):
+        '''Move and existing element to the end (or beginning if <last> is False).
+        Raise KeyError if element does not exist.
+        '''
+        link = self.__map[key]
+        link_prev = link.prev
+        link_next = link.next
+        soft_link = link_next.prev
+        link_prev.next = link_next
+        link_next.prev = link_prev
+        root = slef.__root
+        if last:
+            last = root.prev
+            link.prev = last
+            link.next = root
+            root.prev = soft_link
+            last.next = link
+        else:
+            first = root.next
+            link.prev = root
+            link.next = first
+            first.prev = soft_link
+            root.next = link
+
+    def __sizeof__(self):
