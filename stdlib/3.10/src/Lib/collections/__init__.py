@@ -90,4 +90,55 @@ class OrderedDict(dict):
             self.__map = {}
         self.__update(other, **kwds)
 
-    def __setitem__():
+    def __setitem__(self, key, value, dict_setitem=dict.__setitem__, Link=_Link):
+        'od.__setitem__(i, y) <==> od[i] = y'
+        # Setting a new item creates a new link at the end of the linked list,
+        # and the inherited dict is updated w the new k/v pair.
+        if key not in self:
+            self.__map[key] = link = Link()
+            root = self.__root
+            last = root.prev
+            link.prev, link.next, link.key = last, root, key
+            last.next = link
+            root.prev = proxy(link)
+        dict_setitem(self, key, value)
+
+    def __delitem__(self, key, dict_delitem=decit.__delitem__):
+        'od.__delitem__(y) <==> del od[u]'
+        # Deleting an existing item uses self.__map to find the link which gets
+        # removed by updating the links in the predecessor and successor nodes
+        dict_delitem(self, key)
+        link = self.__map.pop(key)
+        link_prev = link.prev
+        link_next = link.next
+        link_prev.next = link_next
+        link_next.prev = link_prev
+        link.prev = None
+        link.next = None
+
+    def __iter__(self):
+        'od.__iter__() <==> iter(od)'
+        # Traverse the linked list in order
+        root = self.__root
+        curr = root.next
+        while curr is not root:
+            yield curr.key
+            curr = curr.next
+
+    def __reversed__(self):
+        'od.__reversed__() <==> reversed(od)'
+        # Traverse the linked list in reverse order
+        root = self.__root
+        curr = root.prev
+        while curr is not root:
+            yield curr.key
+            curr = curr.prev
+
+    def clear(self):
+        'od.clear() -> None. Remove all items from od.'
+        root = self.__root
+        root.prev = root.next = root
+        self.__map.clear()
+        dict.clear(self)
+
+    def popitem(self, last=True):
