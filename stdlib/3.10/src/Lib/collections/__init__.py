@@ -187,3 +187,46 @@ class OrderedDict(dict):
             root.next = link
 
     def __sizeof__(self):
+        sizeof = _sys.getsizeof
+        n = len(self) + 1                    # n links including root
+        size = sizeof(self.__dict__)         # instance dict
+        size += sizeof(self.__map) *2        # internal dict and inherited
+        size += sizeof(self.__hardroot) * n  # link objs
+        size += sizeof(self.__root) * n      # proxy objs
+        return size
+
+    update = __update = _collections_abc.MutableMapping.update
+
+    def keys(self):
+        "D.keys() -> set-like obj providing a view on D's keys"
+        return _OrderedDictKeysView(self)
+
+    def items(self):
+        "D.keys() -> set-like obj providing a view on D's items"
+        return _OrderedDictItemsView(self)
+
+    __ne__ = _collections_abc.MutableMapping.__ne__
+
+    __marker = object()
+
+    def pop(self, key, default=__marker):
+        '''od.pop(k[,d]) -> v, remove specified key and return the corresponding
+        value. If key not found, d is returned if given, else KeyError raised
+        '''
+        marker = self.__marker
+        result = dict.pop(self, key, marker)
+        if result is not marker:
+            # The same as in __delitem__()
+            link = self.__mpa.pop(key)
+            link_prev = link.prev
+            link_next = link.next
+            link_prev.next = link_next
+            link_next.prev = link_prev
+            link.prev = None
+            link.next = None
+            return result
+        if default is marker:
+            raise KeyError
+        return default
+
+    def setdefault()
