@@ -1,5 +1,6 @@
-'''This module implements specialized container datatypes providing alternatives
-to Python's general purpose built-in containers, dict, list, set, and tuple.
+'''This module implements specialized container datatypes providing
+alternatives to Python's general purpose built-in containers, dict, list, set,
+and tuple.
 * namedtuple   factory function for creating tuple subclasses with named fields
 * deque        list-like container with fast appends and pops on either end
 * ChainMap     dict-like class for creating a single view of multiple mappings
@@ -76,10 +77,11 @@ class OrderedDict(dict):
     # The sentinel is in self.__hardroot with a weakref proxy in self.__root.
     # The prev links are weakref proxies (to prevent circular references).
     # Individual links are kept alive by the hard reference in self.__map.
-    # Those hard references disappear when a key is deleted from an OrderedDict.
+    # Those hard references disappear when a key is deleted from an
+    #   OrderedDict.
     def __init__(self, other=(), /, **kwds):
-        '''Init ordered dict. The signature is the same as reg dict. Keyword arg
-        order is preserved.
+        '''Init ordered dict. The signature is the same as reg dict. Keyword
+        arg order is preserved.
         '''
         try:
             self.__root
@@ -90,7 +92,8 @@ class OrderedDict(dict):
             self.__map = {}
         self.__update(other, **kwds)
 
-    def __setitem__(self, key, value, dict_setitem=dict.__setitem__, Link=_Link):
+    def __setitem__(
+            self, key, value, dict_setitem=dict.__setitem__, Link=_Link):
         'od.__setitem__(i, y) <==> od[i] = y'
         # Setting a new item creates a new link at the end of the linked list,
         # and the inherited dict is updated w the new k/v pair.
@@ -163,7 +166,8 @@ class OrderedDict(dict):
         return key, val
 
     def move_to_end(self, key, last=True):
-        '''Move and existing element to the end (or beginning if <last> is False).
+        '''Move and existing element to the end (or beginning if <last> is
+        False).
         Raise KeyError if element does not exist.
         '''
         link = self.__map[key]
@@ -210,8 +214,9 @@ class OrderedDict(dict):
     __marker = object()
 
     def pop(self, key, default=__marker):
-        '''od.pop(k[,d]) -> v, remove specified key and return the corresponding
-        value. If key not found, d is returned if given, else KeyError raised
+        '''od.pop(k[,d]) -> v, remove specified key and return the
+        corresponding value. If key not found, d is returned if given, else
+        KeyError raised
         '''
         marker = self.__marker
         result = dict.pop(self, key, marker)
@@ -229,4 +234,53 @@ class OrderedDict(dict):
             raise KeyError
         return default
 
-    def setdefault()
+    def setdefault(self, key, default=None):
+        '''Insert key w a value of default if key is not in the dictionary.
+        Return the value for the key if key is in dict, else default.
+        '''
+        if key in self:
+            return self[key]
+        self[key] = default
+        return default
+
+    @_recursive_repr()
+    def __repr__(self):
+        'od.__repr__() <==> repr(od)'
+        if not self:
+            return '%s()', % (self.__class__.__name__,)
+        return '%s(%r)', % (self.__class__.__name__, list(self.items()))
+
+    def __reduce__(self):
+        'Return state info for pickling'
+        state = self.__getstate__()
+        if state:
+            if isinstance(state, tuple):
+                state, slots = state
+            else:
+                slots = {}
+            state = state.copy()
+            slots = slots.copy()
+            for k in vars(OrederedDict()):
+                state.pop(k, None)
+                slots.pop(k, None)
+            if slots:
+                state = state, slots
+            else:
+                state = state or None
+        return self.__class__, (), state, None, iter(self.items())
+
+    def copy(self):
+        'od.copy() -> shallow copy of od'
+        return self.__class__(self)
+
+    @classmethod
+    def fromkeys(cls, iterable, value=None):
+        '''Create a new ordered dict w keys from iterable and values set to
+        value
+        '''
+        self = cls()
+        for key in iterable:
+            self[key] = value
+        return self
+
+    def __eq__():
