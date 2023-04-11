@@ -283,4 +283,50 @@ class OrderedDict(dict):
             self[key] = value
         return self
 
-    def __eq__():
+    def __eq__(self, other):
+        '''od.__eq__(y) <==> od == y. Comparison to another OD is order-
+        sensitive while comparison to a reqular mapping is not
+        '''
+        if isinstance(other, OrderedDict):
+            return dict.__eq__(self, other) and all(map(_eq, self, other))
+        return dict.__eq__(self, other)
+
+    def __ior__(self, other):
+        self.update(other)
+        return self
+
+    def __or__(self, other):
+        if not isinstance(other, dict):
+            return NotImplemented
+        new = self.__class__(self)
+        new.update(other)
+        return new
+
+    def __ror__(self, other):
+        if not isinstance(other, dict):
+            return NotImplemented
+        new = self.__class__(other)
+        new.update(self)
+        return new
+
+
+try:
+    from _collections import OrderedDict
+except ImportError:
+    pass  # leave pure Python version in place
+
+#-----------
+#
+# namedtuple
+#
+#-----------
+
+try:
+    from _collections import _tuplegetter
+except ImportError:
+    _tuplegetter = lambda index, doc: property(_itemgetter(index), doc=doc)
+
+
+def namedtuple(
+        typename, field_names, *, rename=False, defaults=None, module=None):
+    '
