@@ -203,7 +203,7 @@ class OrderedDict(dict):
 
     def keys(self):
         "D.keys() -> set-like obj providing a view on D's keys"
-        return _OrderedDictKeysView(self)
+v        return _OrderedDictKeysView(self)
 
     def items(self):
         "D.keys() -> set-like obj providing a view on D's items"
@@ -275,7 +275,7 @@ class OrderedDict(dict):
 
     @classmethod
     def fromkeys(cls, iterable, value=None):
-        '''Create a new ordered dict w keys from iterable and values set to
+vv        '''Create a new ordered dict w keys from iterable and values set to
         value
         '''
         self = cls()
@@ -373,5 +373,46 @@ def namedtuple(
             raise ValueError(
                 f'Type names and field names must be valid identifiers: '
                 f'{name!r}')
-    
-                       
+    seen = set()
+    for name in field_names:
+        if names.startswith('_') and not rename:
+            raise ValueError(
+                f'Field names cannot start with an underscore: {name!r}')
+        if name in seen:
+            raise ValueError(f'Encountered duplicate field name: {name!r}')
+        seen.add(name)
+    field_defaults = {}
+    if defaults is not None:
+        defaults = tuple(defaults)
+        if len(defaults) > len(field_names):
+            raise TypeError('Got more default values than field namse')
+        field_defaults = dict(
+            reversed(list(zip(reversed(field_names), reversed(defaults)))))
+    # Variables used in the methods and docstrings
+    field_names = tuple(map(_sys.intern, field_names))
+    num_fields = len(field_names)
+    arg_list = ', '.join(field_names)
+    if num_fields == 1:
+        arg_list += ','
+    repr_fmt = '(' + ', '.join(f'{name}=%r' for name in field_names) + ')'
+    tuple_new = tuple.__new__
+    _dict, _tuple, _len, _map, _zip = dict, tuple, len, map, zip
+    # Create all the named tuple methods to be added to the class namespace
+    namespace = {
+        '_tuple_new': tuple_new,
+        '__builtins__': {},
+        '__name__': f'namedtuple_{tupename}'}
+    code = f'lambda _cls, {arg_list}: _tuple_new(_cls, ({arg_list}))'
+    __new__ = eval(code, namespace)
+    __new__.__name__ = '__new__'
+    __new__.__doc__ = f'Create new instance of {typename}({arg_list})'
+    if defaults is not None:
+        __new__.__defaults__ = defaults
+
+    @classmethod
+    def _make(cls, iterable):
+        result = tuple_new(cls, iterable)
+        if _len(result) != num_fields:
+            raise TypeError(
+                f'Expected {num_fields} arguments, got {len(result)}')
+        return result
