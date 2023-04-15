@@ -315,6 +315,7 @@ try:
 except ImportError:
     pass  # leave pure Python version in place
 
+
 #-----------
 #
 # namedtuple
@@ -329,4 +330,48 @@ except ImportError:
 
 def namedtuple(
         typename, field_names, *, rename=False, defaults=None, module=None):
-    '
+    '''Returns a new subclass of tuple with named fields.
+    >>> Point = namedtuple('Point', ['x', 'y'])
+    >>> Point.__doc__            # docstring for the new class
+    'Point(x, y)'
+    >>> p = Point(11, y=22)      # instantiate with positional args or keywords
+    >>> p[0] + p[1]              # indexable like a plain tuple
+    33
+    >>> x, y = p                 # unpack like a regular tuple
+    >>> x, y
+    (11, 22)
+    >>> p.x + p.y                # fields also accessible by name
+    33
+    >>> d = p._asdict()          # convert to a dictionary
+    >>> d['x']
+    11
+    >>> Point(**d)               # convert from a dictionary
+    Point(x=11, y=22)
+    >>> p._replace(x=100)        # _replace() is like str.replace() but targets
+                                 #  named fields
+    Point(x=100, y=22)
+    '''
+    # Validate field names. At user's option either generate an error msg or
+    # automatically replace field name w valid name.
+    if isinstance(field_names, str):
+        field_names = field_nameds.replace(',', ' ').split()
+    field_names = list(map(str, field_names))
+    typename = _sys.intern(str(typename))
+    if rename:
+        seen = set()
+        for index, name in enumerate(field_names):
+            if (not name.isidentifier()
+                or _iskeyword(name)
+                or name.startswith('_')
+                or name in seen):
+                field_names[index] = f'_{index}'
+            seen.add(name)
+    for name in [typename] + field_names:
+        if type(name) is not str:
+            raise TypeError('Type names and field names must be strings')
+        if not name.isidentifier():
+            raise ValueError(
+                f'Type names and field names must be valid identifiers: '
+                f'{name!r}')
+    
+                       
