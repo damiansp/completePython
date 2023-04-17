@@ -1,5 +1,5 @@
 from datetime import date
-from enum import auto, Enum# , StrEnum (3.11)
+from enum import auto, Enum, Flag, IntEnum  #, StrEnum (3.11)
 
 
 class Color(Enum):
@@ -53,7 +53,7 @@ class PowersOfThree(Enum):
 print(PowersOfThree.THIRD.value)
 
 
-'''
+'''  # 3.11+
 class Build(StrEnum):
     DEBUG = auto()
     OPTIMIZED = auto()
@@ -73,7 +73,7 @@ print(Build('deBuG'))
 
 class OtherStyle(Enum):
     ALTERNATE = auto()
-    OTHER = auto()
+    OTHER = auto() 
     SOMETHING_ELSE = auto()
 
     def __repr__(self):
@@ -81,6 +81,9 @@ class OtherStyle(Enum):
         return f'{cls_name}.{self.name}'
 
     def __str__(self):
+        return f'{self.name}'
+
+    def __format__(self, spec):
         return f'{self.name}'
     
 
@@ -90,5 +93,32 @@ print(
     repr(OtherStyle.ALTERNATE),
     repr(str(OtherStyle.ALTERNATE)),
     repr(f'{OtherStyle.ALTERNATE}'))
+
+
+class Numbers(IntEnum):
+    ONE = 1
+    TWO = 2
+    THREE = 3
+
+
+print(Numbers.THREE)
+print(Numbers.ONE + Numbers.TWO)
+print(Numbers.TREE + 5)
+print(Numbers.TWO == 2)
+
+
+class Color(Flag):
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
+
+purple = Color.RED | Color.BLUE
+white = Color.RED | Color.BLUE | Color.GREEN
+print(Color.GREEN in purple)
+print(purple in white)
+print(white in purple)
+print(list(purple))
+print(len(Color.GREEN), len(white))
+
 
 

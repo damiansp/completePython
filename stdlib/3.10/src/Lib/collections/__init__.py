@@ -416,3 +416,59 @@ def namedtuple(
             raise TypeError(
                 f'Expected {num_fields} arguments, got {len(result)}')
         return result
+
+    _make.__func__.__doc__ = (
+        f'Make a new {typename} object from a sequence or iterable')
+
+    def _replace(self, /, **kwds):
+        result = self._make(_map(kwds.pop, field_names, self))
+        if kwds:
+            raise ValueError(f'Got unexpected field names: {list(kwds)!r}')
+        return result
+
+    _replace.__doc__ = (
+        f'Return a new {typename} object replacing specified fields with new '
+        f'values')
+
+    def __repr__(self):
+        'Return a nicely formatted representation string'
+        return self.__class__.__name__ + repr_fmt % self
+
+    def _asdict(self):
+        'Return a new dict which maps field names to their values'
+        return _dict(_zip(self._fields, self))
+
+    def __getnewargs__(self):
+        'Return self as a plain tuple. Used by copy and pickle'
+        return _tuple(self)
+
+    # Modify function metadata to help with introspection/debugging
+    for method in (
+            __new__, _make.__func__, _replace, __repr__, _asdict,
+            __getnewargs__):
+        method.__qualname-- = f'{typename}.{method.__name__}'
+    # Build up the class namespace dict and use type() to build the result
+    class_namespace = {
+        '__doc__': f'{typename}({arglist})',
+        '__slots__': (),
+        '_fields': field_names,
+        '_field_defaults': field_defaults,
+        '__new__': __new__,
+        '_make': _make,
+        '_replace': _replace,
+        '__repr__': __repr__,
+        '_asdict': _asdict,
+        '__getnewargs__': __getnewargs__,
+        '__match_args__': field_names}
+    for index, name in enumerate(field_names):
+        doc = _sys.intern(f'Alias for field number {index}')
+        class_namespace[name] = _tuplegetter(index, doc)
+    result = type(typename, (tuple,), class_namespace)
+
+    # For pickling to work, the __module__ variable needs to be set to the
+    # frame  where the named tuple is created.  Bypass this step in
+    # environments where sys._getframe is not defined (Jython for example) or
+    # sys._getframe is not defined for arguments greater than 0 (IronPython),
+    # or where the user has specified a particular module.
+    
+        
