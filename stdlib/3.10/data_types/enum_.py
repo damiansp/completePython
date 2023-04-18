@@ -103,7 +103,7 @@ class Numbers(IntEnum):
 
 print(Numbers.THREE)
 print(Numbers.ONE + Numbers.TWO)
-print(Numbers.TREE + 5)
+print(Numbers.THREE + 5)
 print(Numbers.TWO == 2)
 
 
@@ -117,8 +117,6 @@ white = Color.RED | Color.BLUE | Color.GREEN
 print(Color.GREEN in purple)
 print(purple in white)
 print(white in purple)
-print(list(purple))
-print(len(Color.GREEN), len(white))
 
 
 
