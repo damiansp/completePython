@@ -534,4 +534,40 @@ class Counter(dict):
     >>> c.most_common()                 # 'b' is still in, but its count is zero
     [('a', 3), ('c', 1), ('b', 0)]
     '''
-    
+
+    def __init__(self, iterable=None, /, **kwds):
+        '''Create a new, empty Counter obj, and, if given, count elements from an
+        input interable. Or, init count from abother mapping of elements to their
+        counts.
+        >>> c = Counter                    # new empty counter
+        >>> c = Counter('gallahad')        # new counter from iterable
+        >>> c = Counter({'a': 4, 'b': 2})  # new counter from mapping
+        >>> c = Counter(a=4, b=2)          # new counter from kwargs
+        '''
+        super().__init__()
+        self.update(iterable, **kwds)
+
+    def __missing__(self, key):
+        'The count of elements not in the Counter is zero'
+        # Needed so that <self[missing_item] does not raise KeyError
+        return 0
+
+    def total(self):
+        'Sum of counts'
+        return sum(self.values())
+
+    def most_common(self, n=None):
+        '''List the n most common elements and their counts from most to least.
+        If n is None, list all
+        >>> Counter('abracadabra').most_common(3)
+        [('a', 5), ('b', 2), ('r', 2)]
+        '''
+        # Emulate Bag.sortedByCount from Smalltalk
+        if n is None:
+            return sorted(self.items(), key=_itemgetter(1), reverse=True)
+        # Lazy import to speedup Python startup time
+        import heapq
+        return heapq.nlargest(n, self.items(), key=_itemgetter(1))
+
+    def elements(self):
+        '''
