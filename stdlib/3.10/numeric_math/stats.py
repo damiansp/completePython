@@ -39,3 +39,21 @@ print(st.multimode('aabbbbbccddddeefffffgg'))
 
 print(st.pstdev([1.5, 2.5, 2.5, 2.75, 3.25, 4.75]))
 
+data = [0., 0.25, 0.25, 1.25, 1.5, 1.75, 2.75, 3.25]
+print(st.pvariance(data))
+
+mu = st.mean(data)
+print(st.pvariance(data, mu))
+
+print(st.stdev(data))
+print(st.stdev(data, xbar=mu))
+
+print(st.variance(data))
+print(st.variance(data, xbar=mu))
+
+data = [
+    105, 129, 87, 86, 111, 111, 89, 81, 108, 92, 110, 100, 75, 105, 103, 109,
+    76, 119, 99, 91, 103, 129, 106, 101, 84, 111, 74, 87, 86, 103, 103, 106,
+    86, 111, 75, 87, 102, 121, 111, 88, 89, 101, 106, 95, 103, 107, 101, 81,
+    109, 104]
+print([round(q, 1) for q in st.quantiles(data, n=10)])
