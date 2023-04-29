@@ -96,3 +96,7 @@ print(1 - norm_sample.cdf(130))  # prob(>=130 | norm_sample)
 print(normd.overlap(norm_sample))
 
 print(normd.quantiles(n=4))
+
+print(normd.zscore(45))
+
+
