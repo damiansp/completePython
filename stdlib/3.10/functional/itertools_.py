@@ -14,3 +14,11 @@ print(
     list(it.accumulate(cashflows, lambda bal, pmt: round(bal*1.05 + pmt, 2))))
 
                
+a = ['a', 'b', 'c']
+b = ['x', 'y', 'z']
+for char in it.chain(a, b):
+    print(char)
+
+
+print(list(it.combinations('ABCD', 2)))   # AB, AC, AD, BC, CD
+print(list(it.combinations(range(4), 3))) # 012, 013, 023, 123
