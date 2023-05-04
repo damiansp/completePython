@@ -22,3 +22,13 @@ for char in it.chain(a, b):
 
 print(list(it.combinations('ABCD', 2)))   # AB, AC, AD, BC, CD
 print(list(it.combinations(range(4), 3))) # 012, 013, 023, 123
+
+print(list(it.combinations_with_replacement('ABCD', 2)))  # AA AB AC BB BC CC
+
+print(list(it.compress('ABCDEF', [1, 0, 1, 1, 0, 1])))  # A C D F
+
+counter = it.count(start=1976, step=10)
+for _ in range(4):
+    print(next(counter))  # 1976 1986 1996 2006
+
+
