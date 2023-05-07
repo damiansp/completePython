@@ -1,4 +1,5 @@
 from enum import Enum
+import json
 
 
 class Color(Enum):
@@ -46,3 +47,13 @@ class RGBA(RGB):
     ALPHA = 4
 
 
+class ResponseStatus(Enum):
+    PENDING = 'pending'
+    FULFILLED = 'fulfilled'
+    REJECTED = 'rejected'
+
+
+response = '{"status": "fulfilled"}'
+data = json.loads(response)
+status = data['status']
+print(ResponseStatus(status))

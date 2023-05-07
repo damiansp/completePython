@@ -32,3 +32,21 @@ for _ in range(4):
     print(next(counter))  # 1976 1986 1996 2006
 
 
+abcd_cycle = it.cycle('abcd')
+for _ in range(10):
+    print(next(abcd_cycle))
+
+
+a = range(50)
+a1 = it.dropwhile(lambda x: x < 30, a)
+print(list(a1))
+
+
+a2 = it.filterfalse(lambda x: x % 3 and x % 5, a)
+print(list(a2))
+
+
+print([k for k, g in it.groupby('AAAAABBBCCCCCDAANNN')]) # A B C D A N
+print([list(g) for k, g in it.groupby('AAAAABBBCCCCCDAANNN')]) # AAAA, BBB...
+
+
