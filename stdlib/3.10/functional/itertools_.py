@@ -50,3 +50,8 @@ print([k for k, g in it.groupby('AAAAABBBCCCCCDAANNN')]) # A B C D A N
 print([list(g) for k, g in it.groupby('AAAAABBBCCCCCDAANNN')]) # AAAA, BBB...
 
 
+data = 'ABCDEFG'
+slicer = it.islice(data, 1, None, 2)  # iterable start stop step
+print(list(slicer))  # BDF
+
+print(list(it.pairwise(data)))  # AB BC CD DE..
