@@ -55,3 +55,11 @@ slicer = it.islice(data, 1, None, 2)  # iterable start stop step
 print(list(slicer))  # BDF
 
 print(list(it.pairwise(data)))  # AB BC CD DE..
+
+
+print(list(it.permutations('ABCD', 2)))  # AB AC AD BA BC BD CA CB CD DA DB...
+print(list(it.permutations(range(3), 3))) # 012 021 102 120 201 210
+
+print(list(it.prodct('ABC', 'xy')))  # Ax Ay Bx By Cx Cy
+print(list(it.product(range(2), repeat=3)))  # 000 001 010 011 100 101 110 111
+
