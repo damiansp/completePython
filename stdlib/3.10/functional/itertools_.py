@@ -63,3 +63,5 @@ print(list(it.permutations(range(3), 3))) # 012 021 102 120 201 210
 print(list(it.prodct('ABC', 'xy')))  # Ax Ay Bx By Cx Cy
 print(list(it.product(range(2), repeat=3)))  # 000 001 010 011 100 101 110 111
 
+print(list(it.repeat(10, 5)))  # 10 10 10 10 10
+print(list(map(pow, range(10), repeat(2))))  # 0^2 1^2 2^2... 9^2
