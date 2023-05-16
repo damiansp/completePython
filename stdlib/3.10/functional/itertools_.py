@@ -60,10 +60,19 @@ print(list(it.pairwise(data)))  # AB BC CD DE..
 print(list(it.permutations('ABCD', 2)))  # AB AC AD BA BC BD CA CB CD DA DB...
 print(list(it.permutations(range(3), 3))) # 012 021 102 120 201 210
 
-print(list(it.prodct('ABC', 'xy')))  # Ax Ay Bx By Cx Cy
+print(list(it.product('ABC', 'xy')))  # Ax Ay Bx By Cx Cy
 print(list(it.product(range(2), repeat=3)))  # 000 001 010 011 100 101 110 111
 
 print(list(it.repeat(10, 5)))  # 10 10 10 10 10
-print(list(map(pow, range(10), repeat(2))))  # 0^2 1^2 2^2... 9^2
+print(list(map(pow, range(10), it.repeat(2))))  # 0^2 1^2 2^2... 9^2
 
 print(list(it.starmap(pow, [(2, 5), (3, 2), (10, 3)])))  # 2^5, 3^2, 10^3
+
+print(list(it.takewhile(lambda x: x < 5, [1, 4, 6, 8, 6, 4, 1])))  # 1 4 4 1
+
+iter1, iter2 = it.tee([1, 2, 3, 4, 5, 6], 2)
+print(next(iter1))  # 1
+print(next(iter1))  # 2
+print(next(iter2))  # 1
+print(next(iter2))  # 2
+print(next(iter1))  # 3
