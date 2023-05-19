@@ -76,3 +76,6 @@ print(next(iter1))  # 2
 print(next(iter2))  # 1
 print(next(iter2))  # 2
 print(next(iter1))  # 3
+
+
+print(list(it.zip_longest('ABCD', 'xy', fillvalue='z')))  # Ax By Cz Dz
