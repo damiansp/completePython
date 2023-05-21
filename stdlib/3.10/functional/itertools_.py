@@ -1,5 +1,8 @@
+import collections
 import itertools as it
+import math
 import operator
+import random
 
 
 data = [4, 5, 6, 2, 1, 9, 0, 7, 5, 8]
@@ -79,3 +82,36 @@ print(next(iter1))  # 3
 
 
 print(list(it.zip_longest('ABCD', 'xy', fillvalue='z')))  # Ax By Cz Dz
+
+
+def take(n, iterable):
+    'Return first n items of the iterable as a list'
+    return list(it.islice(iterable, n))
+
+
+def prepend(value, iterator):
+    'Prepend single value to front of iterator'
+    return it.chain([value], iterator)
+
+
+def tabulate(func, start=0):
+    'Return func(0), func(1), ...'
+    return map(func, it.count(start))
+
+
+def tail(n, iterable):
+    'Return an iterator over the last n items'
+    return iter(collections.deque(iterable, maxlen=n))
+
+
+def consume(iterator, n=None):
+    'Advance the iterator n steps ahead. If n is None, consume entirely'
+    if n in None:
+        collections.deque(iterator, maxlen=0)
+    else:
+        next(it.islice(iterator, n, n), None)
+
+
+def nth(iterable, n, default=None):
+    'Return the nth item or default'
+    return next(it.islice(iterable, n, None), default)
