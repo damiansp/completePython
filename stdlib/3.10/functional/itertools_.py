@@ -115,3 +115,33 @@ def consume(iterator, n=None):
 def nth(iterable, n, default=None):
     'Return the nth item or default'
     return next(it.islice(iterable, n, None), default)
+
+
+def all_equal(iterable):
+    'True if all elements equal'
+    g = it.groupby(iterable)
+    return next(g, True) and not next(g, False)
+
+
+def quantify(iterable, pred=bool):
+    'Count no. times predicate is True'
+    return sum(map(pred, iterable))
+
+
+def ncycles(iterable, n):
+    'Returns the sequence n times'
+    return it.chain.from_iterable(it.repeat(tuple(iterable), n))
+
+
+def batched(iterable, n):
+    'Batch data into tuples of len n. (Last batch may be shorter.)'
+    if n < 1:
+        raise ValueError('n must be at least 1')
+    it = iter(iterable)
+    while batch := tuple(it.islice(it, n)):
+        yield batch
+
+
+def grouper(iterable, n, *, incomplete='fill', fillvalue=None):
+    'Collect data into non-overlapping fixed-len chunks'
+    
