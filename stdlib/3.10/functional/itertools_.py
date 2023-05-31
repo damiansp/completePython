@@ -144,4 +144,55 @@ def batched(iterable, n):
 
 def grouper(iterable, n, *, incomplete='fill', fillvalue=None):
     'Collect data into non-overlapping fixed-len chunks'
-    
+    args = [iter(iterable)] * n
+    if incomplete == 'fill':
+        return it.zip_longest(*args, fillvalue=fillvalue)
+    if incomplete == 'strict':
+        return zip(*args, strict=True)
+    if incomplete == 'ignore':
+        return zip(*args)
+    raise ValueError('Expected fill, strict, or ignore')
+
+
+def sumprod(v1, v2):
+    'Compute a sum of products (dot prod)'
+    return sum(it.starmap(operator.mul, zip(v1, v2, strict=True)))
+
+
+def sum_of_squares(it):
+    return sumprod(*it.tee(it))
+
+
+def transpose(it):
+    return zip(*it, strict=True)
+
+
+def matmul(m1, m2):
+    n = len(m2[0])
+    return batched(it.starmap(sumprod, product(m1, transpose(m2))), n)
+
+
+def convolve(signal, kernel):
+    kernel = tuple(kernel)[::-1]
+    n = len(kernel)
+    window = collections.deque([0], maxlen=n) * n
+    for x in it.chain(signal, repeat(0, n - 1)):
+        window.append(x)
+        yield sumprod(kernel, window)
+
+
+def polynomial_from_roots(roots):
+    '''Compute a polynomial's coefs from its roots
+    E.g., roots=[5, -4, 3]:
+    -> (x - 5)(x + 4)(x - 3) = 0
+    -> x^3 - 4x^2 - 17x + 60
+    -> (returns:) [1, -4, -17, 60]
+    '''
+    expansion = [1]
+    for r in roots:
+        expansion = convolve(expansion, (1, -r))
+    return list(expansion)
+
+
+def polynomial_eval(coefs, x):
+    'Evaluate a polynomial at a specific value'
