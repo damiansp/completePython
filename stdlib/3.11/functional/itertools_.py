@@ -71,7 +71,7 @@ print(list(map(pow, range(10), it.repeat(2))))  # 0^2 1^2 2^2... 9^2
 
 print(list(it.starmap(pow, [(2, 5), (3, 2), (10, 3)])))  # 2^5, 3^2, 10^3
 
-print(list(it.takewhile(lambda x: x < 5, [1, 4, 6, 8, 6, 4, 1])))  # 1 4 4 1
+vprint(list(it.takewhile(lambda x: x < 5, [1, 4, 6, 8, 6, 4, 1])))  # 1 4 4 1
 
 iter1, iter2 = it.tee([1, 2, 3, 4, 5, 6], 2)
 print(next(iter1))  # 1
@@ -196,3 +196,61 @@ def polynomial_from_roots(roots):
 
 def polynomial_eval(coefs, x):
     'Evaluate a polynomial at a specific value'
+    # eval x^3 - 4x^2 - 17x + 60 at x=2.5
+    # polynomial_eval([1, -4, -17, 60], x=2.5) -> 8.125
+    n = len(coefs)
+    if n == 0:
+        return x * 0  # coerce to type of x
+    powers = map(pow, repeat(x), reversed(range(n)))
+    return sumprod(coefs, powers)
+
+
+def iter_index(iterable, val, start=0):
+    'Return indices wher val occurs'
+    i = start - 1
+    try:
+        seq_index = iterable.index
+    except AttributeError:
+        # slow path for general iterables
+        itr = it.islice(iterable, start, None)
+        try:
+            while True:
+                yield (i := i + operator.indexOf(itr, val) + 1)
+        except ValueError:
+            pass
+    else:
+        # fast path for seqs
+        try:
+            while True:
+                yield (i := seq_index(val, i + 1))
+        except ValueError:
+            pass
+
+
+def sieve(n):
+    'Get primes < n'
+    data = bytearray((0, 1)) * (n // 2)
+    data[:3] = 0, 0, 0
+    limit = math.isqrt(n) + 1
+    for p in compress(range(limit), data):
+        data[p * p : n : p + p] = bytes(len(range(p * p, n, p + p)))
+    data[2] = 1
+    return iter_index(data, 1) if n > 2 else iter([])
+
+
+def factor(n):
+    'Get prime factors of n'
+    for prime in sieve(math.isqrt(n) + 1):
+        while True:
+            quotient, remainder = divmod(n, prime)
+            if remainder:
+                break
+            yield prime
+            n = quotient
+            if n == 1:
+                return
+    if n > 1:
+        yield n
+
+
+def flatten(): pass
