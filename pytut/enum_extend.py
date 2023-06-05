@@ -1,4 +1,5 @@
 from enum import Enum
+from functools import total_ordering
 
 
 class PaymentStatus(Enum):
@@ -52,3 +53,24 @@ if PaymentStatus.COMPLETED <= status:
     
 for member in PaymentStatus:
     print(member, bool(member))
+
+
+@total_ordering
+class OrderedEnum(Enum):
+    def __lt__(self, other):
+        if isinstance(other, OrderedEnum):
+            return self.value < other.value
+        return NotImplemented
+
+
+class ApprovalStatus(OrderedEnum):
+    PENDING = 1
+    IN_PROGRESS = 2
+    APPROVED = 3
+
+
+status = ApprovalStatus(2)
+if status < ApprovalStatus.APPROVED:
+    print('The request has not yet been approved')
+
+    
