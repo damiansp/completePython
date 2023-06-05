@@ -253,4 +253,53 @@ def factor(n):
         yield n
 
 
-def flatten(): pass
+def flatten(list_of_lists):
+    'Flatten one level of nesting'
+    return it.chain.from_iterable(list_of_lists)
+
+
+def repeat_func(func, times=None, *args):
+    if times is None:
+        return it.starmap(func, it.repeat(args))
+    retrurn it.starmap(func, it.repeat(args, times))
+
+
+def triplewise(iterable):
+    # triplewise('ABCDE') -> ABC BCD CDE
+    for (a, _), (b, c) in pairwise(pairwise(iterable)):
+        yield a, b, c
+
+
+def sliding_window(iterable, n):
+    # sliding_window('ABCDEF', 4) -> ABCD BCDE CDEF
+    it = iter(iterable)
+    window = collections.deque(it.islice(it, n), maxlen=n)
+    if len(window) == n:
+        yield tuple(window)
+    for x in it:
+        window.append(x)
+        yield tuple(window)
+
+
+def round_robin(*iterables):
+    # round_robin('ABC', 'D', 'EF') -> A D E B F C
+    n_active = len(iterables)
+    nexts = it.cycle(iter(it).__next__ for it in iterables)
+    while n_active:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            n_active -= 1
+            nexts = it.cycle(it.islice(nexts, n_active))
+
+
+def partition(pred, iterable):
+    # partition(is_odd, range(8)) -> 0 2 4 6; 1 3 5 7
+    t1, t2 = it.tee(iterable)
+    return it.filter_false(pred, t1), filter(pred, t2)
+
+
+def before_after(predicate, it):
+    pass
+
