@@ -301,5 +301,70 @@ def partition(pred, iterable):
 
 
 def before_after(predicate, it):
-    pass
+    '''Variant of takewhile() that allows complete access to the remainder of the
+    iterator.
+        >>> it = iter('ABCdEfGhI')
+        >>> all_upper, remainder = before_and_after(str.isupper, it)
+        >>> ''.join(all_upper)
+        'ABC'
+        >>> ''.join(remainder)     # takewhile() would lose the 'd'
+        'dEfGhI'
+    Note that the first iterator must be fully consumed before the second iterator
+    can generate valid results.
+    '''
+    it = iter(it)
+    transition = []
+    
+    def true_iterator():
+        for elem in it:
+            if predicate(elem):
+                yield elem
+            else:
+                transition.append(elem)
+                return
 
+    def remainder_iterator():
+        yield from transition
+        yield from it
+
+    return true_iterator(), remainder_iterator()
+
+
+def subslices(seq):
+    'Return all contiguous non-empty subslices of a sequence'
+    # subslices('ABCD') -> A AB ABC ABCD B BC BCD C CD D
+    slices = it.starmap(slice, it.combinations(range(len(seq) + 1), 2))
+    return map(operator.getitem, it.repeat(seq), slices)
+
+
+def powerset(iterable):
+    # powerset([1, 2, 3]) -> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    s = list(iterable)
+    return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s) + 1))
+
+
+def unique_everseen(iterable, key=None):
+    'List unique elements, preserving order. Remember all elements ever seen'
+    # unique_everseen('AAAAABBBCCDAABBC') -> A B C D
+    # unique_everseen('ABBcCADC') -> A B c D
+    seen = set()
+    if key is None:
+        for elem in it.filterfalse(seen.__contains__, iterable):
+            seen.add(elem)
+            yield elem
+        # For order-preserving deduplication a faster, but non-lazy solution is:
+        #     yield from dict.fromkeys(iterable)
+    else:
+        for elem in iterable:
+            k = key(elem)
+            if k not in seen:
+                seen.add(k)
+                yield elem
+        # For use cases that allow the last matching element to be returned, a faster
+        # but non-lazy solution is:
+        #    t1, t2 = it.tee(iterable)
+        #    yield from dict(zip(map(key, t1), t2)).values()
+
+
+def unique_justseen(iterable, key=None): pass
+    
