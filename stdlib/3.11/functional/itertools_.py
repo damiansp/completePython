@@ -366,5 +366,59 @@ def unique_everseen(iterable, key=None):
         #    yield from dict(zip(map(key, t1), t2)).values()
 
 
-def unique_justseen(iterable, key=None): pass
-    
+def unique_justseen(iterable, key=None):
+    'List unique elements, preserving order. Remember only the element just seen.'
+    # unique_justseen('AAAABBBCCDAABBB') --> A B C D A B
+    # unique_justseen('ABBcCAD', str.lower) --> A B c A D
+    return map(next, map(operator.itemgetter(1), groupby(iterable, key)))
+
+
+def iter_except(func, exception, first=None):
+    '''Call a function repeatedly until an exception is raised.
+    Converts a call-until-exception interface to an iterator interface.
+    Like builtins.iter(func, sentinel) but uses an exception instead
+    of a sentinel to end the loop.
+    Examples:
+        # priority queue iterator
+        iter_except(functools.partial(heappop, h), IndexError)
+        iter_except(d.popitem, KeyError)        # non-blocking dict iterator
+        iter_except(d.popleft, IndexError)      # non-blocking deque iterator
+        iter_except(q.get_nowait, Queue.Empty)  # loop over a producer Queue
+        iter_except(s.pop, KeyError)            # non-blocking set iterator
+    '''
+    try:
+        if first is not None:
+            yield first  # For database APIs needing an intial cast to db.first
+        while True:
+            yield func()
+    except exception:
+        pass
+
+
+def first_true(iterable, default=False, pred=None):
+    '''Returns the first true value in the iterable. If not true value found, returns
+    <default>.  If <pred> is not None, returns the first item for which <pred(item)>
+    is true.
+    '''
+    # first_true([a,b,c], x) --> a or b or c or x
+    # first_true([a,b], x, f) --> a if f(a) else b if f(b) else x
+    return next(filter(pred, iterable), default)
+
+
+def nth_combintion(iterable, r, index):
+    'Equivalent to list(combinations(iterable, r))[index]'
+    pool = tuple(iterable)
+    n = len(pool)
+    c = math.comb(n, r)
+    if index < 0:
+        index += c
+    if index < 0 or index >= c:
+        raise IndexError
+    res = []
+    while r:
+        c, n, r = c*r // n, n - 1, r - 1
+        while index >= c:
+            index -= c
+            c, n = c*(n - r) // n, n - 1
+        res.append(pool[-1 - n])
+    return tuple(res)
