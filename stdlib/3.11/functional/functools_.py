@@ -1,4 +1,4 @@
-from functools import cache, cached_property, lru_cache
+from functools import cache, cached_property, lru_cache, total_ordering
 import statistics
 import urllib
 
@@ -42,3 +42,29 @@ def get_pep(n):
 def fib(n):
     return (n if n < 2 else fib(n - 1) + fib(n - 2))
         
+
+# Given a def of == and at least one of <, <=, >, >=, <total_ordering> can figure out
+# the remaining comparisons
+@total_ordering
+class Student:
+    def __init__(self, name, surname):
+        self.name = name
+        self.surname = surname
+        
+    def _is_valid_operand(self, other):
+        # compared obj does not have to be Student, but must have name and surname
+        return (hasattr(other, 'name') and hasattr(other, 'surname'))
+
+    def __eq__(self, other):
+        if self._is_valid_operand(other):
+            return (
+                (self.surname.lower(), self.name.lower())
+                == (other.surname.lower(), other.name.lower()))
+        return NotImplemented
+
+    def __lt__(self, other):
+        if self._is_valid_operand(other):
+            return (
+                (self.lastname.lower(), self.name.lower())
+                < (other.surname.lower(), other.name.lower()))
+        return NotImplemented
