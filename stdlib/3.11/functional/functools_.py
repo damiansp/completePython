@@ -1,4 +1,5 @@
-from functools import cache, cached_property, lru_cache, total_ordering
+from functools import (
+    cache, cached_property, lru_cache, partial, total_ordering)
 import statistics
 import urllib
 
@@ -43,8 +44,8 @@ def fib(n):
     return (n if n < 2 else fib(n - 1) + fib(n - 2))
         
 
-# Given a def of == and at least one of <, <=, >, >=, <total_ordering> can figure out
-# the remaining comparisons
+# Given a def of == and at least one of <, <=, >, >=, <total_ordering> can
+# figure out the remaining comparisons
 @total_ordering
 class Student:
     def __init__(self, name, surname):
@@ -52,7 +53,8 @@ class Student:
         self.surname = surname
         
     def _is_valid_operand(self, other):
-        # compared obj does not have to be Student, but must have name and surname
+        # compared obj does not have to be Student, but must have name and
+        # surname
         return (hasattr(other, 'name') and hasattr(other, 'surname'))
 
     def __eq__(self, other):
@@ -68,3 +70,11 @@ class Student:
                 (self.lastname.lower(), self.name.lower())
                 < (other.surname.lower(), other.name.lower()))
         return NotImplemented
+
+
+# partial(f, *args, **kwargs) like:
+# f(*args, **kwargs)
+base_two = partial(int, base=2)
+base_two.__doc__ = 'Convert base-two string to (base 10) int'
+print(base_two('10101'))  # 21
+
