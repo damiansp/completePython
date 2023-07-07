@@ -1,5 +1,5 @@
 from functools import (
-    cache, cached_property, lru_cache, partial, total_ordering)
+    cache, cached_property, lru_cache, partial, partialmethod, total_ordering)
 import statistics
 import urllib
 
@@ -78,3 +78,23 @@ base_two = partial(int, base=2)
 base_two.__doc__ = 'Convert base-two string to (base 10) int'
 print(base_two('10101'))  # 21
 
+
+class Cell:
+    def __init__(self):
+        self._alive = False
+
+    @property
+    def alive(self):
+        return self._alive
+
+    def set_state(self, state):
+        self._alive = bool(state)
+
+    set_alive = partialmethod(set_state, True)
+    set_dead = partialmethod(set_state, False)
+
+
+c = Cell()
+print(c.alive)  # False
+c.set_alive()
+print(c.alive)  # True
