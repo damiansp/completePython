@@ -1,5 +1,6 @@
 from functools import (
-    cache, cached_property, lru_cache, partial, partialmethod, total_ordering)
+    cache, cached_property, lru_cache, partial, partialmethod, singledispatch,
+    total_ordering)
 import statistics
 import urllib
 
@@ -98,3 +99,32 @@ c = Cell()
 print(c.alive)  # False
 c.set_alive()
 print(c.alive)  # True
+
+
+@singledispatch
+def f(arg, verbose=False):
+    if verbose:
+        print('Please allow me to say', end=' ')
+    print(arg)
+
+
+@f.register
+def _(arg: list, verbose=False):
+    if verbose:
+        print('Enumerate this:', end=' '))
+    for i, elem in enumerate(arg):
+        print(i, elem)
+
+
+# could also do:
+# from typing import Union
+# ...(arg: Union[int, float], ...)
+@f.register
+def _(arg: int | float, verbose=False):
+    if verbose:
+        print('Strength in numbers eh, with', end=' ')
+    print(arg)
+
+
+@f.register(complex)
+pass
