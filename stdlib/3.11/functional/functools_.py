@@ -1,3 +1,4 @@
+from decimal import Decimal
 from functools import (
     cache, cached_property, lru_cache, partial, partialmethod, singledispatch,
     total_ordering)
@@ -111,7 +112,7 @@ def f(arg, verbose=False):
 @f.register
 def _(arg: list, verbose=False):
     if verbose:
-        print('Enumerate this:', end=' '))
+        print('Enumerate this:')
     for i, elem in enumerate(arg):
         print(i, elem)
 
@@ -127,4 +128,32 @@ def _(arg: int | float, verbose=False):
 
 
 @f.register(complex)
-pass
+def _(arg, verbose=False):
+    if verbose:
+        print('Better than complicated.', end=' ')
+    print(f'{arg.real}+{arg.imag}i')
+
+
+def nothing(arg, verbose=False):
+    print('Nothing!')
+
+
+f.register(type(None), nothing)
+
+
+@f.register(float)
+@f.register(Decimal)
+def f_num(arg, verbose=False):
+    if verbose:
+        print('Half of your number:', end=' ')
+    print(arg / 2)
+
+
+print(f_num is f)  # False
+
+f('Hello, World!')
+f('test.', verbose=True)
+f(42, verbose=True)
+f(['ham', 'ham', 'eggs', 'spam'], verbose=True)
+f(None)
+f(1.234)
