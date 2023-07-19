@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from decimal import Decimal
 from functools import (
     cache, cached_property, lru_cache, partial, partialmethod, singledispatch,
@@ -149,6 +150,14 @@ def f_num(arg, verbose=False):
     print(arg / 2)
 
 
+@f.register
+def _(arg: Mapping, verbose=False):
+    if verbose:
+        print('Keys AND values!')
+    for k, v in arg.items():
+        print(k, ' => ', v)
+
+
 print(f_num is f)  # False
 
 f('Hello, World!')
@@ -157,3 +166,11 @@ f(42, verbose=True)
 f(['ham', 'ham', 'eggs', 'spam'], verbose=True)
 f(None)
 f(1.234)
+
+print(f.dispatch(float))
+print(f.dispatch(dict))
+print(f.registry.keys())
+print(f.registry[float])
+print(f.registry[object])
+
+
