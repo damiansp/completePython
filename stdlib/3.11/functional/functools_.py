@@ -2,7 +2,7 @@ from collections.abc import Mapping
 from decimal import Decimal
 from functools import (
     cache, cached_property, lru_cache, partial, partialmethod, singledispatch,
-    total_ordering)
+    singledispatchmethod, total_ordering)
 import statistics
 import urllib
 
@@ -172,5 +172,36 @@ print(f.dispatch(dict))
 print(f.registry.keys())
 print(f.registry[float])
 print(f.registry[object])
+
+
+class Negator:
+    @singledispatchmethod
+    def neg(self, arg):
+        raise NotImplementedError(f'Cannot negate a {type(arg)}')
+
+    @neg.register
+    def _(self, arg: int):
+        return -arg
+
+    @neg.register
+    def _(self, arg: bool):
+        return not arg
+
+
+class Negator2:
+    @singledispatchmethod
+    @classmethod
+    def neg(cls, arg):
+        raise NotImplementedError(f'Cannot negate a {type(arg)}')
+
+    @neg.register
+    @classmethod
+    def _(cls, arg: int):
+        return -arg
+
+    @neg.register
+    @classmethod
+    def _(cls, arg: bool):
+        return not arg
 
 
