@@ -2,7 +2,7 @@ from collections.abc import Mapping
 from decimal import Decimal
 from functools import (
     cache, cached_property, lru_cache, partial, partialmethod, singledispatch,
-    singledispatchmethod, total_ordering)
+    singledispatchmethod, total_ordering, wraps)
 import statistics
 import urllib
 
@@ -204,4 +204,22 @@ class Negator2:
     def _(cls, arg: bool):
         return not arg
 
+    
+def my_decorator(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        print('Called decorated function')
+        return f(*args, **kwargs)
+    return wrapper
 
+
+@my_decorator
+def example():
+    'Example docstring'
+    print('Called example()')
+
+
+example()
+# properly wrapped:
+print(example.__name__)
+print(example.__doc__)
