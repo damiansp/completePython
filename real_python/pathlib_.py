@@ -63,3 +63,24 @@ print(md_path)
 
 
 # Copying files
+source = Path('shopping_list.md')
+dest = source.with_stem('shopping_list_bk')
+dest.write_bytes(source.read_bytes())
+
+
+# Moving/Deleting Files
+source = Path('shopping_list_bk.md')
+dest = Path('junk.md')
+try:
+    with dest.open(mode='xb') as f:
+        f.write(source.read_bytes())
+except FileExistsError:
+    print(f'"{dest}" already exists')
+else:
+    source.unlink()
+
+
+# Touch
+filename = Path('empty.txt')
+filename.touch(exist_ok=True)  # overwrites if exists
+print(filename.exists())
