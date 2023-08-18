@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 
@@ -17,7 +18,7 @@ print(PARENT_DIR)
 # Joining paths
 for filepath in Path.cwd().glob('*.txt'):
     new_path = Path('archive') / filepath.name
-    filepath.rename(new_path)
+    #filepath.rename(new_path)
 
 
 # File system ops with paths
@@ -84,3 +85,35 @@ else:
 filename = Path('empty.txt')
 filename.touch(exist_ok=True)  # overwrites if exists
 print(filename.exists())
+
+
+# Show directory tree
+def show_tree(directory):
+    print(directory)
+    for path in sorted(directory.rglob('*')):
+        depth = len(path.relative_to(directory).parts)
+        spacer = '    ' * depth
+        print(f'{spacer}L {path.name}')
+
+
+show_tree(Path.cwd()) #.parent)
+
+
+# Find most recently modified
+d = Path.cwd()
+time, file_path = max((f.stat().st_mtime, f) for f in d.iterdir())
+print(file_path, datetime.fromtimestamp(time))
+
+
+# Create unique file name
+def unique_path(directory, name_pattern):
+    counter = 0
+    while True:
+        counter += 1
+        path = directory / name_pattern.format(counter)
+        if not path.exists():
+            return path
+
+
+template = 'test{:03d}.txt'
+print(unique_path(Path.cwd(), template))
