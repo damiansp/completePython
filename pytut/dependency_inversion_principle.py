@@ -33,8 +33,6 @@ class App:
         self.converter.convert('EUR', 'USD', 100)
 
 
-# in the future...
-
 def main():
     app1 = App1()
     app1.start()
