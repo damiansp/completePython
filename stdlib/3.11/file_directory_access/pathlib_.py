@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PurePath
 
 
 # Basic usage
@@ -18,4 +18,13 @@ if q.exists():
         print(f.readline())
 
 
-# Pure Paths
+# Pure Paths: path-handling ops that don't actually access filesystems
+print(PurePath('setup.py'))
+print(PurePath('foo', 'some/path', 'bar'))
+print(PurePath(Path('foo'), Path('bar')))
+print(PurePath())                         # '.'
+print(PurePath('/etc', '/usr', 'lib64'))  # '/usr/lib64'
+print(PurePath('foo//bar'))
+print(PurePath('//foo/bar'))              # //foo/bar
+print(PurePath('foo/./bar'))              # foo/bar
+print(PurePath('foo/../bar'))             # foo/../bar != bar if foo is symlink
