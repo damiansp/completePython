@@ -1,4 +1,4 @@
-from pathlib import Path, PurePath
+from pathlib import Path, PurePath, PurePosixPath
 
 
 # Basic usage
@@ -28,3 +28,8 @@ print(PurePath('foo//bar'))
 print(PurePath('//foo/bar'))              # //foo/bar
 print(PurePath('foo/./bar'))              # foo/bar
 print(PurePath('foo/../bar'))             # foo/../bar != bar if foo is symlink
+
+
+print(PurePosixPath('/etc'))
+print(PurePosixPath('foo') == PurePosixPath('FOO'))  # False
+print(PurePosixPath('FOO') in {PurePosixPath('foo')})  # True
