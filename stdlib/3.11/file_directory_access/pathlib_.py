@@ -1,3 +1,4 @@
+import os
 from pathlib import Path, PurePath, PurePosixPath
 
 
@@ -33,3 +34,16 @@ print(PurePath('foo/../bar'))             # foo/../bar != bar if foo is symlink
 print(PurePosixPath('/etc'))
 print(PurePosixPath('foo') == PurePosixPath('FOO'))  # False
 print(PurePosixPath('FOO') in {PurePosixPath('foo')})  # True
+
+
+# Operators ('/')
+p = PurePath('/etc')
+print(p)
+print(p / 'init.d' / 'apache2')
+q = PurePath('bin')
+print('/usr' / q)
+print(p / '/abs_path')  # /abs_path
+
+print(os.fspath(p))  # /etc
+print(str(p))        # '/etc'
+print(bytes(p))      # b'/etc'
