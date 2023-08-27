@@ -47,3 +47,12 @@ print(p / '/abs_path')  # /abs_path
 print(os.fspath(p))  # /etc
 print(str(p))        # '/etc'
 print(bytes(p))      # b'/etc'
+
+
+# Path parts
+p = PurePath('/usr/bin/python3')
+print(p.parts)  # / usr bin python3
+
+
+# Methods/Properties
+print(PurePosixPath('/etc').root)  # /
