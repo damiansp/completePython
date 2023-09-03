@@ -55,4 +55,20 @@ print(p.parts)  # / usr bin python3
 
 
 # Methods/Properties
-print(PurePosixPath('/etc').root)  # /
+print(PurePosixPath('/etc').root)    # /
+print(PurePosixPath('/etc').anchor)  # /
+
+p = PurePosixPath('/foo/bar/setup.py')
+print(p.parents[0])  # /foo/bar
+print(p.parents[1])  # /foo
+print(p.parents[2])  # /
+
+p = PurePosixPath('/a/b/c/d')
+print(p.parent)  # '/a/b/c'
+root = PurePosixPath('/')
+print(root.parent)  # /
+here = PurePosixPath('.')
+print(here.parent)  # .
+p = PurePosixPath('foo/..')
+print(p.parent)     # foo (!)
+#print(p.resolve().parent())  # to get expected behavior
