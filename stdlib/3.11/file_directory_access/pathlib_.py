@@ -72,3 +72,14 @@ print(here.parent)  # .
 p = PurePosixPath('foo/..')
 print(p.parent)     # foo (!)
 #print(p.resolve().parent())  # to get expected behavior
+
+p = PurePosixPath('my/library/setup.py')
+print(p.name)    # setup.py
+print(p.suffix)  # .py
+print(p.stem)    # setup
+
+c = PurePosixPath('my/library/lib.tar.gz')
+print(c.name)      # lib.tar.gz
+print(c.suffix)    # .gz
+print(c.suffixes)  # ['.tar', '.gz']
+print(c.stem)      # /lib.tar
