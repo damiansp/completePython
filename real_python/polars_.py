@@ -6,6 +6,7 @@ def main():
     buildings = init_buildings_data()
     show_sample_selects(buildings)
     filter_example(buildings)
+    aggregate_example(buildings)
     
 
 def init_buildings_data():
@@ -33,5 +34,13 @@ def filter_example(buildings):
     print(after_2015.select(pl.col('year').min()))
     
 
+def aggregate_example(buildings):
+    print(
+        buildings.groupby('building_type').agg([
+            pl.mean('sqft').alias('mean_sqft'),
+            pl.median('year').alias('median_yr'),
+            pl.count()]))
+
+    
 if __name__ == '__main__':
     main()
