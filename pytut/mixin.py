@@ -1,3 +1,4 @@
+import json
 from pprint import pprint
 
 
@@ -28,7 +29,12 @@ class DictMixin:
         return val
 
 
-class Employee(DictMixin, Person):
+class JSONMixin:
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
+    
+class Employee(DictMixin, JSONMixin, Person):
     def __init__(self, name, skills, dependents):
         super().__init__(name)
         self.skills = skills
@@ -41,4 +47,5 @@ if __name__ == '__main__':
         skills=['Python Programming', 'Sausage Buttering'],
         dependents={'wife': 'Jane', 'children': ['Alice', 'Bob']})
     pprint(e.to_dict())
+    print(e.to_json())
     
