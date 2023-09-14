@@ -83,3 +83,13 @@ print(c.name)      # lib.tar.gz
 print(c.suffix)    # .gz
 print(c.suffixes)  # ['.tar', '.gz']
 print(c.stem)      # /lib.tar
+
+p = PurePosixPath('/etc/passwd')
+print(p.as_uri())  # file:///etc/passwd
+
+print(PurePosixPath('/a/b').is_absolute())  # True
+print(PurePosixPath('a/b').is_absolute())   # False
+
+print(p.is_relative_to('/etc'))  # True
+print(p.is_relative_to('/usr'))  # False
+      
