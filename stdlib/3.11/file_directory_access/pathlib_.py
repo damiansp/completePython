@@ -105,6 +105,6 @@ print(PurePath('a/b.py').match('/*.py'))     # False
 print(PurePosixPath('b.py').match('*.PY'))   # False
 #print(PureWindowsPath('b.py').match('*.PY'))# True
 
-
-      
-      
+print(p.relative_to('/'))      # etc/passwd
+print(p.relative_to('/etc'))   # passwd
+#print(p.relative_to('/usr'))  # ValueError: not a subpath
