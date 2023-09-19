@@ -3,19 +3,21 @@ import polars as pl
 
 
 def main():
-    buildings = init_buildings_data()
+    N = 5_000
+    rng = np.random.default_rng(seed=12)
+    input_data = {
+        'sqft': rng.exponential(scale=1000, size=N),
+        'year': rng.integers(low=1995, high=2023, size=N),
+        'bldg_type': rng.choice(list('ABC'), size=N}}
+    buildings = init_buildings_data(data)
     show_sample_selects(buildings)
     filter_example(buildings)
     aggregate_example(buildings)
-    
+    demo_lazy(input_data)
 
-def init_buildings_data():
-    N = 5_000
-    rng = np.random.default_rng(seed=12)
-    data = pl.DataFrame({
-        'sqft': rng.exponential(scale=1000, size=N),
-        'year': rng.integers(low=1995, high=2023, size=N),
-        'bldg_type': rng.choice(list('ABC'), size=N)})
+    
+def init_buildings_data(input_data):
+    data = pl.DataFrame(input_data)
     print(data.head())
     print('schema:', data.schema)
     print(data.describe())
@@ -41,6 +43,20 @@ def aggregate_example(buildings):
             pl.median('year').alias('median_yr'),
             pl.count()]))
 
+
+def demo_lazy(input_data):
+    buildings_lazy = pl.LazyFrame(input_data)
+    print(buildings_lazy)
+    lazy_query = (
+        buildings_lazy
+        .with_columns(
+            (pl.col('price') / pl.col('sqft')).alias('price_per_sqft'))
+        .filter(pl.col('price_per_sqft') > 100)
+        .filter(pl.col('year') < 2010))
+    print(lazy_query)
+    lazy_query.show_graph()
+    print(lazy_query.explain())
+    
     
 if __name__ == '__main__':
     main()

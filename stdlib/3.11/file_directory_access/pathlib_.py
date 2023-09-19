@@ -92,4 +92,19 @@ print(PurePosixPath('a/b').is_absolute())   # False
 
 print(p.is_relative_to('/etc'))  # True
 print(p.is_relative_to('/usr'))  # False
+
+print(PurePosixPath('/etc').joinpath('passwd'))
+print(PurePosixPath('/etc').joinpath(PurePosixPath('passwd')))
+print(PurePosixPath('/etc').joinpath('passwd', 'apache2'))
+
+print(PurePath('a/b.py').match('*.py'))      # True
+print(PurePath('a/b/c.py').match('b/*.py'))  # True
+print(PurePath('a/b/c.py').match('a/*.py'))  # False
+print(PurePath('/a.py').match('/*.py'))      # True
+print(PurePath('a/b.py').match('/*.py'))     # False
+print(PurePosixPath('b.py').match('*.PY'))   # False
+#print(PureWindowsPath('b.py').match('*.PY'))# True
+
+
+      
       
