@@ -7,9 +7,10 @@ def main():
     rng = np.random.default_rng(seed=12)
     input_data = {
         'sqft': rng.exponential(scale=1000, size=N),
+        'price': rng.exponential(scale=100_000, size=N),
         'year': rng.integers(low=1995, high=2023, size=N),
-        'bldg_type': rng.choice(list('ABC'), size=N}}
-    buildings = init_buildings_data(data)
+        'building_type': rng.choice(list('ABC'), size=N)}
+    buildings = init_buildings_data(input_data)
     show_sample_selects(buildings)
     filter_example(buildings)
     aggregate_example(buildings)
@@ -54,8 +55,11 @@ def demo_lazy(input_data):
         .filter(pl.col('price_per_sqft') > 100)
         .filter(pl.col('year') < 2010))
     print(lazy_query)
-    lazy_query.show_graph()
+    #lazy_query.show_graph()
     print(lazy_query.explain())
+    res = lazy_query.collect().select(pl.col(['price_per_sqft', 'year']))
+    print(res)
+    print(res.describe())
     
     
 if __name__ == '__main__':
