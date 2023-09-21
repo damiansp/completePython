@@ -108,3 +108,9 @@ print(PurePosixPath('b.py').match('*.PY'))   # False
 print(p.relative_to('/'))      # etc/passwd
 print(p.relative_to('/etc'))   # passwd
 #print(p.relative_to('/usr'))  # ValueError: not a subpath
+
+
+# Concrete Paths
+print(Path('setup.py'))
+print(PosixPath('/etc'))
+print(os.name)  # posix
