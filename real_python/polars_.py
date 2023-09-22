@@ -1,5 +1,11 @@
+from pathlib import Path
+
 import numpy as np
 import polars as pl
+import requests
+
+
+URL = 'https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD'
 
 
 def main():
@@ -15,6 +21,7 @@ def main():
     filter_example(buildings)
     aggregate_example(buildings)
     demo_lazy(input_data)
+    run_example()
 
     
 def init_buildings_data(input_data):
@@ -60,6 +67,40 @@ def demo_lazy(input_data):
     res = lazy_query.collect().select(pl.col(['price_per_sqft', 'year']))
     print(res)
     print(res.describe())
+
+
+def run_example():
+    data_path = Path('data/electric_cars.csv')
+    download_file(data_path)
+    lazy_data = pl.scan_csv(data_path)
+    print(lazy_data.schema)
+    query(lazy_data)
+
+
+def download_file(path):
+    res = requests.get(URL)
+    if res:
+        path.write_bytes(res.content)
+        print('Data saved to', path)
+    else:
+        print('Unexpected error downloading data.')
+
+
+def query(lazy_data):
+    q = (
+        lazy_data
+        .filter((pl.col('Model Year') >= 2018))
+        .filter(pl.col('Electric Vehicle Type') == 'Battery Electric Vehicle (BEV)')
+        .groupby(['State', 'Make'])
+        .agg(
+            pl.mean('Electric Range').alias('Mean Elect Range'),
+            pl.min('Model Year').alias('Oldest Model'),
+            pl.count().alias('N'))
+        .filter(pl.col('Mean Elect Range') > 0)
+        .filter(pl.col('N') > 5)
+        .sort(pl.col('N'), descending=True))
+    res = q.collect()
+    print(res)
     
     
 if __name__ == '__main__':
