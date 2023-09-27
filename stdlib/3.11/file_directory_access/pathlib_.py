@@ -1,5 +1,5 @@
 import os
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import Path, PosixPath, PurePath, PurePosixPath
 
 
 # Basic usage
@@ -114,3 +114,16 @@ print(p.relative_to('/etc'))   # passwd
 print(Path('setup.py'))
 print(PosixPath('/etc'))
 print(os.name)  # posix
+
+# Methods
+print('CWD:', Path.cwd())
+print('Home:', Path.home())
+p = Path('./pathlib_.py')
+print('stats:')
+print('size:', p.stat().st_size)
+print('time:', p.stat().st_mtime)
+print('chmod:', p.stat().st_mode)
+#p.chmod(0o444)
+
+print('exists:', p.exists())
+print('./foo?', Path('./foo').exists())
