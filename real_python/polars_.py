@@ -21,7 +21,8 @@ def main():
     filter_example(buildings)
     aggregate_example(buildings)
     demo_lazy(input_data)
-    run_example()
+    data = run_example()
+    save(data, 'junk.csv')
 
     
 def init_buildings_data(input_data):
@@ -90,7 +91,9 @@ def query(lazy_data):
     q = (
         lazy_data
         .filter((pl.col('Model Year') >= 2018))
-        .filter(pl.col('Electric Vehicle Type') == 'Battery Electric Vehicle (BEV)')
+        .filter(
+            pl.col('Electric Vehicle Type')
+            == 'Battery Electric Vehicle (BEV)')
         .groupby(['State', 'Make'])
         .agg(
             pl.mean('Electric Range').alias('Mean Elect Range'),
@@ -101,6 +104,21 @@ def query(lazy_data):
         .sort(pl.col('N'), descending=True))
     res = q.collect()
     print(res)
+    return res
+
+
+def save(data, outfile):
+    extension = outfile.split('.')[-1]
+    match extension:
+        case 'csv':
+            data.write_csv(outfile)
+        case 'json':
+            data.write_ndjson(outfile)
+        case 'parquet':
+            data.write_parquet(outfile)
+        case _:
+            raise ValueError(f'No method for writing {extension} files')
+    print(f'File saved to {outfile}')
     
     
 if __name__ == '__main__':
