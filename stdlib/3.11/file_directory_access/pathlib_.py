@@ -127,3 +127,9 @@ print('chmod:', p.stat().st_mode)
 
 print('exists:', p.exists())
 print('./foo?', Path('./foo').exists())
+
+p = PosixPath('~/repos/python')
+print(p.expanduser())
+p = Path('.').parent
+print(sorted(p.glob('*.py')))
+print(sorted(p.glob('**/*.py')))  # **: this dir and all subdirs
