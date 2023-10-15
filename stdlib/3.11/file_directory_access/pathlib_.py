@@ -133,3 +133,8 @@ print(p.expanduser())
 p = Path('.').parent
 print(sorted(p.glob('*.py')))
 print(sorted(p.glob('**/*.py')))  # **: this dir and all subdirs
+
+
+p = Path('/Users/damiansp/Learning/python/stdlib/3.11')
+for child in p.iterdir():
+    print(child)
