@@ -138,3 +138,26 @@ print(sorted(p.glob('**/*.py')))  # **: this dir and all subdirs
 p = Path('/Users/damiansp/Learning/python/stdlib/3.11')
 for child in p.iterdir():
     print(child)
+
+
+for root, dirs, files in p.walk(on_error=print):
+    print(
+        root,
+        'consumes',
+        sum((root / f).stat().st_size for f in files),
+        'bytes in',
+        len(files),
+        'non-directory files')
+    if '__pycache__' in dirs:
+        dirs.remove('__pycache__')
+
+
+# Use w caution! Deletes everything reachable from <top>
+#for root, dirs, files in top.walk(top_down=False):
+#    for name in files:
+#        (root / name).unlink()
+#    for name in dirs:
+#        (root / name).rmdir()
+
+
+
