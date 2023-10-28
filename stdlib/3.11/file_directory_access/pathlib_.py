@@ -160,4 +160,17 @@ for root, dirs, files in p.walk(on_error=print):
 #        (root / name).rmdir()
 
 
+p = Path('.')
+with p.open() as f:
+    print(f.readlines())
+
+p = Path('./my_binary')
+n = p.write_bytes(b'binary file contents')
+print(n)  # n bytes
+print(p.read_bytes())
+
+p = Path('./plaintext.txt')
+n = p.write_text('Just some plain text')
+print(n)  # n chars
+print(p.read_text())
 
