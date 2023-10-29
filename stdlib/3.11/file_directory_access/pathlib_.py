@@ -140,16 +140,16 @@ for child in p.iterdir():
     print(child)
 
 
-for root, dirs, files in p.walk(on_error=print):
-    print(
-        root,
-        'consumes',
-        sum((root / f).stat().st_size for f in files),
-        'bytes in',
-        len(files),
-        'non-directory files')
-    if '__pycache__' in dirs:
-        dirs.remove('__pycache__')
+#for root, dirs, files in p.walk(on_error=print):
+#    print(
+#        root,
+#        'consumes',
+#        sum((root / f).stat().st_size for f in files),
+#        'bytes in',
+#        len(files),
+#        'non-directory files')
+#    if '__pycache__' in dirs:
+#        dirs.remove('__pycache__')
 
 
 # Use w caution! Deletes everything reachable from <top>
@@ -160,7 +160,7 @@ for root, dirs, files in p.walk(on_error=print):
 #        (root / name).rmdir()
 
 
-p = Path('.')
+p = Path('./pathlib_.py')
 with p.open() as f:
     print(f.readlines())
 
@@ -174,3 +174,15 @@ n = p.write_text('Just some plain text')
 print(n)  # n chars
 print(p.read_text())
 
+target = Path('foo')
+p.rename(target)
+print(target.open().read())
+
+p = Path('test')
+print(p.absolute())
+
+p = Path()
+print(p.resolve())
+
+p = Path('..')
+print(p.resolve())
