@@ -28,3 +28,30 @@ class Person:
 
 person = Person('John')
 
+
+class SquareNumber(int):
+    def __new__(cls, val):
+        return super().__new__(cls, val ** 2)
+
+
+x = SquareNumber(3)
+print('x:', x)
+print('int:', isinstance(x, int))
+
+
+#class BadSquareNumber(int):
+#    def __init__(self, val):
+#        super().__init__(val ** 2)  # TypeError: int.__init__ takes exactly 1 arg (self)
+
+
+class Persona:
+    def __new__(cls, name, surname):
+        obj = super().__new__(cls)
+        obj.name = name
+        obj.surname = surname
+        obj.full_name = f'{name} {surname.upper()}'
+        return obj
+
+person = Persona('John Michael', 'Doe')
+print(person.full_name)
+print(person.__dict__)
