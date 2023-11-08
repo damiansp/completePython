@@ -186,3 +186,16 @@ print(p.resolve())
 
 p = Path('..')
 print(p.resolve())
+
+print(sorted(Path('..').rglob('*.py')))
+
+#p = Path('spam')
+#q = Path('eggs')
+#print(p.samefile(q))       # False
+#print(p.samefile('spam'))  # True
+
+#p = Path('mylink')
+#p.symlink_to('setup.py')
+#print(p.resolve())        # path/to/setup.py
+#print(p.stat().st_size)   # 956 (file size)
+#print(p.lstat().st_size)  # 8 (link size)
