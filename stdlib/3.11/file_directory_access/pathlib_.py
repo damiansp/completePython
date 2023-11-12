@@ -199,3 +199,14 @@ print(sorted(Path('..').rglob('*.py')))
 #print(p.resolve())        # path/to/setup.py
 #print(p.stat().st_size)   # 956 (file size)
 #print(p.lstat().st_size)  # 8 (link size)
+
+
+p = Path('my_binary')
+n_bytes = p.write_bytes(b'Some binary contents.')
+print('n bytes:', n_bytes)
+print(p.read_bytes())
+
+p = Path('my_text.txt')
+n_chars = p.write_text('Some plain text.')
+print('n chars:', n_chars)
+print(p.read_text())
