@@ -1,40 +1,6 @@
 from pprint import pprint
 
 
-class Person:
-    def __init__(self, name, age):
-        self._name = name
-        self._age = age
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, val):
-        self._name = val
-
-    @property
-    def age(self):
-        return self._age
-
-    @age.setter
-    def age(self, val):
-        self._age = val
-
-    def __eq__(self, other):
-        return self.name == other.name and self.age == other.age
-
-    def __hash__(self):
-        return hash(f'{self.name}, {self.age}')
-
-    def __str__(self):
-        return f'Person(name={self.name}, age={self.age})'
-
-    def __repr__(self):
-        return f'Person(name={self.name}, age={self.age})'
-
-
 class Prop:
     def __init__(self, attr):
         self._attr = attr
@@ -53,9 +19,11 @@ class Data(type):
     def __new__(mcs, name, bases, class_dict):
         class_obj = super().__new__(mcs, name, bases, class_dict)
         Data.define_property(class_obj)
-        return class_obj
-        # define __init__
+        # define __init__, etc
         setattr(class_obj, '__init__', Data.init(class_obj))
+        setattr(class_obj, '__repr__', Data.repr(class_obj))
+        setattr(class_obj, '__eq__', Data.eq(class_obj))
+        setattr(class_obj, '__hash__', Data.hash(class_obj))
         return class_obj
 
     @staticmethod
@@ -70,6 +38,35 @@ class Data(type):
                     setattr(self, kv[0], kv[1])
 
         return _init
+
+    @staticmethod
+    def repr(class_obj):
+        def _repr(self):
+            prop_vals = (getattr(self, prop) for pros in class_obj.props)
+            prop_kv = (f'{k}={v}' for k, v in zip(class_obj.props, prop_vals))
+            prop_kv_str = ', '.join(prop_kv)
+            return f'{class_obj.__name__}({prop_kv_str})'
+
+        return _repr
+
+    @staticmethod
+    def eq(class_obj):
+        def _eq(self, other):
+            if not isinstance(other, class_obj):
+                return False
+            self_vals = [getattr(self, prop) for prop in class_obj.props]
+            other_vals = [getattr(self, prop) for prop in other.props]
+            return self_vals == other_vals
+
+        return _eq
+
+    @staticmethod
+    def hash(class_obj):
+        def _hash(self):
+            vals = (getattr(self, prop) for prop in class_obj.props)
+            return hash(tuple(vals))
+
+        return _hash
 
     @staticmethod
     def define_property(class_obj):
@@ -87,6 +84,10 @@ class Person(metaclass=Data):
     props = ['name', 'age']
 
 
-pprint(Person.__dict__)
-p = Person('John Doe', age=25)
-print(p.__dict__)
+def data(cls):
+    return Data(cls.__name__, cls.__bases__, dict(cls.__dict__))
+
+
+@data
+class Employee:
+    props = ['name', 'job_title']
