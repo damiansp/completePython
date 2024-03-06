@@ -45,6 +45,7 @@ cpython/
 bookcode/
 images
 py_openGL_tut
+semopy/
 
 
 # Graph Files
