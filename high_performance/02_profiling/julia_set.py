@@ -13,7 +13,7 @@ def calc_pure_python(width, max_iters):
     Julia set
     '''
     x_step = (x2 - x1) / width
-    y_step = (y2 - y1) / width
+    y_step = (y1 - y2) / width
     x, y = [], []
     y_coord = y2
     while y_coord > y1:
@@ -38,4 +38,23 @@ def calc_pure_python(width, max_iters):
     end = time.time()
     secs = end - start
     print(f'{calculate_z_serial_purepython.__name__} took {secs} s')
+    print(sum(out))
     assert sum(out) == 33219980
+
+
+def calculate_z_serial_purepython(maxiter, zs, cs):
+    'Calculate output list using Julia update rule'
+    output = [0] * len(zs)
+    for i in range(len(zs)):
+        n = 0
+        z = zs[i]
+        c = cs[i]
+        while abs(z) < 2 and n < maxiter:
+            z = z * z + c
+            n += 1
+        output[i] = n
+    return output
+
+
+if __name__ == '__main__':
+    calc_pure_python(width=1_000, max_iters=300)
