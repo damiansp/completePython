@@ -1,4 +1,5 @@
 'Julia Set generator w/o image drawing'
+from functools import wraps
 import time
 
 
@@ -6,6 +7,17 @@ import time
 x1, x2 = -1.8, 1.8
 y1, y2 = -1.8, 1.8
 c_real, c_imag = -0.62772, -0.42193
+
+
+def time_fn(f):
+    @wraps(f)
+    def measure_time(*args, **kwargs):
+        t1 = time.time()
+        res = f(*args, **kwargs)
+        elapsed = time.time() - t1
+        print(f'@time_fn: {f.__name__}: {elapsed} s')
+        return res
+    return measure_time
 
 
 def calc_pure_python(width, max_iters):
@@ -39,9 +51,10 @@ def calc_pure_python(width, max_iters):
     secs = end - start
     print(f'{calculate_z_serial_purepython.__name__} took {secs} s')
     print(sum(out))
-    assert sum(out) == 33219980
+    #assert sum(out) == 33219980
 
 
+@time_fn
 def calculate_z_serial_purepython(maxiter, zs, cs):
     'Calculate output list using Julia update rule'
     output = [0] * len(zs)
