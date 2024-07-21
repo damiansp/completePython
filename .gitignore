@@ -44,6 +44,7 @@ data/
 cpython/
 bookcode/
 images
+img/
 py_openGL_tut
 semopy/
 
