@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.widget)
 
     def _init_widget(self):
-        widget = QSlider()
+        widget = QSlider()  # (Qt.Orientation.Horizontal/.Vertical)
         widget.setRange(-10, 3)  # .setMinimum()/.setMaximum()
         widget.valueChanged.connect(self._value_changed)
         widget.sliderMoved.connect(self._slider_moved)
