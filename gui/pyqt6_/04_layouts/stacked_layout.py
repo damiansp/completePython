@@ -1,7 +1,8 @@
 import sys
 
-from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedLayout, QWidget
+
+from layout_colorwidget import Color
 
 
 def main(args):
@@ -28,15 +29,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(Color('yellow'))
         layout.setCurrentIndex(3)
         return layout
-
-
-class Color(QWidget):
-    def __init__(self, color):
-        super().__init__()
-        self.setAutoFillBackground(True)
-        palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(color))
-        self.setPalette(palette)
         
 
 if __name__ == '__main__':
