@@ -30,7 +30,19 @@ a = A()
 a_id = id(a)
 b_id = id(a.b)
 
-print(count_refs(a_id))
-print(count_refs(b_id))
-print(object_exists(a_id))
-print(object_exists(b_id))
+print(count_refs(a_id))     # 2
+print(count_refs(b_id))     # 1
+print(object_exists(a_id))  # True
+print(object_exists(b_id))  # True
+
+a = None
+print(count_refs(a_id))     # 1
+print(count_refs(b_id))     # 1
+print(object_exists(a_id))  # True
+print(object_exists(b_id))  # True
+
+gc.collect()
+print(object_exists(a_id))  # False
+print(object_exists(b_id))  # False
+print(count_refs(a_id))     # 0
+print(count_refs(b_id))     # 0
