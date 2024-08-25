@@ -61,3 +61,32 @@ def get_current_state(mat):
             return 'CONTINUE'
     return 'LOST'
             
+
+def compress(mat):
+    'Compress grid before AND after each cell merging'
+    is_changed = False
+    new_mat = []
+    for i in range(DIM):
+        new_mat.append([0] * DIM)
+    for i in range(DIM):
+        pos = 0
+        for j in range(DIM):
+            if mat[i][j]:
+                new_mat[i][pos] = mat[i][j]
+                if j != pos:
+                    is_changed = True
+                pos += 1
+    return new_mat, is_changed
+
+
+def merge(mat):
+    'Merge cells in the matrix after compressing'
+    is_changed = False
+    for i in range(DIM):
+        for j in range(DIM - 1):
+            # if cell has same value as next, and is non-empty
+            if mat[i][j] and mat[i][j] == mat[i][j + 1]:
+                mat[i][j] *= 2
+                mat[i][j + 1] = 0
+                is_changed = True
+    return mat, is_changed
