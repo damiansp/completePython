@@ -3,7 +3,7 @@ import sys
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import (
-    QApplication, QLabel, QMainWindow, QStatusBar, QToolBar)
+    QApplication, QCheckBox, QLabel, QMainWindow, QStatusBar, QToolBar)
 
 
 def main(args):
@@ -31,12 +31,18 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar('Main toolbar')
         toolbar.setIconSize(QSize(16, 16))
         self.addToolBar(toolbar)
-        button = self._make_toolbar_button()
+        button = self._make_toolbar_button('&Your button', 'I am your button')
         toolbar.addAction(button)
+        toolbar.addSeparator()
+        button2 = self._make_toolbar_button(
+            'Your &button2', 'I am your button, too')
+        toolbar.addAction(button2)
+        toolbar.addWidget(QLabel('Hi there!'))
+        toolbar.addWidget(QCheckBox())
 
-    def _make_toolbar_button(self):
-        button = QAction(QIcon('bug.png'), 'Your button', self)
-        button.setStatusTip('I am your button')
+    def _make_toolbar_button(self, txt, tip):
+        button = QAction(QIcon('bug.png'), txt, self)
+        button.setStatusTip(tip)
         button.triggered.connect(self.on_toolbar_button_click)
         button.setCheckable(True)
         return button
