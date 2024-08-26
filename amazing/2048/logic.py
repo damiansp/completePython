@@ -90,3 +90,39 @@ def merge(mat):
                 mat[i][j + 1] = 0
                 is_changed = True
     return mat, is_changed
+
+
+def reverse(mat):
+    'Reverses the content of each row'
+    new_mat = []
+    for i in range(DIM):
+        new_mat.append([])
+        for j in range(DIM):
+            ne_mat[i].append(mat[i][DIM - 1 - j])
+    return new_mat
+
+
+def transpose(mat):
+    new_mat = []
+    for i in range(DIM):
+        new_mat.append([])
+        for j in range(DIM):
+            new_mat[i].append(mat[j][i])
+    return new_mat
+
+
+def move_left(mat):
+    mat, is_changed1 = compress(mat)
+    mat, is_changed2 = merge(mat)
+    is_changed = is_changed1 or is_changed2
+    mat, _ = compress(mat)
+    return mat, is_changed
+
+
+def move_right(mat):
+    'Reverse, move left, reverse back'
+    # works but inefficient
+    mat = reverse(mat)
+    mat, is_changed = move_left(mat)
+    mat = reverse(mat)
+    return mat, is_changed
