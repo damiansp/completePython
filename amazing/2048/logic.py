@@ -13,13 +13,13 @@ def start_game():
     for _ in range(DIM):
         mat.append([0] * DIM)
     print_controls()
-    add_new_2(mat)
+    mat = add_new_2(mat)
     return mat
 
 
 def print_controls():
     print(
-        "Commands are as follows :\n"
+        "Commands are as follows:\n"
         "'W' or 'w' : Move Up\n"
         "'S' or 's' : Move Down\n"
         "'A' or 'a' : Move Left\n"
@@ -31,10 +31,11 @@ def add_new_2(mat):
     # code appears to be faulty
     r = random.randint(0, DIM - 1)
     c = random.randint(0, DIM - 1)
-    while mat[r] != 0:
+    while mat[r][c] != 0:
         r = random.randint(0, DIM - 1)
         c = random.randint(0, DIM - 1)
-    mat[r] = 2
+    mat[r][c] = 2
+    return mat
 
 
 def get_current_state(mat):
