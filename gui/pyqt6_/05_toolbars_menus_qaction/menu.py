@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
     def _add_menu(self):
         menu = self.menuBar()
         file_menu = menu.addMenu('&File')
-        file_menu.add_action(self.button)
+        file_menu.addAction(self.button)
         return menu
         
 
