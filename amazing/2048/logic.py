@@ -10,7 +10,7 @@ WIN = 2048
 
 def start_game():
     mat = []
-    for in range(DIM):
+    for _ in range(DIM):
         mat.append([0] * DIM)
     print_controls()
     add_new_2(mat)
@@ -98,7 +98,7 @@ def reverse(mat):
     for i in range(DIM):
         new_mat.append([])
         for j in range(DIM):
-            ne_mat[i].append(mat[i][DIM - 1 - j])
+            new_mat[i].append(mat[i][DIM - 1 - j])
     return new_mat
 
 
@@ -125,4 +125,20 @@ def move_right(mat):
     mat = reverse(mat)
     mat, is_changed = move_left(mat)
     mat = reverse(mat)
+    return mat, is_changed
+
+
+def move_up(mat):
+    # again, works but inefficient
+    mat = transpose(mat)
+    mat, is_changed = move_left(mat)
+    mat = transpose(mat)
+    return mat, is_changed
+
+
+def move_down(mat):
+    # inefficien
+    mat = transpose(mat)
+    mat, is_changed = move_right(mat)
+    mat = transpose(mat)
     return mat, is_changed
