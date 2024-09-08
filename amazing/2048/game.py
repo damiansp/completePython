@@ -16,7 +16,6 @@ def main():
             'd': logic.move_right
         }[x](mat)
         status = logic.get_current_state(mat)
-        print(status)
         if status == 'CONTINUE':
             logic.add_new_2(mat)
         else:
