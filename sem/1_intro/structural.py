@@ -22,7 +22,7 @@ def correlation_coefficient(x, y):
     return pearsonr(x, y)[0]
 
 
-def check_exogeneity(t, y_treated, y_control): -> bool
+def check_exogeneity(t, y_treated, y_control) -> bool:
     '''Check for exchangeability in causal inference.
     Params:
     - t: treatment indiator
@@ -47,12 +47,12 @@ def regression_with_controls(x, z, y):  # that's not confusing!
     - y: outcome variable
     Returns: regression coefs.
     '''
-    xz = _get_xz(x, z)
+    xz = _get_xz(x, z, True)
     beta = _get_beta_analytical(xz, y)
     return beta
 
 
-def simulate_structural_v_reduced_form(data: dict, structural: bool = True):
+def simulate_structural_vs_reduced_form(data: dict, structural: bool = True):
     '''Simulate and compare structural vs reduced form models.
     Params:
     - data: with keys: 'x', 'y', 'z'
@@ -62,7 +62,7 @@ def simulate_structural_v_reduced_form(data: dict, structural: bool = True):
     x = data['x']
     y = data['y']
     z = data['z']
-    xz = _get_xz(x, z, is_structural)
+    xz = _get_xz(x, z, structural)
     beta = _get_beta_analytical(xz, y)
     return beta
 
@@ -71,9 +71,34 @@ def _get_xz(x, z, is_structural):
     ones = np.ones(len(x))
     if is_structural:
         return np.column_stack((ones, x, z))
-    return np.column_stack(ones, x))
+    return np.column_stack((ones, x))
 
 
 def _get_beta_analytical(xz, y):
     beta = np.linalg.inv(xz.T @ xz) @ (xz.T @ y)
     return beta
+
+
+
+# Test example
+if __name__ == '__main__':
+    y_treated = np.array([5, 6, 7, 8, 9])
+    y_control = np.array([3, 2, 4, 5, 4])
+    t = np.array([1, 1, 1, 1, 1])
+    x = np.array([2.5, 3., 2.8, 3.5, 2.7])
+    y = np.array([5., 6., 5.5, 7., 5.8])
+    z = np.array([1, 0, 1, 1, 0])
+    causal_effect = calculate_causal_effect(y_treated, y_control)
+    corr_coef = correlation_coefficient(x, y)
+    exchangeability = is_exchangeable(t, y_treated, y_control)
+    regr_res = regression_with_controls(x, z, y)
+    data_ex = {'x': x, 'y': y, 'z': z}
+    struct_coefs = simulate_structural_vs_reduced_form(data_ex, True)
+    reduced_form_coefs = simulate_structural_vs_reduced_form(data_ex, False)
+    print('Causal effect:     ', causal_effect)
+    print('Corr coef:         ', corr_coef)
+    print('Exchangeable:      ', exchangeability)
+    print('Regr coefs:        ', regr_res)
+    print('Structural coefs:  ', struct_coefs)
+    print('Reduced form coefs:', reduced_form_coefs)
+                  
