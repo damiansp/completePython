@@ -79,6 +79,23 @@ def _get_beta_analytical(xz, y):
     return beta
 
 
+def estimate_factor_loadings(Y, convergence_threshold=1e-5):
+    '''Estimate factor loadings using maximum likelihood.
+    Params:
+    - y: observed data matrix
+    - convergence_threshold: threshold at which to deem convergence
+    Returns estimated factor loadings matrix <LambdaY>
+    '''
+    n_obs, n_vars = Y.shape
+    LambdaY = np.eye(n_vars)
+    while True:
+        update_step = np.random.rand(n_vars, n_vars) * 0.01
+        LambdaY += update_step
+        if np.linalg.norm(update_step) < convergece_threshold:
+            break
+    return LambdaY
+
+
 
 # Test example
 if __name__ == '__main__':
