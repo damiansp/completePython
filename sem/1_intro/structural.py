@@ -79,22 +79,49 @@ def _get_beta_analytical(xz, y):
     return beta
 
 
-def estimate_factor_loadings(Y, convergence_threshold=1e-5):
+def estimate_factor_loadings(Y, convergence_threshold=1e-5, max_iters=None):
     '''Estimate factor loadings using maximum likelihood.
     Params:
     - y: observed data matrix
     - convergence_threshold: threshold at which to deem convergence
-    Returns estimated factor loadings matrix <LambdaY>
+    Returns: estimated factor loadings matrix <LambdaY>
     '''
     n_obs, n_vars = Y.shape
     LambdaY = np.eye(n_vars)
+    i = 0
     while True:
         update_step = np.random.rand(n_vars, n_vars) * 0.01
         LambdaY += update_step
-        if np.linalg.norm(update_step) < convergece_threshold:
+        if np.linalg.norm(update_step) < convergence_threshold:
+            break
+        i += 1
+        if max_iters is not None and i >= max_iters:
             break
     return LambdaY
 
+
+def construct_measurement_model(LambdaY, eta, epsilon):
+    '''Construct the measurement model for SEM.
+    Params:
+    - LambdaY: factor loadings matrix
+    - eta: latent vars
+    - epsilon: measurement error term
+    Returns: measurment model matrix Y
+    '''
+    return np.dot(LambdaY, eta) + epsilon
+
+
+def compute_variance_covariance_structure(LambdaY, Phi, Theta, ThetaEpsilon):
+    '''Compute the var-covar structure for SEM.
+    Params:
+    - LambdaY: factor loading matrix
+    - Phi: cov matrix of latent vars
+    - Theta: error cov matrix of observed vars
+    - ThetaEpsilon: error cov matrix of latent vars
+    Returns: cov matrix, Sigma
+    '''
+    return np.dot(LambdaY, np.dot(Phi + Theta, LambdaY.T)) + ThetaEpsilon
+    
 
 
 # Test example
@@ -119,3 +146,15 @@ if __name__ == '__main__':
     print('Structural coefs:  ', struct_coefs)
     print('Reduced form coefs:', reduced_form_coefs)
                   
+    y = np.random.rand(100, 10)        # sim data
+    eta = np.random.rand(10, 1)        # sim latent vars
+    eps = np.random.rand(10, 1) * 0.1  # sim meas err
+    phi = np.random.rand(10, 10)       # sim latent var cov
+    theta = np.random.rand(10, 10) * 0.05  # sim err cov for observed vars
+    theta_eps = np.random.rand(10, 10) * 0.02  # sim err cov for latent vars
+    lamb_y = estimate_factor_loadings(y, max_iters=50)
+    meas_mod = construct_measurement_model(lamb_y, eta, eps)
+    sig = compute_variance_covariance_structure(lamb_y, phi, theta, theta_eps)
+    print(f'Loadings:\n{lamb_y}')
+    print(f'Meas mod:\n{meas_mod}')
+    print(f'V-CV:\n{sig}')
