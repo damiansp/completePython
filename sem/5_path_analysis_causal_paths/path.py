@@ -49,7 +49,22 @@ def path_coef_optimization(S, Sigma, theta0, max_iter=1000, tol=1e-6):
         if discr < tol:
             return theta
         theta -= 0.01 * discr
-    print('Max iters reached without convergence')f
+    print('Max iters reached without convergence')
     return theta
 
 
+if __name__ == '__main__':
+    beta1, beta2 = 0.4, 0.3
+    y = path_model(2, 3, beta1, beta2, 0.1)
+    alpha, beta = 0.5, 0.6
+    indir_eff = indirect_effect(alpha, beta)
+    tot_eff = total_effect(beta1, indir_eff)
+
+    S_samp = np.array([[1, 0.5], [0.5, 1]])
+    Sig_samp = np.array([[0.8, 0.3], [0.3, 0.9]])
+    theta0 = np.array([0.4, 0.3])
+    opt_theta = path_coef_optimization(S_samp, Sig_samp, theta0)
+    print('y:', y)
+    print('indir eff:', indir_eff)
+    print('tot eff:', tot_eff)
+    print('Opt coef:', opt_theta)
