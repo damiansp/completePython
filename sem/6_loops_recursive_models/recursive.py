@@ -19,7 +19,7 @@ def recursive_system(Y, X, alpha_init, beta_init):
         return loss
 
     params_init = np.concatenate((alpha_init, beta_init))
-    res = minimize(loss_function, params_init)
+    res = minimize(loss_func, params_init)
     return res.x
 
 
@@ -52,3 +52,12 @@ def parameter_estimation(Y, X):
     beta_init = np.random.rand(Y.shape[1] - 1)
     return recursive_system(Y, X, alpha_init, beta_init)
 
+
+if __name__ == '__main__':
+    Y = np.array([[11., 12.], [21., 9.], [19., 20.]])
+    X = np.array([[5., 4.], [4., 3.], [6., 8.]])
+    params = parameter_estimation(Y, X)
+    print('Estimated params:', params)
+    gamma_init = np.random.rand(2)
+    gamma_est = loop_system_identification(Y, X, gamma_init)
+    print('Est params for feedback loop model:', gamma_est)
