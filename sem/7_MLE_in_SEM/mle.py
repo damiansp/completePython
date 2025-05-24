@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.stats import multivariate_normal
+#from scipy.stats import multivariate_normal
 
 
 def log_likelihood(y, mu, sigma_theta):
@@ -14,7 +14,7 @@ def log_likelihood(y, mu, sigma_theta):
     diff = y - mu
     inv_sig = np.linalg.inv(sigma_theta)
     return (
-        -0.5 * n * np.log(np.linalg.det(sig_theta))
+        -0.5 * n * np.log(np.linalg.det(sigma_theta))
         - 0.5 * np.sum(diff @ inv_sig * diff, axis=1).sum())
 
 
@@ -37,7 +37,7 @@ def em_algorithm(y, mu_init, sigma_init, tol=1e-6, max_iter=1000):
             break
         mu = mu_new
         sig = sig_new
-        n_ter += 1
+        n_iter += 1
     return mu, sig
 
 
@@ -60,4 +60,14 @@ def compute_hessian(y, mu, sigma_theta):
 
 
 if __name__ == '__main__':
-    pass
+    y = np.random.multivariate_normal(
+        mean=[0, 0], cov=[[1, 0.5], [0.5, 1]], size=100)
+    mu_init = np.array([1, 1])
+    sig_init = np.array([[1, 0], [0, 1]])
+    mu, sig = em_algorithm(y, mu_init, sig_init)
+    log_lik = log_likelihood(y, mu, sig)
+    hessian = compute_hessian(y, mu, sig)
+    print('Est mean:', mu)
+    print('Est cov:\n', sig)
+    print('Log-likelihood:', log_lik)
+    print('Hessian:', hessian)
