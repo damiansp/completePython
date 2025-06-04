@@ -1,4 +1,9 @@
+import copy
+
 import numpy as np
+
+
+DEFAULT_FRAMERATE = 11025
 
 
 def CosSignal(
@@ -34,7 +39,7 @@ class Signal:
         '''
         return 0.1
 
-    def plot(self, framerate int = 11025) -> None:
+    def plot(self, framerate int = DEFAULT_FRAMERATE) -> None:
         '''Plots the signal.
         The default is to plot 3 periods.
         Parameters:
@@ -48,7 +53,7 @@ class Signal:
             self,
             duration: float = 1.,
             start: float = 0.,
-            framerate: int = 11025) -> Wave:
+            framerate: int = DEFAULT_FRAMERATE) -> Wave:
         '''Makes a Wave object.
         Parameters:
         - duration: s
@@ -95,4 +100,38 @@ class Sinusoid(Signal):
 
 class Wave:
     'Represents a discrete-time waveform'
-    # HERE
+    def __init__(self, ys: list, ts: list = None, framerate: int = None):
+        '''
+        Parameters:
+        - ys: wave array
+        - ts: times
+        - framerate: samples/s
+        '''
+        self.ys = np.asanyarray(ys)
+        self.framerate = (
+            framerate if framerate is not None else DEFAULT_FRAMERATE)
+        if ts is None:
+            self.ts = np.arange(len(ys0)) / self.framerate
+        else:
+            self.ts = np.asanyarray(ts)
+
+    def copy(self) -> Wave:
+        return copy.deepcopy(self)
+
+    def __len__(self):
+        return len(self.ys)
+
+    @property
+    def start(self):
+        return self.ts[0]
+
+    @property
+    def end(self):
+        return self.ts[-1]
+
+    @property
+    def duration(self)) -> float:
+        return len(self.ys) / self.framerate
+
+    def __add__(self, other):  #HERE
+                                
