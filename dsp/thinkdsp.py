@@ -1,4 +1,5 @@
 import copy
+import warnings
 
 import numpy as np
 
@@ -6,20 +7,9 @@ import numpy as np
 DEFAULT_FRAMERATE = 11025
 
 
-def CosSignal(
-        freq: float = 440, amp: float = 1., offset: float = 0.) -> Sinusoid:
-    '''Makes a cosine Sinusoid.
-    Parameters:
-    - freq: frequency in Hz
-    - amp: amplitude, 1.0 is nominal max
-    - offset: phase offset in radians
-    '''
-    return Sinusoid(freq, amp, offset, func=np.cos)
-
-
 class Signal:
     'Represents a time-varying signal'
-    def __add__(self, other: Signal) -> Signal:
+    def __add__(self, other):
         '''Add two signals
         Parameters:
         - other: another Signal
@@ -39,7 +29,7 @@ class Signal:
         '''
         return 0.1
 
-    def plot(self, framerate int = DEFAULT_FRAMERATE) -> None:
+    def plot(self, framerate: int = DEFAULT_FRAMERATE) -> None:
         '''Plots the signal.
         The default is to plot 3 periods.
         Parameters:
@@ -53,7 +43,7 @@ class Signal:
             self,
             duration: float = 1.,
             start: float = 0.,
-            framerate: int = DEFAULT_FRAMERATE) -> Wave:
+            framerate: int = DEFAULT_FRAMERATE):
         '''Makes a Wave object.
         Parameters:
         - duration: s
@@ -66,6 +56,21 @@ class Signal:
         return Wave(ys, ts, framerate=framerate)
 
 
+class Sinusoid(Signal):
+    pass
+
+
+def CosSignal(
+        freq: float = 440, amp: float = 1., offset: float = 0.) -> Sinusoid:
+    '''Makes a cosine Sinusoid.
+    Parameters:
+    - freq: frequency in Hz
+    - amp: amplitude, 1.0 is nominal max
+    - offset: phase offset in radians
+    '''
+    return Sinusoid(freq, amp, offset, func=np.cos)
+
+
 class SumSignal(Signal):
     'Represents the sum of signals'
     def __init__(self, *args):
@@ -73,7 +78,7 @@ class SumSignal(Signal):
         Parameters:
         - args: tuple of Signals
         '''
-        self.signals = signals
+        self.signals = args
 
     @property
     def period(self) -> float:
@@ -94,10 +99,6 @@ class SumSignal(Signal):
         return sum(sig.evaluate(ts) for sig in self.signals)
     
         
-class Sinusoid(Signal):
-    pass
-
-
 class Wave:
     'Represents a discrete-time waveform'
     def __init__(self, ys: list, ts: list = None, framerate: int = None):
@@ -111,11 +112,11 @@ class Wave:
         self.framerate = (
             framerate if framerate is not None else DEFAULT_FRAMERATE)
         if ts is None:
-            self.ts = np.arange(len(ys0)) / self.framerate
+            self.ts = np.arange(len(ys)) / self.framerate
         else:
             self.ts = np.asanyarray(ts)
 
-    def copy(self) -> Wave:
+    def copy(self):
         return copy.deepcopy(self)
 
     def __len__(self):
@@ -130,8 +131,45 @@ class Wave:
         return self.ts[-1]
 
     @property
-    def duration(self)) -> float:
+    def duration(self) -> float:
         return len(self.ys) / self.framerate
 
-    def __add__(self, other):  #HERE
+    def __add__(self, other):
+        'Add 2 waves elementwise'
+        if other == 0:
+            return self
+        if self.framerate != other.framerate:
+            raise ValueError('Frame rates must be equal to add waves')
+        # make array of times that covers both waves
+        start = min(self.start, other.start)
+        end = max(self.end, other.end)
+        n = int(round((end - start) * self.framerate)) + 1
+        ys = np.zeors(n)
+        ts = start + np.arange(n) / self.framerate
+
+        def add_ys(wave):
+            i = find_index(wave.start, ts)
+            # make sure arrays line up reasonably well
+            diff = ts[i] - wave.start
+            dt = 1 / wave.framerate
+            if (diff/ dt) > 0.1:
+                warnings.warn(
+                    'Cannot add these waveforms. Time arrays do not line up')
+            j = i + len(wave)
+            ys[i:j] += wave.ys
+
+        add_ys(self)
+        add_ys(other)
+        return Wave(ys, ts, self.framerate)
+               
+
+
+def find_index(x, xs):
+    'Find the index corresponding to a given value in an array'
+    n = len(xs)
+    start = xs[0]
+    end = xs[-1]
+    i = round((n - 1) * (x - start)/(end - start))
+    return int(i)
+        
                                 
