@@ -161,7 +161,48 @@ class Wave:
         add_ys(self)
         add_ys(other)
         return Wave(ys, ts, self.framerate)
-               
+
+    __radd__ = __add__
+
+    def __or__(self, other):
+        '''Concatenates two waves
+        Parameters;
+        - other (Wave)
+        Returns: Wave
+        '''
+        if self.framerate != other.framerate:
+            raise ValueError('Wave.__or__: framerates do not agree')
+        ys = np.concatenate((self.ys, other.ys))
+        return Wave(ys, framerate=self.framerate)
+
+    def __mul__(self, other):
+        '''Elementwise multiplication of two waves
+        Note: ignores timestamps; result inherits timestamps from self.
+        Parameters:
+        - other (Wave)
+        Returns: Wave
+        '''
+        if self.framerate != other.framerate:
+            raise ValueError('Frame rates must be equal to add waves')
+        if len(self) != len(other):
+            raise ValueError('Waves must be of equal lengths to multiply')
+        ys = self.ys * other.ys
+        return Wave(ys, self.ts, self.framerate)
+
+    def max_diff(self, other) -> float:
+        '''Computes maximum absolute difference between two waves.
+        Parameters:
+        - other (Wave):
+        '''
+        if self.framerate != other.framerate:
+            raise ValueError('Frame rates must be equal to add waves')
+        if len(self) != len(other):
+            raise ValueError('Waves must be of equal lengths to multiply')
+        diffs = np.abs(self.ys - other.ys)
+        return np.max(diffs)
+
+    def convolve(self, other):
+        pass  # TODO
 
 
 def find_index(x, xs):
