@@ -138,13 +138,12 @@ class Wave:
         'Add 2 waves elementwise'
         if other == 0:
             return self
-        if self.framerate != other.framerate:
-            raise ValueError('Frame rates must be equal to add waves')
+        self._check_alignment(other, check_len=False)
         # make array of times that covers both waves
         start = min(self.start, other.start)
         end = max(self.end, other.end)
         n = int(round((end - start) * self.framerate)) + 1
-        ys = np.zeors(n)
+        ys = np.zerps(n)
         ts = start + np.arange(n) / self.framerate
 
         def add_ys(wave):
@@ -170,8 +169,7 @@ class Wave:
         - other (Wave)
         Returns: Wave
         '''
-        if self.framerate != other.framerate:
-            raise ValueError('Wave.__or__: framerates do not agree')
+        self._check_alignment(other, check_len=False)
         ys = np.concatenate((self.ys, other.ys))
         return Wave(ys, framerate=self.framerate)
 
@@ -182,10 +180,7 @@ class Wave:
         - other (Wave)
         Returns: Wave
         '''
-        if self.framerate != other.framerate:
-            raise ValueError('Frame rates must be equal to add waves')
-        if len(self) != len(other):
-            raise ValueError('Waves must be of equal lengths to multiply')
+        self._check_alignment(other)
         ys = self.ys * other.ys
         return Wave(ys, self.ts, self.framerate)
 
@@ -194,15 +189,19 @@ class Wave:
         Parameters:
         - other (Wave):
         '''
-        if self.framerate != other.framerate:
-            raise ValueError('Frame rates must be equal to add waves')
-        if len(self) != len(other):
-            raise ValueError('Waves must be of equal lengths to multiply')
+        self._check_alignment(other)
         diffs = np.abs(self.ys - other.ys)
         return np.max(diffs)
 
     def convolve(self, other):
         pass  # TODO
+
+    def _check_alignment(self, other, check_framerate=True, check_len=True):
+        if check_framerate and self.framerate != other.framerate:
+            raise ValueError('Frame rates must be equal')
+        if check_len and len(self) != len(other):
+            raise ValueError('Waves must be of equal lengths')
+        
 
 
 def find_index(x, xs):
