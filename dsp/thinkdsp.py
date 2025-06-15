@@ -194,6 +194,46 @@ class Wave:
         return np.max(diffs)
 
     def convolve(self, other):
+        '''Convolve two waves.
+        Note: ignores timestamps--retult inherits from self
+        Parameters:
+        - other (Wave | numpy array)
+        Returns: Wave
+        '''
+        if isinstance(other, Wave):
+            self._check_alignment(check_len=False)
+            window = other.ys
+        else:
+            window = other
+        ys = np.convolve(self.ys, window, mode='full')
+        return Wave(ys, framerate=self.framerate)
+
+    def diff(self):
+        '''Computes the difference between successive elements
+        Returns: Wave
+        '''
+        ys = np.diff(self.ys)
+        ts = self.ts[1:].copy()
+        return Wave(ys, ts, self.framerate)
+
+    def cumsum(self):
+        '''Computes the cumulative sum of elements.
+        Returns: Wave
+        '''
+        ys = np.cumsum(self.ys)
+        ts = self.ts.copy()
+        return Wave(ys, ts, self.framerate)
+
+    def quantize(self, bound, dtype):
+        '''Maps waveform to quanta.
+        Parameters:
+        - bound: max amplitude
+        - dtype: numpy datatype or str
+        Returns: quantized signal
+        '''
+        return quantize(self.ys, bound, dtype)
+
+    def apodize(sel, denom=20, duration=0.1):
         pass  # TODO
 
     def _check_alignment(self, other, check_framerate=True, check_len=True):
@@ -213,3 +253,27 @@ def find_index(x, xs):
     return int(i)
         
                                 
+def quantize(ys, bound, dtype):
+    '''Maps waveform to quanta.
+    Parameters:
+    - ys: wave array
+    - bound: max amplitude
+    - dtype: numpy datatype or str
+    Returns: quantized signal
+    '''
+    if max(ys) > 1 or min(ys) < -1:
+        warnings.warn('Warning: normalize before quantizing')
+        ys = normalize(ys)
+    zs = (ys * bound).astype(dtype)
+    return zs
+
+
+def normalize(ys, amp=1.0):
+    '''Normalizes a wave array so max amp is +amp or -amp
+    Parameters:
+    - ys: wave array
+    - amp: max amplitude (pos or neg) in result
+    Returns: wave array
+    '''
+    high, low = abs(max(ys)), abs(min(ys))
+    return amp * ys / max(high, low)
