@@ -233,8 +233,46 @@ class Wave:
         '''
         return quantize(self.ys, bound, dtype)
 
-    def apodize(sel, denom=20, duration=0.1):
-        pass  # TODO
+    def apodize(self, denom: float = 20, duration float = 0.1):
+        '''Tapers amplitude at beginning an end of signal.
+        Tapers the lesser of duration given or fraction given.
+        Parameters:
+        - denom: fraction of segment to taper
+        - duration: time to taper in s
+        '''
+        self.ys = apodize(self.ys, self.framerate, denom, duration)
+
+    def hamming(self):
+        'Apply hamming window to wave'
+        self.ys *= np.hamming(len(self.ys))
+
+    def window(self, win):
+        '''Apply a window to the wave.
+        Parameters:
+        - win: sequence of mulitpliers of len self.ys
+        '''
+        self.ys *= window
+
+    def scale(self, factor: float):
+        '''Multiplies waves by a const factor.
+        Parameter:
+        - factor: scale factor
+        '''
+        self.ys *= factor
+
+    def shift(self, s: float):
+        '''Shift the wave left or right in time.
+        Parameters:
+        s: time shift (s)
+        '''
+        self.ts += shift
+
+    def roll(self, r):
+        'Rolls this wave by the given number of locations.'
+        self.ys = np.roll(self.ys, r)
+
+    def truncate(self, n):
+        pass
 
     def _check_alignment(self, other, check_framerate=True, check_len=True):
         if check_framerate and self.framerate != other.framerate:
@@ -277,3 +315,7 @@ def normalize(ys, amp=1.0):
     '''
     high, low = abs(max(ys)), abs(min(ys))
     return amp * ys / max(high, low)
+
+
+def apodize():
+    pass
