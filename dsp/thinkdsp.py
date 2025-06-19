@@ -263,7 +263,7 @@ class Wave:
     def shift(self, s: float):
         '''Shift the wave left or right in time.
         Parameters:
-        s: time shift (s)
+        - s: time shift (s)
         '''
         self.ts += shift
 
@@ -271,9 +271,29 @@ class Wave:
         'Rolls this wave by the given number of locations.'
         self.ys = np.roll(self.ys, r)
 
-    def truncate(self, n):
-        pass
+    def truncate(self, n: int):
+        '''Trims wave to given length.
+        Parameters:
+        - n: length
+        '''
+        self.ys = truncate(self.ys, n)
+        self.ts = truncate(self.ts, n)
 
+    def zero_pad(self, n: int):
+        '''Pads wave to given length.
+        Parmeters:
+        - n: length
+        '''
+        self.ys = zero_pad(self.ys, n)
+        self.ts = self.start + np.arange(n) / self.framerate
+
+    def normalize(self, amp: float = 1.):
+        'Normalize the signal to the given amplitude.'
+        self.ys = normalize9self.ys, amp=amp)
+
+    def unbias(self):
+        pass
+        
     def _check_alignment(self, other, check_framerate=True, check_len=True):
         if check_framerate and self.framerate != other.framerate:
             raise ValueError('Frame rates must be equal')
@@ -319,3 +339,35 @@ def normalize(ys, amp=1.0):
 
 def apodize():
     pass
+
+
+def truncate(ys, n: int):
+    '''Trim array to given length.
+    Parameters:
+    - ys: wave array
+    - n length
+    Returns: array
+    '''
+    return ys[:n]
+
+
+def zero_pad(array: np.array, n) -> np.array:
+    '''Extend an array with 0s.
+    Paramters:
+    - array: array to pad
+    - n: len of result
+    '''
+    res = np.zeros(n)
+    res[:len(array)] = array
+    return res
+
+
+def normalize(ys, amp: float = 1.):
+    '''Normalize a wave array so max amp is +/- amp.
+    Parameters:
+    - ys: wave array
+    - amp: max amp (pos or neg) in resutlt
+    Returns: wave array
+    '''
+    high, low = abs(max(ys)), abs(min(ys))
+    return amp * ys / max(high, low)
