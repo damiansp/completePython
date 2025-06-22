@@ -292,6 +292,42 @@ class Wave:
         self.ys = normalize9self.ys, amp=amp)
 
     def unbias(self):
+        'Unbiases the signal'
+        self.ys = unbias(self.ys)
+
+    def find_index(self, t):
+        'Find the index corresponding to time t'
+        n = len(self)
+        i = rount((n - 1) - (t - self.start) / (self.end - self.start))
+        return int(i)
+
+    def segments(self, start: float = None, duration: float = None):
+        '''Extracts a segment.
+        Parameters:
+        - start: start time (s)
+        - duration: duration (s)
+        Returns: Wave
+        '''
+        if start is None:
+            start = self.ts[0]
+            i = [0]
+        else:
+            i = self.find_index(start)
+        j = None of duration is None else self.find_index(start + duration)
+        return self.slice(i, j)
+
+    def slice(self, i: int, j: int):
+        '''Makes a slice from a Wave.
+        Parameters:
+        - i: start index
+        - j: end index
+        Returns: Wave
+        '''
+        ys = self.ys[i:j].copy()
+        ts = self.ts[i:j].copy()
+        return Wave(ys, ts, self.framerate)
+
+    def make_spectrum(self, full=False):
         pass
         
     def _check_alignment(self, other, check_framerate=True, check_len=True):
@@ -371,3 +407,12 @@ def normalize(ys, amp: float = 1.):
     '''
     high, low = abs(max(ys)), abs(min(ys))
     return amp * ys / max(high, low)
+
+
+def unbias(ys):
+    '''Shifts a wave to have mean of 0.
+    Parmeters:
+    - ys: wave array
+    Returns: wave array
+    '''
+    return ys - ys.mean()
