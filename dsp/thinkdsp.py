@@ -5,6 +5,7 @@ import numpy as np
 
 
 DEFAULT_FRAMERATE = 11025
+PI2 = 2 * np.pi
 
 
 class Signal:
@@ -57,7 +58,39 @@ class Signal:
 
 
 class Sinusoid(Signal):
-    pass
+    'Represents a sinusoidal signal'
+    def __init__(
+            self,
+            freq: float = 440.,
+            amp: float = 1.,
+            offset: float = 0.,
+            func=np.sin):
+        '''
+        Parameters:
+        - freq: frequency in Hz
+        - amp: amplitude
+        - offset: phase offset in radians
+        - func: function to map phase to amp
+        '''
+        self.freq = freq
+        self.amp = amp
+        self.offset = offset
+        self.func = func
+
+    @property
+    def period(self) -> float:
+        return 1. / self.freq
+
+    def evaluate(self, ts):
+        '''Evaluate the signal at given times <ts>
+        Parameters:
+        - ts: array of times (floats)
+        Returns: wave (array of floats)
+        '''
+        ts = np.asarray(ts)
+        phases = PI2 * self.freq * ts + self.offset
+        ys = self.amp * self.func(phases)
+        return ys
 
 
 def CosSignal(
@@ -69,6 +102,17 @@ def CosSignal(
     - offset: phase offset in radians
     '''
     return Sinusoid(freq, amp, offset, func=np.cos)
+
+
+def SinSignal(
+        freq: float = 440, amp: float = 1., offset: float = 0.) -> Sinusoid:
+    '''Makes a sine Sinusoid.
+    Parameters:
+    - freq: frequency in Hz
+    - amp: amplitude, 1.0 is nominal max
+    - offset: phase offset in radians
+    '''
+    return Sinusoid(freq, amp, offset, func=np.sin)
 
 
 class SumSignal(Signal):
@@ -233,7 +277,7 @@ class Wave:
         '''
         return quantize(self.ys, bound, dtype)
 
-    def apodize(self, denom: float = 20, duration float = 0.1):
+    def apodize(self, denom: float = 20, duration: float = 0.1):
         '''Tapers amplitude at beginning an end of signal.
         Tapers the lesser of duration given or fraction given.
         Parameters:
@@ -251,7 +295,7 @@ class Wave:
         Parameters:
         - win: sequence of mulitpliers of len self.ys
         '''
-        self.ys *= window
+        self.ys *= win
 
     def scale(self, factor: float):
         '''Multiplies waves by a const factor.
@@ -265,7 +309,7 @@ class Wave:
         Parameters:
         - s: time shift (s)
         '''
-        self.ts += shift
+        self.ts += s
 
     def roll(self, r):
         'Rolls this wave by the given number of locations.'
@@ -289,7 +333,7 @@ class Wave:
 
     def normalize(self, amp: float = 1.):
         'Normalize the signal to the given amplitude.'
-        self.ys = normalize9self.ys, amp=amp)
+        self.ys = normalize(self.ys, amp=amp)
 
     def unbias(self):
         'Unbiases the signal'
@@ -298,7 +342,7 @@ class Wave:
     def find_index(self, t):
         'Find the index corresponding to time t'
         n = len(self)
-        i = rount((n - 1) - (t - self.start) / (self.end - self.start))
+        i = round((n - 1) - (t - self.start) / (self.end - self.start))
         return int(i)
 
     def segments(self, start: float = None, duration: float = None):
@@ -313,7 +357,7 @@ class Wave:
             i = [0]
         else:
             i = self.find_index(start)
-        j = None of duration is None else self.find_index(start + duration)
+        j = None if duration is None else self.find_index(start + duration)
         return self.slice(i, j)
 
     def slice(self, i: int, j: int):
@@ -362,11 +406,11 @@ def quantize(ys, bound, dtype):
     return zs
 
 
-def normalize(ys, amp=1.0):
-    '''Normalizes a wave array so max amp is +amp or -amp
+def normalize(ys, amp: float = 1.):
+    '''Normalize a wave array so max amp is +/- amp.
     Parameters:
     - ys: wave array
-    - amp: max amplitude (pos or neg) in result
+    - amp: max amp (pos or neg) in resutlt
     Returns: wave array
     '''
     high, low = abs(max(ys)), abs(min(ys))
@@ -396,17 +440,6 @@ def zero_pad(array: np.array, n) -> np.array:
     res = np.zeros(n)
     res[:len(array)] = array
     return res
-
-
-def normalize(ys, amp: float = 1.):
-    '''Normalize a wave array so max amp is +/- amp.
-    Parameters:
-    - ys: wave array
-    - amp: max amp (pos or neg) in resutlt
-    Returns: wave array
-    '''
-    high, low = abs(max(ys)), abs(min(ys))
-    return amp * ys / max(high, low)
 
 
 def unbias(ys):
