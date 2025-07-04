@@ -3,10 +3,38 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
+from wave import open as open_wave
 
 
 DEFAULT_FRAMERATE = 11025
 PI2 = 2 * np.pi
+
+
+def read_wave(path: str = 'sound.wav'):
+    '''Read a wave file.
+    Returns: Wave
+    '''
+    fp = open_wave(path, 'r')
+    n_channels = fp.getnchannels()
+    n_frames = fp.getnframes()
+    samp_width = fp.getsampwidth()
+    framerate = fp.getframerate()
+    z_str = fp.readframes(n_frames)
+    fp.close()
+    dtype_map = {1: np.int8, 2: np.int16, 3: 'special', 4: np.int32}
+    if samp_width not in dtype_map:
+        raise ValueError(f'samp_width {samp_width} unknown')
+    if samp_width == 3:
+        xs = np.fromstring(z_str, dtype=np.int8).astype(np.int32)
+        ys = 256 * (256 * xs[2::3] + xs[1::3]) + xs[0::3]
+    else:
+        ys = np.fromstring(z_str, dtype=dtype_map[samp_width])
+    # if stereo just use first channel
+    if n_channels == 2:
+        ys = ys[::2]
+    wave = Wave(ys, framerate=framerate)
+    wave.normalize()
+    return wave
 
 
 class Signal:
@@ -332,9 +360,9 @@ class Wave:
 #         self.ys = zero_pad(self.ys, n)
 #         self.ts = self.start + np.arange(n) / self.framerate
 
-#     def normalize(self, amp: float = 1.):
-#         'Normalize the signal to the given amplitude.'
-#         self.ys = normalize(self.ys, amp=amp)
+    def normalize(self, amp: float = 1.):
+        'Normalize the signal to the given amplitude.'
+        self.ys = normalize(self.ys, amp=amp)
 
 #     def unbias(self):
 #         'Unbiases the signal'
@@ -423,15 +451,15 @@ class Wave:
 #     return zs
 
 
-# def normalize(ys, amp: float = 1.):
-#     '''Normalize a wave array so max amp is +/- amp.
-#     Parameters:
-#     - ys: wave array
-#     - amp: max amp (pos or neg) in resutlt
-#     Returns: wave array
-#     '''
-#     high, low = abs(max(ys)), abs(min(ys))
-#     return amp * ys / max(high, low)
+def normalize(ys, amp: float = 1.):
+    '''Normalize a wave array so max amp is +/- amp.
+    Parameters:
+    - ys: wave array
+    - amp: max amp (pos or neg) in resutlt
+    Returns: wave array
+    '''
+    high, low = abs(max(ys)), abs(min(ys))
+    return amp * ys / max(high, low)
 
 
 # def apodize():
