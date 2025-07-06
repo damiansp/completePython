@@ -203,6 +203,12 @@ class Wave:
     def end(self):
         return self.ts[-1]
 
+    def write(self, path: str ='sound.wav') -> None:
+        print('Writing', path)
+        wfile = WavFileWriter(path, self.framerate)
+        wfile.write(self)
+        wfile.close()
+
 #     @property
 #     def duration(self) -> float:
 #         return len(self.ys) / self.framerate
@@ -297,14 +303,14 @@ class Wave:
 #         ts = self.ts.copy()
 #         return Wave(ys, ts, self.framerate)
 
-#     def quantize(self, bound, dtype):
-#         '''Maps waveform to quanta.
-#         Parameters:
-#         - bound: max amplitude
-#         - dtype: numpy datatype or str
-#         Returns: quantized signal
-#         '''
-#         return quantize(self.ys, bound, dtype)
+    def quantize(self, bound, dtype):
+        '''Maps waveform to quanta.
+        Parameters:
+        - bound: max amplitude
+        - dtype: numpy datatype or str
+        Returns: quantized signal
+        '''
+        return quantize(self.ys, bound, dtype)
 
 #     def apodize(self, denom: float = 20, duration: float = 0.1):
 #         '''Tapers amplitude at beginning an end of signal.
@@ -423,9 +429,47 @@ class Wave:
         except KeyError:
             xfactor = 1
         return xfactor
-            
-        
 
+
+class WavFileWriter:
+    'Writes wav files'
+
+    def __init__(
+            self,
+            path: str = 'sound.wav',
+            framerate: float = DEFAULT_FRAMERATE):
+        'Opens file and sets params.'
+        self.path = path
+        self.framerate = framerate
+        self.n_channels = 1
+        self.sampwidth = 2
+        self.bits = 8 * self.sampwidth
+        self.bound = 2 ** (self.bits - 1) - 1
+        self.fmt = 'h'
+        self.dtype = np.int16
+        self.fp = open_wave(self.path, 'w')
+        self.fp.setnchannels(self.n_channels)
+        self.fp.setsampwidth(self.sampwidth)
+        self.fp.setframerate(self.framerate)
+
+    def write(self, wave):
+        '''Write a wave
+        Parameters:
+        - wave (Wave)
+        '''
+        zs = wave.quantize(self.bound, self.dtype)
+        self.fp.writeframes(zs.tostring())
+
+    def close(self, duration: float = 0):
+        '''Close the file
+        Parameters:
+        - duration: no. s of silence to append
+        '''
+        if duration:
+            self.write(rest(duration))
+        self.fp.close()
+
+        
 
 # def find_index(x, xs):
 #     'Find the index corresponding to a given value in an array'
@@ -436,19 +480,19 @@ class Wave:
 #     return int(i)
         
                                 
-# def quantize(ys, bound, dtype):
-#     '''Maps waveform to quanta.
-#     Parameters:
-#     - ys: wave array
-#     - bound: max amplitude
-#     - dtype: numpy datatype or str
-#     Returns: quantized signal
-#     '''
-#     if max(ys) > 1 or min(ys) < -1:
-#         warnings.warn('Warning: normalize before quantizing')
-#         ys = normalize(ys)
-#     zs = (ys * bound).astype(dtype)
-#     return zs
+def quantize(ys, bound, dtype):
+    '''Maps waveform to quanta.
+    Parameters:
+    - ys: wave array
+    - bound: max amplitude
+    - dtype: numpy datatype or str
+    Returns: quantized signal
+    '''
+    if max(ys) > 1 or min(ys) < -1:
+        warnings.warn('Warning: normalize before quantizing')
+        ys = normalize(ys)
+    zs = (ys * bound).astype(dtype)
+    return zs
 
 
 def normalize(ys, amp: float = 1.):
