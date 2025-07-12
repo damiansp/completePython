@@ -12,7 +12,7 @@ PI2 = 2 * np.pi
 
 
 def read_wave(path: str = 'sound.wav'):
-    '''Read a wave file.
+    '''Reads a wave file.
     Returns: Wave
     '''
     fp = open_wave(path, 'r')
