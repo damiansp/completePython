@@ -1,4 +1,5 @@
 import copy
+import subprocess
 import warnings
 
 import matplotlib.pyplot as plt
@@ -35,6 +36,17 @@ def read_wave(path: str = 'sound.wav'):
     wave = Wave(ys, framerate=framerate)
     wave.normalize()
     return wave
+
+
+def play_wave(filename: str = 'sound.wav', player='afplay'):
+    '''Plays a wave file.
+    Parameters:
+    - filename: a sound (wav) file
+    - player: executable that can play wav files
+    '''
+    cmd = f'{player} {filename}'
+    popen = subprocess.Popen(cmd, shell=True)
+    popen.communicate()
 
 
 class Signal:
