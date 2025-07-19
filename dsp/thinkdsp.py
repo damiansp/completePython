@@ -420,8 +420,19 @@ class Wave:
         ts = self.ts[i:j].copy()
         return Wave(ys, ts, self.framerate)
 
-#     def make_spectrum(self, full=False):
-#         pass
+    def make_spectrum(self, full: bool = False):
+        '''Computes the spectrum using FFT.
+        Parameters:
+        - full: compute a full FFT? (as opposed to a real FFT)
+        Returns: Spectrum
+        '''
+        n = len(self.ys)
+        d = 1 / self.framerate
+        fft = np.fft.fft if full else np.fft.rfft
+        fftfreq = np.fft.fftfreq if full else np.fft.rfftfreq
+        hs = fft(self.ys)
+        fs = fftfreq(n, d)
+        return Spectrum(hs, fs, self.framerate, full)
         
 #     def _check_alignment(self, other, check_framerate=True, check_len=True):
 #         if check_framerate and self.framerate != other.framerate:
@@ -480,6 +491,26 @@ class WavFileWriter:
         if duration:
             self.write(rest(duration))
         self.fp.close()
+
+
+class _SpectrumParent:
+    'Contains code common to Spectrum and DCT'''
+    def __init__(self, hs, fs, framerate, full=False):
+        '''Init spectrum.
+        Parameters:
+        - hs: array of amplitudes (real or complex)
+        - fs: array of frequencies
+        - framerate: frames per second
+        - full: boolean: full or real FFT
+        '''
+        self.hs = np.asanyarray(hs)
+        self.fs = np.asanyarray(fs)
+        self.framerate = framerate
+        self.full = full
+
+        
+class Spectrum(_SpectrumParent):
+    'Represents the spectrum of a signal'
 
         
 
