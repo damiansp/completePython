@@ -508,11 +508,30 @@ class _SpectrumParent:
         self.framerate = framerate
         self.full = full
 
+    @property
+    def amps(self):
+        'Returns sequenc of amplitudes (read-only)'
+        return np.absolute(self.hs)
+
+    def plot(self, high=None, **options):
+        '''Plots amplitude vs frequency
+        Note: full spectrum ignores high and low
+        Parameters:
+        - high: freq to cut off at
+        '''
+        if self.full:
+            fs, amps = self.render_full(high)
+            plt.plot(fs, amps, **options)
+        else:
+            i = None if high is None else find_index(high, self.ts)
+            plt.plot(self.fs[:i], self.amps[:i], **options)
+            plt.xlabel('Freq')
+            plt.ylabel('Amp')
+        
         
 class Spectrum(_SpectrumParent):
     'Represents the spectrum of a signal'
 
-        
 
 # def find_index(x, xs):
 #     'Find the index corresponding to a given value in an array'
