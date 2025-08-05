@@ -532,7 +532,15 @@ class _SpectrumParent:
 class Spectrum(_SpectrumParent):
     'Represents the spectrum of a signal'
 
+    def low_pass(self, cutoff: float, factor: float = 0):
+        '''Attenuate frequencies above cutoff.
+        Parameters:
+        - cutoff: highest unattenuated freq in Hz
+        - factor: factor to multiply by
+        '''
+        self.hs[abs(self.fs) > cutoff] *= factor
 
+        
 # def find_index(x, xs):
 #     'Find the index corresponding to a given value in an array'
 #     n = len(xs)
