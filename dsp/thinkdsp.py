@@ -540,6 +540,16 @@ class Spectrum(_SpectrumParent):
         '''
         self.hs[abs(self.fs) > cutoff] *= factor
 
+    def make_wave(self) -> Wave:
+        'Transforms to time domain.'
+        if self.full:
+            ys = np.fft.ifft(self.hs)
+        else:
+            ys = np.fft.irfft(self.hs)
+        # NOTE: whatever the start time was, we lose it when we transform back.
+        # Could fixthat by saving the start time in the Spectrum
+        # ts = self.start + np.arange(len(ys)) / self.framerate
+        return Wave(ys, framerate=self.framerate)
         
 # def find_index(x, xs):
 #     'Find the index corresponding to a given value in an array'
