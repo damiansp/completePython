@@ -453,6 +453,11 @@ class Wave:
             xfactor = 1
         return xfactor
 
+    def play(self, filename: str = 'sound.wav'):
+        'Plays a wave file.'
+        self.write(filename)
+        play_wave(filename)
+        
 
 class WavFileWriter:
     'Writes wav files'
