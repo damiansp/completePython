@@ -201,8 +201,8 @@ class Wave:
         else:
             self.ts = np.asanyarray(ts)
 
-#     def copy(self):
-#         return copy.deepcopy(self)
+    #     def copy(self):
+    #         return copy.deepcopy(self)
 
     def __len__(self):
         return len(self.ys)
@@ -221,99 +221,99 @@ class Wave:
         wfile.write(self)
         wfile.close()
 
-#     @property
-#     def duration(self) -> float:
-#         return len(self.ys) / self.framerate
+    #     @property
+    #     def duration(self) -> float:
+    #         return len(self.ys) / self.framerate
+    
+    #     def __add__(self, other):
+    #         'Add 2 waves elementwise'
+    #         if other == 0:
+    #             return self
+    #         self._check_alignment(other, check_len=False)
+    #         # make array of times that covers both waves
+    #         start = min(self.start, other.start)
+    #         end = max(self.end, other.end)
+    #         n = int(round((end - start) * self.framerate)) + 1
+    #         ys = np.zerps(n)
+    #         ts = start + np.arange(n) / self.framerate
+    
+    #         def add_ys(wave):
+    #             i = find_index(wave.start, ts)
+    #             # make sure arrays line up reasonably well
+    #             diff = ts[i] - wave.start
+    #             dt = 1 / wave.framerate
+    #             if (diff/ dt) > 0.1:
+    #                 warnings.warn(
+    #                     'Cannot add these waveforms. Time arrays do not line up')
+    #             j = i + len(wave)
+    #             ys[i:j] += wave.ys
+    
+    #         add_ys(self)
+    #         add_ys(other)
+    #         return Wave(ys, ts, self.framerate)
+    
+    #     __radd__ = __add__
 
-#     def __add__(self, other):
-#         'Add 2 waves elementwise'
-#         if other == 0:
-#             return self
-#         self._check_alignment(other, check_len=False)
-#         # make array of times that covers both waves
-#         start = min(self.start, other.start)
-#         end = max(self.end, other.end)
-#         n = int(round((end - start) * self.framerate)) + 1
-#         ys = np.zerps(n)
-#         ts = start + np.arange(n) / self.framerate
+    #     def __or__(self, other):
+    #         '''Concatenates two waves
+    #         Parameters;
+    #         - other (Wave)
+    #         Returns: Wave
+    #         '''
+    #         self._check_alignment(other, check_len=False)
+    #         ys = np.concatenate((self.ys, other.ys))
+    #         return Wave(ys, framerate=self.framerate)
+    
+    #     def __mul__(self, other):
+    #         '''Elementwise multiplication of two waves
+    #         Note: ignores timestamps; result inherits timestamps from self.
+    #         Parameters:
+    #         - other (Wave)
+    #         Returns: Wave
+    #         '''
+    #         self._check_alignment(other)
+    #         ys = self.ys * other.ys
+    #         return Wave(ys, self.ts, self.framerate)
+    
+    #     def max_diff(self, other) -> float:
+    #         '''Computes maximum absolute difference between two waves.
+    #         Parameters:
+    #         - other (Wave):
+    #         '''
+    #         self._check_alignment(other)
+    #         diffs = np.abs(self.ys - other.ys)
+    #         return np.max(diffs)
 
-#         def add_ys(wave):
-#             i = find_index(wave.start, ts)
-#             # make sure arrays line up reasonably well
-#             diff = ts[i] - wave.start
-#             dt = 1 / wave.framerate
-#             if (diff/ dt) > 0.1:
-#                 warnings.warn(
-#                     'Cannot add these waveforms. Time arrays do not line up')
-#             j = i + len(wave)
-#             ys[i:j] += wave.ys
-
-#         add_ys(self)
-#         add_ys(other)
-#         return Wave(ys, ts, self.framerate)
-
-#     __radd__ = __add__
-
-#     def __or__(self, other):
-#         '''Concatenates two waves
-#         Parameters;
-#         - other (Wave)
-#         Returns: Wave
-#         '''
-#         self._check_alignment(other, check_len=False)
-#         ys = np.concatenate((self.ys, other.ys))
-#         return Wave(ys, framerate=self.framerate)
-
-#     def __mul__(self, other):
-#         '''Elementwise multiplication of two waves
-#         Note: ignores timestamps; result inherits timestamps from self.
-#         Parameters:
-#         - other (Wave)
-#         Returns: Wave
-#         '''
-#         self._check_alignment(other)
-#         ys = self.ys * other.ys
-#         return Wave(ys, self.ts, self.framerate)
-
-#     def max_diff(self, other) -> float:
-#         '''Computes maximum absolute difference between two waves.
-#         Parameters:
-#         - other (Wave):
-#         '''
-#         self._check_alignment(other)
-#         diffs = np.abs(self.ys - other.ys)
-#         return np.max(diffs)
-
-#     def convolve(self, other):
-#         '''Convolve two waves.
-#         Note: ignores timestamps--retult inherits from self
-#         Parameters:
-#         - other (Wave | numpy array)
-#         Returns: Wave
-#         '''
-#         if isinstance(other, Wave):
-#             self._check_alignment(check_len=False)
-#             window = other.ys
-#         else:
-#             window = other
-#         ys = np.convolve(self.ys, window, mode='full')
-#         return Wave(ys, framerate=self.framerate)
-
-#     def diff(self):
-#         '''Computes the difference between successive elements
-#         Returns: Wave
-#         '''
-#         ys = np.diff(self.ys)
-#         ts = self.ts[1:].copy()
-#         return Wave(ys, ts, self.framerate)
-
-#     def cumsum(self):
-#         '''Computes the cumulative sum of elements.
-#         Returns: Wave
-#         '''
-#         ys = np.cumsum(self.ys)
-#         ts = self.ts.copy()
-#         return Wave(ys, ts, self.framerate)
+    #     def convolve(self, other):
+    #         '''Convolve two waves.
+    #         Note: ignores timestamps--retult inherits from self
+    #         Parameters:
+    #         - other (Wave | numpy array)
+    #         Returns: Wave
+    #         '''
+    #         if isinstance(other, Wave):
+    #             self._check_alignment(check_len=False)
+    #             window = other.ys
+    #         else:
+    #             window = other
+    #         ys = np.convolve(self.ys, window, mode='full')
+    #         return Wave(ys, framerate=self.framerate)
+    
+    #     def diff(self):
+    #         '''Computes the difference between successive elements
+    #         Returns: Wave
+    #         '''
+    #         ys = np.diff(self.ys)
+    #         ts = self.ts[1:].copy()
+    #         return Wave(ys, ts, self.framerate)
+    
+    #     def cumsum(self):
+    #         '''Computes the cumulative sum of elements.
+    #         Returns: Wave
+    #         '''
+    #         ys = np.cumsum(self.ys)
+    #         ts = self.ts.copy()
+    #         return Wave(ys, ts, self.framerate)
 
     def quantize(self, bound, dtype):
         '''Maps waveform to quanta.
@@ -324,39 +324,39 @@ class Wave:
         '''
         return quantize(self.ys, bound, dtype)
 
-#     def apodize(self, denom: float = 20, duration: float = 0.1):
-#         '''Tapers amplitude at beginning an end of signal.
-#         Tapers the lesser of duration given or fraction given.
-#         Parameters:
-#         - denom: fraction of segment to taper
-#         - duration: time to taper in s
-#         '''
-#         self.ys = apodize(self.ys, self.framerate, denom, duration)
+    #     def apodize(self, denom: float = 20, duration: float = 0.1):
+    #         '''Tapers amplitude at beginning an end of signal.
+    #         Tapers the lesser of duration given or fraction given.
+    #         Parameters:
+    #         - denom: fraction of segment to taper
+    #         - duration: time to taper in s
+    #         '''
+    #         self.ys = apodize(self.ys, self.framerate, denom, duration)
+    
+    #     def hamming(self):
+    #         'Apply hamming window to wave'
+    #         self.ys *= np.hamming(len(self.ys))
+    
+    #     def window(self, win):
+    #         '''Apply a window to the wave.
+    #         Parameters:
+    #         - win: sequence of mulitpliers of len self.ys
+    #         '''
+    #         self.ys *= win
 
-#     def hamming(self):
-#         'Apply hamming window to wave'
-#         self.ys *= np.hamming(len(self.ys))
+    def scale(self, factor: float):
+        '''Multiplies waves by a const factor.
+        Parameter:
+        - factor: scale factor
+        '''
+        self.ys *= factor
 
-#     def window(self, win):
-#         '''Apply a window to the wave.
-#         Parameters:
-#         - win: sequence of mulitpliers of len self.ys
-#         '''
-#         self.ys *= win
-
-#     def scale(self, factor: float):
-#         '''Multiplies waves by a const factor.
-#         Parameter:
-#         - factor: scale factor
-#         '''
-#         self.ys *= factor
-
-#     def shift(self, s: float):
-#         '''Shift the wave left or right in time.
-#         Parameters:
-#         - s: time shift (s)
-#         '''
-#         self.ts += s
+    def shift(self, s: float):
+        '''Shift the wave left or right in time.
+        Parameters:
+        - s: time shift (s)
+        '''
+        self.ts += s
 
 #     def roll(self, r):
 #         'Rolls this wave by the given number of locations.'
