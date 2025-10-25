@@ -1,6 +1,14 @@
 import string
 
 
+def main():
+    ed = TextEditor()
+    for char in 'Hello':
+        ed.add_character(char, 'Arial', 12)
+    ed.add_character('!', 'Arial', 14)
+    print(ed.render_text())
+
+
 class CharacterStyle:
     def __init__(self, font, size):
         self.font = font
@@ -21,8 +29,8 @@ class TextEditor:
         self.characters = []
         self.style_factory = StyleFactory()
 
-    def add_characters(self, char, font, size):
-        styel = self.style_factory.get_style(font, size)
+    def add_character(self, char, font, size):
+        style = self.style_factory.get_style(font, size)
         self.characters.append(Character(char, style))
 
     def render_text(self):
@@ -34,5 +42,11 @@ class StyleFactory:
         self.styles = {}
 
     def get_style(self, font, size):
-        # TODO
-        pass
+        key = (font, size)
+        if key not in self.styles:
+            self.styles[key] = CharacterStyle(font, size)
+        return self.styles[key]
+
+
+if __name__ == '__main__':
+    main()

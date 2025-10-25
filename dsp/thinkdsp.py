@@ -2,6 +2,7 @@ import copy
 import subprocess
 import warnings
 
+from IPython.display import Audio
 import matplotlib.pyplot as plt
 import numpy as np
 from wave import open as open_wave
@@ -457,6 +458,11 @@ class Wave:
         'Plays a wave file.'
         self.write(filename)
         play_wave(filename)
+
+    def make_audio(self):
+        'Makes an IPython audio object.'
+        audio = Audio(data=self.ys.real, rate=self.framerate)
+        return audio
         
 
 class WavFileWriter:
