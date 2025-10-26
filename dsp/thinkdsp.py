@@ -72,15 +72,15 @@ class Signal:
 #         '''
 #         return 0.1
 
-#     def plot(self, framerate: int = DEFAULT_FRAMERATE) -> None:
-#         '''Plots the signal.
-#         The default is to plot 3 periods.
-#         Parameters:
-#         framerate: samples per second
-#         '''
-#         duration = 3 * self.period
-#         wave = self.make_wave(duration, start=0, framerate=framerate)
-#         wave.plot()
+    def plot(self, framerate: int = DEFAULT_FRAMERATE) -> None:
+        '''Plots the signal.
+        The default is to plot 3 periods.
+        Parameters:
+        framerate: samples per second
+        '''
+        duration = 3 * self.period
+        wave = self.make_wave(duration, start=0, framerate=framerate)
+        wave.plot()
 
     def make_wave(
             self,
@@ -629,3 +629,43 @@ def normalize(ys, amp: float = 1.):
 #     Returns: wave array
 #     '''
 #     return ys - ys.mean()
+
+
+def decorate(**options):
+    '''Decorate the current axes.
+    Call decorate with keyword arguments like
+    decorate(title='Title', xlabel='x', ylabel='y')
+    The keyword arguments can be any of the axis properties
+    https://matplotlib.org/api/axes_api.html
+    In addition, you can use `legend=False` to suppress the legend.
+    And you can use `loc` to indicate the location of the legend
+    (the default value is 'best')
+    '''
+    loc = options.pop('loc', 'best')
+    if options.pop('legend', True):
+        legend(loc=loc)
+    plt.gca().set(**options)
+    plt.tight_layout()
+
+
+def legend(**options):
+    '''Draws a legend only if there is at least one labeled item.
+    options are passed to plt.legend()
+    https://matplotlib.org/api/_as_gen/matplotlib.plt.legend.html
+    '''
+    underride(options, loc='best', frameon=False)
+    ax = plt.gca()
+    handles, labels = ax.get_legend_handles_labels()
+    if handles:
+        ax.legend(handles, labels, **options)
+
+
+def underride(d: dict, **options):
+    '''Add key-value pairs to d only if key is not in d.
+    If d is None, create a new dictionary.
+    '''
+    if d is None:
+        d = {}
+    for k, v in options.items():
+        d.setdefault(k, v)
+    
