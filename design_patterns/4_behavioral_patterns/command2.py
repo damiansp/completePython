@@ -5,11 +5,11 @@ def main():
     light = Light()
     light_on = LightOnCommand(light)
     light_off = LightOffCommand(light)
-    remote = RemoteControl()
-    remote.set_command(light_on)
-    remote.press_button()
-    remote.set_command(light_off)
-    remote.press_button()
+    remote = RemoteControlWithUndo()
+    remote.press_button(light_on)
+    remote.press_button(light_off)
+    remote.undo()
+    remote.undo()
     
 
 class Command(ABC):
@@ -43,7 +43,7 @@ class LightOnCommand(UndoableCommand):
         self._light.turn_off()
 
 
-class LightOffCommand(UndoabeCommand):
+class LightOffCommand(UndoableCommand):
     def __init__(self, light):
         self._light = light
 
@@ -54,16 +54,29 @@ class LightOffCommand(UndoabeCommand):
         self._light.turn_on()
 
 
-class RemoteControl:
+class CommandHistory:
     def __init__(self):
-        self._command = None
+        self._commands = []
 
-    def set_command(self, command):
-        self._command = command
+    def push(self, command):
+        self._commands.append(command)
 
-    def press_button(self):
-        if self._command is not None:
-            self._command.execute()
+    def pop(self):
+        return self._commands.pop() if self._commands else None
+
+
+class RemoteControlWithUndo:
+    def __init__(self):
+        self._history = CommandHistory()
+
+    def press_button(self, command):
+        command.execute()
+        self._history.push(command)
+
+    def undo(self):
+        command = self._history.pop()
+        if command:
+            command.undo()
 
 
 if __name__ == '__main__':
