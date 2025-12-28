@@ -325,14 +325,14 @@ class Wave:
         '''
         return quantize(self.ys, bound, dtype)
 
-    #     def apodize(self, denom: float = 20, duration: float = 0.1):
-    #         '''Tapers amplitude at beginning an end of signal.
-    #         Tapers the lesser of duration given or fraction given.
-    #         Parameters:
-    #         - denom: fraction of segment to taper
-    #         - duration: time to taper in s
-    #         '''
-    #         self.ys = apodize(self.ys, self.framerate, denom, duration)
+    def apodize(self, denom: float = 20, duration: float = 0.1):
+        '''Tapers amplitude at beginning an end of signal.
+        Tapers the lesser of duration given or fraction given.
+        Parameters:
+        - denom: fraction of segment to taper
+        - duration: time to taper in s
+        '''
+        self.ys = apodize(self.ys, self.framerate, denom, duration)
     
     #     def hamming(self):
     #         'Apply hamming window to wave'
@@ -597,8 +597,29 @@ def normalize(ys, amp: float = 1.):
     return amp * ys / max(high, low)
 
 
-# def apodize():
-#     pass
+def apodize(ys, framerate: int, denom: float = 20, duration: float = 0.1):
+    '''Tapers the amplitude at the beginning and end of the signal. Tapers
+    the lesser of the given duration of time or the given fraction of the total
+    duration.
+    Parameters:
+    - ys: wave array
+    - framerate: frames per s
+    - denom: fraction of segment to taper
+    - duration: duration of taper in s
+    Returns: wave array
+    '''
+    # a fixed frac of the segment
+    n = len(ys)
+    k1 = n // denom
+    # fixed dur of time
+    k2 = int(duration * framerate)
+    k = min(k1, k2)
+    w1 = np.linspace(0, 1, k)
+    w2 = np.ones(n - 2*k)
+    w3 = np.linspace(1, 0, k)
+    window = np.concatenate((w1, w2, w3))
+    return ys * window
+    
 
 
 # def truncate(ys, n: int):
