@@ -7,6 +7,8 @@ def surface_area_of_cube(dim: float) -> str:
     return f'The surface area of the cube is {area}'
 
 
+
+# Type Aliases ----------
 type Vector = list[float]
 
 
@@ -26,6 +28,7 @@ def broadcast_msg(msg: str, servers: Sequence[Server]) -> None:
     pass
 
 
+# New Type ----------
 UserID = NewType('UserID', int)
 some_id = UserID(524313)
 
@@ -47,6 +50,7 @@ class AdminUserID(UserID):
 ProUserID = NewType('ProUserID', UserID)  # ok
 
 
+# Annotating Callables ----------
 def feeder(get_next_item: Callable[[], str]) -> None:
     pass
 
@@ -94,6 +98,8 @@ batch_proc([], good_cb)   # ok
 # batch_proc([], bad_cb)  # err: arg 2 incompaitble type bc of diff name/kind
 
 
+
+# Generics ----------
 class Employee:
     pass
 
@@ -115,3 +121,60 @@ U = TypeVar('U')
 
 def econd(l: Sequence[U]) -> U:
     return l[1]
+
+
+
+# Annotating Tuples ---------
+x: list[int] = []
+# y: list[int, str] = [1, 'foo']  # type checker error
+z: Mapping[str, str | int] = {}
+
+x: tuple[int] = (5,)
+y: tuple[int, str] = (5, 'foo')  # ok
+#z: tuple[int] = (1, 2, 3)       # err, annotated for one val only
+
+x: tuple[int, ...] = (1, 2)  # ok
+x = (1, 2, 3)                # reassignment ok
+x = ()                       # ok
+x = ('foo', 'bar')           # err
+y: tuple[()] = ()            # can only be an empty tuple
+z: tuple('foo', 'bar')
+z = (1, 2, 3)                # ok
+z = ()                       # ok
+
+
+class User:
+    pass
+
+
+class ProUser(User):
+    pass
+
+
+class TeamUser(User):
+    pass
+
+
+def make_new_user(user_class: type[User]) -> User:
+    # ...
+    return user_class()
+
+
+make_new_user(User)      # ok
+make_new_user(ProUser)   # ok
+make_new_user(TeamUser)  # ok
+# make_new_user(User())  # err: expected <type[User]> but got <User>
+# make_new_user(int)     # err: <type[int]> not a subtype of <type[User]>
+
+
+def new_non_team_user(user_class: type[BasicUser | ProUser]):
+    pass
+
+
+new_non_team_user(BasicUser)  # ok
+new_non_team_user(ProUser)    # ok
+new_non_team_user(TeamUser)   # err
+new_non_team_user(User)       # err
+
+
+# Annotating generators and coroutines ----------
