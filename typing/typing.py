@@ -1,3 +1,4 @@
+# From Ref: https://docs.python.org/3.13/library/typing.html
 from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
 from typing import NewType, Protocol, TypeVar
 
