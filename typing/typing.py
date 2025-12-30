@@ -1,5 +1,5 @@
-from collections.abc import Sequence
-from typing import NewType
+from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
+from typing import NewType, Protocol, TypeVar
 
 
 def surface_area_of_cube(dim: float) -> str:
@@ -46,3 +46,72 @@ class AdminUserID(UserID):
 
 ProUserID = NewType('ProUserID', UserID)  # ok
 
+
+def feeder(get_next_item: Callable[[], str]) -> None:
+    pass
+
+
+def async_query(
+        on_success: Callable[[int], None],
+        on_error: Callable[[int, Exception], None]
+): -> None:
+    pass
+
+
+async def on_update(val: str) -> None:
+    pass
+
+
+callback: Callable[[str], Awaitable[None]] = on_update
+
+
+def concat(x: str, y: str) -> str:
+    return x + y
+
+
+x: Callable[..., str]
+x = str     # ok
+x = concat  # ok
+
+
+class Combiner(Protocol):
+    def __call__(self, *vals: bytes, maxlen: int | None = None) -> list[bytes]:
+        pass
+
+
+def batch_proc(data: Iterable[bytes], cb_results: Combiner) -> bytes:
+    for item in data:
+        pass
+
+
+def good_cb(*vals: bytes, maxlen: int | None = None) -> list[bytes]:
+    pass
+
+# def bad_cb(*vals: byte, maxitem: int | None) -> list[bytes]: ...
+
+
+batch_proc([], good_cb)   # ok
+# batch_proc([], bad_cb)  # err: arg 2 incompaitble type bc of diff name/kind
+
+
+class Employee:
+    pass
+
+
+# Sequence[Employee] indicates that all elems in the seq must be instances of
+# "Employee". Mapping[str, str] indicates that all keys and vals must be strs
+def notify_by_email(
+        employees: Sequence[Employee], overrides: Mapping[str, str]
+) -> None:
+    pass
+
+
+def first[T](l: Sequence[T]) -> T:
+    return l[0]
+
+
+U = TypeVar('U')
+
+
+def econd(l: Sequence[U]) -> U:
+    return l[1]
