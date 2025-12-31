@@ -1,5 +1,6 @@
 # From Ref: https://docs.python.org/3.13/library/typing.html
-from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
+from collections.abc import (
+    Awaitable, Callable, Coroutine, Iterable, Mapping, Sequence)
 from typing import NewType, Protocol, TypeVar
 
 
@@ -179,3 +180,38 @@ new_non_team_user(User)       # err
 
 
 # Annotating generators and coroutines ----------
+# Generator[YieldType, SendType, ReturnType]
+def echo_round() -> Generator[int, float, str]:  
+    sent = yield 0
+    while sent >= 0:
+        sent = yield round(sent)
+    return 'Done'
+
+
+def inifinite_stream(start: int) -> Generator[int]:  #  = [int, None, None]
+    while True:
+        yield start
+        start += 1
+
+
+# if only ever yields vals, Iterable/Iterator ok too
+def inf_stream(start: int) -> Iterator[int]:
+    while True:
+        yield start
+        start += 1
+
+
+# AsyncGenerator[YieldType, SendType=None]
+async def infinite_strem(start: int) -> AsyncGenerator[int]:
+    while True:
+        yield start
+        start += 1
+
+
+# Couroutine[YieldType, SendType, ReturnType]
+c: Couroutine[list[str], str, int]  # some couroutine defined elsewhere
+x = c.send('hi')                   # inferred type of <x> is list[str]
+
+
+async def bar() -> none:
+    y = await c  # inferred type of <y> is int
