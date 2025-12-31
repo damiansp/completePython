@@ -1,3 +1,10 @@
+'''Derived with some edits from:
+https://github.com/AllenDowney/ThinkDSP/blob/master/code/thinkdsp.py
+by Allen B. Downey, available from greenteapress.com
+
+Copyright 2013 Allen B. Downey
+License: MIT License (https://opensource.org/licenses/MIT)
+'''
 import copy
 import subprocess
 import warnings
@@ -534,10 +541,19 @@ class _SpectrumParent:
             fs, amps = self.render_full(high)
             plt.plot(fs, amps, **options)
         else:
-            i = None if high is None else find_index(high, self.ts)
+            i = None if high is None else find_index(high, self.fs)
             plt.plot(self.fs[:i], self.amps[:i], **options)
             plt.xlabel('Freq')
             plt.ylabel('Amp')
+
+
+def find_index(x, xs):
+    'Find the index corresponding to a given value in an array'
+    n = len(xs)
+    start = xs[0]
+    end = xs[-1]
+    i = int(round((n - 1) * (x - start) / (end - start)))
+    return i
         
         
 class Spectrum(_SpectrumParent):
