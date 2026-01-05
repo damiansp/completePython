@@ -15,3 +15,17 @@ for m, d, y in datepat.findall(text):
 
 for m in datepat.finditer(text):
     print(m.groups())  # ('12', '14', '2025'), ('12', '25', '2025')
+
+
+m = datepat.match('11/27/2012abcdef')
+print(m.group())  # 11/27/2012 (possibly unwanted match)
+
+datepat = re.compile(r'(\d+)/(\d+)/(\d+)$')  # note final $
+m = datepat.match('11/27/2012abcdef')
+if m is not None:
+    print(m.group())
+else:
+    print('No match')  # no match
+
+
+    

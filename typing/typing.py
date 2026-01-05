@@ -1,7 +1,8 @@
 # From Ref: https://docs.python.org/3.13/library/typing.html
 from collections.abc import (
-    Awaitable, Callable, Coroutine, Iterable, Mapping, Sequence)
-from typing import NewType, Protocol, TypeVar
+    Awaitable, Callable, Coroutine, Iterable, Mapping, Sequence, Sized)
+from logging import Logger
+from typing import Generic, NewType, Protocol, Sequence as SeqType, TypeVar
 
 
 def surface_area_of_cube(dim: float) -> str:
@@ -215,3 +216,84 @@ x = c.send('hi')                   # inferred type of <x> is list[str]
 
 async def bar() -> none:
     y = await c  # inferred type of <y> is int
+
+
+# User-defined generic types ----------
+class LoggedVar[T]:
+    def __init__(self, value: T, name: str, logger: Logger) -> None:
+        self.name = name
+        self.logger = logger
+        self.value = value
+
+    def set(self, new: T) -> None:
+        self.log(f'Set {repr(self.value)}')
+        self.value = new
+
+    def get(self): -> T:
+        self.log(f'Get {repr(self.value)}')
+        return self.value
+
+    def log(self, msg: str) -> None:
+        self.logger.infor(f'{self.name}: {msg}')
+
+
+T = TypeVar('T')
+
+
+# <=3.11 compatibility
+class LoggedVar(Generic[T]):
+    pass
+
+
+def zero_all_vars(vars: Iterable[LoggedVar[int]]) -> None:
+    for var in vars:
+        var.set(0)
+
+
+class WeirdTrio[T, B: SeqType[bytes], S: (int, str)]:
+    pass
+
+
+OldT = TypeVar('OldT', contravariant=True)
+OldB = TypeVar('OldB', bound=SeqType[bytes], covariant=True)
+OldS = TypeVar('OldS', int, str)
+
+
+class OldWeirdTrio(Generic[OldT, OldB, OldS]):
+    pass
+
+
+# class Pair[M, M]:  # Syntax err
+
+T = TypeVar('T')
+
+# class Pair(Generic[T, T]):  # invalid; eac type var arg must be distinct
+
+
+class LinkedList[T](Sized):
+    pass
+
+
+class MyDict[T](Mapping[str, T]):
+    pass
+
+
+class MyIterable(Iterable):  # same as Iterable[Any]
+    pass
+
+
+type Response[S] = Iterable[S] | int
+
+# Return type here same as Iterable[str] | int
+def response(query: str) -> Response[str]:
+    pass
+
+
+type Vec[T] = Iterable[tuple[T, T]]
+
+
+# return type same as Iterable[tuple[T, T]]
+def inprod[T: (int, float, complex)](v: Vec[T]) -> T:
+    return sum(x * y for x, y in v)
+
+
