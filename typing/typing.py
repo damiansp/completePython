@@ -2,7 +2,8 @@
 from collections.abc import (
     Awaitable, Callable, Coroutine, Iterable, Mapping, Sequence, Sized)
 from logging import Logger
-from typing import Generic, NewType, Protocol, Sequence as SeqType, TypeVar
+from typing import (
+    Any, Generic, NewType, ParamSpec, Protocol, Sequence as SeqType, TypeVar)
 
 
 def surface_area_of_cube(dim: float) -> str:
@@ -297,3 +298,61 @@ def inprod[T: (int, float, complex)](v: Vec[T]) -> T:
     return sum(x * y for x, y in v)
 
 
+S = TypeVar('S')
+Response = Iterable[S] | int
+
+
+class Z[T, **P]:  # T is a TypeVar, P is a ParamSpec
+    pass
+
+
+print(Z[int, [dict, float]])  # __main__.Z[int, [dict, float]]
+P = ParamSpec('P')
+
+
+class Z(Generic[P]):
+    pass
+
+
+class X[**P]:
+    pass
+
+print(X[int, str])    # __main__.X[[int, str]]
+print(X[[int, str]])  # __main__.X[[int, str]]
+
+
+
+# The Any type ----------
+a: Any = None
+a = []
+a = 2
+s: str = ''
+s = a  # ok!
+
+
+def foo(item: Any) -> int:
+    item.bar()
+    pass
+
+
+def legacy_parser(txt):
+    # return data
+    pass
+
+
+# Eq to
+def legacy_prser(txt: Any) -> Any:
+    # return data
+    pass
+
+
+def hash_a(item: object) -> int:
+    item.magic()  # fail type checking. object does not have a 'magic' method
+
+
+def hash_b(item: Any) -> int:
+    item.magic()  # ok
+
+
+    
+# Nominal vs structural subtyping ----------
