@@ -1,6 +1,7 @@
 # From Ref: https://docs.python.org/3.13/library/typing.html
 from collections.abc import (
-    Awaitable, Callable, Coroutine, Iterable, Mapping, Sequence, Sized)
+    Awaitable, Callable, Coroutine, Iterable, Iterator, Mapping, Sequence,
+    Sized)
 from logging import Logger
 from typing import (
     Any, Generic, NewType, ParamSpec, Protocol, Sequence as SeqType, TypeVar)
@@ -356,3 +357,20 @@ def hash_b(item: Any) -> int:
 
     
 # Nominal vs structural subtyping ----------
+class Bucket(Sized, Iterable[int]):
+    def __len__(self) -> int:
+        pass
+
+    def __iter__(self) -> Iterator[int]:
+        pass
+
+
+class Bucket:  # No base class!
+    def __len__(self) -> int:
+        pass
+
+    def __iter__(self) -> Iterator[int]:
+        pass
+
+
+# Special typing primitives ----------
