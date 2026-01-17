@@ -4,7 +4,8 @@ from collections.abc import (
     Sized)
 from logging import Logger
 from typing import (
-    Any, Generic, NewType, ParamSpec, Protocol, Sequence as SeqType, TypeVar)
+    Any, AnyStr, Generic, NewType, ParamSpec, Protocol, Sequence as SeqType,
+    TypeVar)
 
 
 def surface_area_of_cube(dim: float) -> str:
@@ -374,3 +375,23 @@ class Bucket:  # No base class!
 
 
 # Special typing primitives ----------
+def concat(a: AnyStr, b: AnyStr) -> AnyStr:
+    # AnyStr: str or bytes
+    return a + b
+
+
+concat('foo', 'bar')    # ok
+concat(b'foo', b'bar')  # ok
+concat('foo', b'bar')   # err: cannot mix types
+
+
+# Invalid use of AnyStr: the type var is used only once in the func signature,
+# so cannot be 'solved' by the type checker
+def greet_bad(cond: bool) -> AnyStr:
+    return 'hi' if cond else b'Hello'
+
+# better:
+def greet_good(cond: bool) -> str | bytes:
+    return 'hi' if cond else b'Hello'
+
+
