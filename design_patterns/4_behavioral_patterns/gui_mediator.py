@@ -1,3 +1,10 @@
+def main():
+    d = DialogueDirector()
+    d.create_widgets()
+    d.text_field.set_text('')  # OK button disabled
+    d.text_field.set_text('Heya')  # enabled
+    
+
 class DialogueDirector:
     def __init__(self):
         self.ok_button = None
@@ -32,4 +39,22 @@ class Button(Widget):
         self.enabled = True
 
     def set_enabled(self, enabled):
-        pass
+        self.enabled = enabled
+        print(f'{self.text} button {"en" if enabled else "dis"}abled')
+
+
+class TextField(Widget):
+    def __init__(self, director):
+        super().__init__(director)
+        self.text = ''
+
+    def set_text(self, text):
+        self.text = text
+        self.changed()
+
+    def get_text(self):
+        return self.text
+
+
+if __name__ == '__main__':
+    main()
