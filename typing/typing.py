@@ -3,6 +3,7 @@ from collections.abc import (
     Awaitable, Callable, Coroutine, Iterable, Iterator, Mapping, Sequence,
     Sized)
 from logging import Logger
+import typing as typ
 from typing import (
     Any, AnyStr, Generic, NewType, ParamSpec, Protocol, Sequence as SeqType,
     TypeVar)
@@ -394,4 +395,36 @@ def greet_bad(cond: bool) -> AnyStr:
 def greet_good(cond: bool) -> str | bytes:
     return 'hi' if cond else b'Hello'
 
+
+def run_query(sql: typ.LiteralString) -> None:
+    pass
+
+
+def caller(arbitrary_str: str, lit_str: typ.LiteralString) -> None:
+    run_query('SELECT * FROM students')  # ok
+    run_query(lit_str)                   # ok
+    run_query('SELECT * FROM ' + lit_str)  # ok
+    #run_query(arbitrary_str)              # type check err
+    # type check err
+    #run_query(f'SELECT * FROM students WHERE name = {arbitrary_str}')
+
+
+# indicates a function that never returns
+def stop() -> typ.Never: 
+    raise RuntimeError('no way')
+
+
+def never_call_me(arg: Never) -> None:
+    pass
+
+
+def int_or_str(arg: int | str) -> None:
+    #never_call_me(arg)  # type check err
+    match arg:
+        case int():
+            print('int here')
+        case str():
+            print('str here')
+        case _:
+            never_call_me(arg)  # ok, arg is of type Never
 
