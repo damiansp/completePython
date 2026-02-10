@@ -5,7 +5,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2013 Allen B. Downey
 License: MIT License (https://opensource.org/licenses/MIT)
 '''
-import copy
+#import copy
 import subprocess
 import warnings
 
@@ -511,6 +511,29 @@ class WavFileWriter:
         self.fp.close()
 
 
+def rest(duration: float):
+    '''Makes a rest of the given duration.
+    Parameters:
+    - duration: seconds
+    Returns: Wave
+    '''
+    signal = SilentSignal()
+    wave = signal.make_wave(duration)
+    return wave
+
+
+class SilentSignal(Signal):
+    'Silence'
+    def evaluate(self, ts):
+        '''Evaluates the signal at the given times.
+        Parameters:
+        - ts: float array of times
+        Returns: float Wave array
+        '''
+        return np.zeros(len(ts))
+        
+
+
 class _SpectrumParent:
     'Contains code common to Spectrum and DCT'''
     def __init__(self, hs, fs, framerate, full=False):
@@ -706,3 +729,25 @@ def underride(d: dict, **options):
     for k, v in options.items():
         d.setdefault(k, v)
     
+
+class TriangleSignal(Sinusoid):
+    'Represents a triangel signal'
+    def evaluate(self, ts: float):
+        '''Evaluate the signal at the given times.
+        ts: array of times
+        Returns: wave array
+        '''
+        ts = np.asarray(ts)
+        cycles = self.freq * ts + self.offset / PI2
+        frac, _ = np.modf(cycles)
+        ys = np.abs(frac - 0.5)
+        ys = normalize(unbias(ys), self.amp)
+        return ys
+
+
+def unbias(ys):
+    '''Shift wave array to have mean = 0
+    ys: wave array
+    Returns: wave array
+    '''
+    return ys - ys.mean()
