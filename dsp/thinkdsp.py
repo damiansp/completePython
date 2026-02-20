@@ -142,6 +142,23 @@ class Sinusoid(Signal):
         return ys
 
 
+class TriangleSignal(Sinusoid):
+    'Represents a triangle signal.'
+
+    def evaluate(self, ts):
+        '''Evaluates the signal at the given times.
+        Parameters:
+        - ts: float array of times
+        Returns: float wave array
+        '''
+        ts = np.asarray(ts)
+        cycles = self.freq*ts + self.offset/PI2
+        frac, _ = np.modf(cycles)
+        ys = np.abs(frac - 0.5)
+        ys = normalize(unbias(ys), self.amp)
+        return ys
+
+
 def CosSignal(
         freq: float = 440., amp: float = 1., offset: float = 0.) -> Sinusoid:
     '''Makes a cosine Sinusoid.
@@ -729,21 +746,6 @@ def underride(d: dict, **options):
     for k, v in options.items():
         d.setdefault(k, v)
     
-
-class TriangleSignal(Sinusoid):
-    'Represents a triangel signal'
-    def evaluate(self, ts: float):
-        '''Evaluate the signal at the given times.
-        ts: array of times
-        Returns: wave array
-        '''
-        ts = np.asarray(ts)
-        cycles = self.freq * ts + self.offset / PI2
-        frac, _ = np.modf(cycles)
-        ys = np.abs(frac - 0.5)
-        ys = normalize(unbias(ys), self.amp)
-        return ys
-
 
 def unbias(ys):
     '''Shift wave array to have mean = 0
