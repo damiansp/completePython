@@ -159,6 +159,22 @@ class TriangleSignal(Sinusoid):
         return ys
 
 
+class SquareSignal(Sinusoid):
+    'Represents a square signal.'
+
+    def evaluate(self, ts):
+        '''Evaluates the signal at the given times.
+        Parameters:
+        - ts: float array of times
+        Returns: float wave array
+        '''
+        ts = np.asarray(ts)
+        cycles = self.freq*ts + self.offset/PI2
+        frac, _ = np.modf(cycles)
+        ys = self.amp * np.sign(unbias(frac))
+        return ys
+
+
 def CosSignal(
         freq: float = 440., amp: float = 1., offset: float = 0.) -> Sinusoid:
     '''Makes a cosine Sinusoid.
