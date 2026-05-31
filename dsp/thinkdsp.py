@@ -141,6 +141,43 @@ class Sinusoid(Signal):
         ys = self.amp * self.func(phases)
         return ys
 
+    
+class Chirp(Signal):
+    'Represents a signal with variable frequency.'
+
+    def __init__(self, start: float, end: float, amp: float = 1.):
+        'Initialize a linear chirp'
+        self.start = start
+        self.end = end
+        self.amp = amp
+
+    @property
+    def period(self):
+        return ValueError('Non-periodic signal')
+
+    def evaluate(self, ts):
+        '''Evaluates the signal at the given times.
+        Args:
+        - ts: float array of times
+        Returns: float wave array
+        '''
+        ts = np.asarray(ts)
+        freqs = self._interpolate(ts)
+        # compute time intervals
+        dts = np.diff(ts, append=ts[-1])
+        # compute change in phase
+        dphis = PI2 * freqs * dts
+        dphis = np.roll(dphis, 1)
+        # compute phase
+        phases = np.cumsum(dphis)
+        # compute amplitudes
+        ys = self.amp * np.cos(phases)
+        return ys
+
+    def _interpolate(self, ts):
+        t0, t1 = ts[0], ts[-1]
+        return self.start + (self.end - self.start) * (ts - t0) / (t1 - t0)
+        
 
 class TriangleSignal(Sinusoid):
     'Represents a triangle signal.'
