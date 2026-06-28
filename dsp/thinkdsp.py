@@ -177,7 +177,23 @@ class Chirp(Signal):
     def _interpolate(self, ts):
         t0, t1 = ts[0], ts[-1]
         return self.start + (self.end - self.start) * (ts - t0) / (t1 - t0)
-        
+
+
+class ExpoChirp(Chirp):
+    'Represents a signal with varying frequency'
+    def evaluate(self, ts):
+        '''Evaluates the signal at the given times.
+        Args:
+        - ts: float array of times
+        Returns: float wave array
+        '''
+        f0, f1 = np.log10(self.start), np.log10(self.end)
+        freqs = np.logspace(f0, f1, len(ts))
+        dts = np.diff(ts, prepend=0)
+        dphis = PI2 * freqs * dts
+        phases = np.cumsum(dphis)
+        ys = self.amp * np.cos(phases)
+        return ys
 
 class TriangleSignal(Sinusoid):
     'Represents a triangle signal.'
