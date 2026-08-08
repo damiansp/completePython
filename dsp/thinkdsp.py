@@ -431,12 +431,12 @@ class Wave:
     #         'Apply hamming window to wave'
     #         self.ys *= np.hamming(len(self.ys))
     
-    #     def window(self, win):
-    #         '''Apply a window to the wave.
-    #         Parameters:
-    #         - win: sequence of mulitpliers of len self.ys
-    #         '''
-    #         self.ys *= win
+    def window(self, win):
+        '''Apply a window to the wave.
+        Parameters:
+        - win: sequence of mulitpliers of len self.ys
+        '''
+        self.ys *= win
 
     def scale(self, factor: float):
         '''Multiplies waves by a const factor.
@@ -539,6 +539,30 @@ class Wave:
         xfactor = self.get_xfactor(kwargs)
         plt.plot(self.ts * xfactor, np.real(self.ys), **kwargs)
 
+    def make_spectrogram(self, seg_length: int, win_flag: bool = True):
+        '''Computes the spectrogram of the wav.
+        Parameters:
+        seg_length: number of samples in each segment
+        win_flag: apply hamming window to each segment?
+        Returns: Spectrogram
+        '''
+        if win_flag:
+            window = np.hamming(seg_length)
+        i, j = 0, seg_length
+        step = int(seg_length // 2)
+        # Map from time to spectrum
+        spec_map = {}
+        while j < len(self.ys):
+            segment = self.slice(i, j)
+            if win_flag:
+                segment.window(window)
+            # nominal time for this segment is the midpoint
+            t = (segment.start + segment.end) / 2
+            spec_map[t] = segment.make_spectrum()
+            i += step
+            j += step
+        return Spectrogram(spec_map, seg_length)
+
     def get_xfactor(self, options):
         try:
             xfactor = options['xfactor']
@@ -556,6 +580,57 @@ class Wave:
         'Makes an IPython audio object.'
         audio = Audio(data=self.ys.real, rate=self.framerate)
         return audio
+
+
+class Spectrogram:
+    'Represents the spectrum of a signal'
+    
+    def __init__(self, spec_map: dict, seg_length: int):
+        '''Initialize spectrogram.
+        Parameters:
+        - spec_map: map from float time to Spectrum
+        - seg_length: number of samples per segment
+        '''
+        self.spec_map = spec_map
+        self.seg_length = seg_length
+
+    def plot(self, high: float | None = None, **options):
+        '''Make a pseudocolor plot.
+        Parameters:
+        - high: highest freq component to plot
+        '''
+        fs = self.frequencies()
+        i = None if high is None else find_index(high, fs)
+        fs = fs[:i]
+        ts = self.times()
+        # make the array
+        size = len(fs), len(ts)
+        array = np.zeros(size, dtype=float)
+        # copy amp from each spectrum into col of the array
+        for j, t in enumerate(ts):
+            spectrum = self.spec_map[t]
+            array[:, j] = spectrum.amps[:i]
+        underride(options, cmap='inferno_r', shading='auto')
+        plt.pcolormesh(ts, fs, array, **options)
+
+    def frequencies(self):
+        '''Sequence of frequencies.
+        Returns: seq of float freqs in Hz
+        '''
+        fs = self.any_spectrum().fs
+        return fs
+
+    def any_spectrum(self):
+        'Returns an arbitrary spectrum from the spectrogram'
+        i = next(iter(self.spec_map))
+        return self.spec_map[i]
+
+    def times(self):
+        '''Sorted seq of times.
+        Returns: seq of float times in seconds
+        '''
+        ts = sorted(iter(self.spec_map))
+        return ts
         
 
 class WavFileWriter:
