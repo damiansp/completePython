@@ -1,4 +1,11 @@
-class Buttton:
+def main():
+    button = Button()
+    observer = ClickObserver()
+    button.attach(observer)
+    button.click()
+    
+
+class Button:
     def __init__(self):
         self._observers = []
         self._clicked = False
@@ -19,4 +26,10 @@ class Buttton:
 
 
 class ClickObserver:
-    pass
+    def update(self, button):
+        print('Button clicked!')
+
+
+if __name__ == '__main__':
+    main()
+    
